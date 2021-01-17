@@ -1,6 +1,4 @@
-import logo from './logo.svg';
-import './App.scss';
-import ContactItem from './components/contact-item';
+import ContactItem from './views/contact-item';
 
 function App() {
   return (

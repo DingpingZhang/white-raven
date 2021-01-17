@@ -1,0 +1,46 @@
+span.text {
+  user-select: none;
+  cursor: default;
+
+  &.title {
+    color: var(--text-primary-color);
+    font-size: 20px;
+    line-height: 20px;
+    font-weight: 400;
+    margin: 0;
+  }
+
+  &.subtitle {
+    color: var(--text-primary-color);
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+  }
+
+  &.tip {
+    color: var(--text-primary-color);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 14px;
+  }
+
+  &.tip-secondary {
+    color: var(--text-secondary-color);
+    font-size: 12px;
+  }
+
+  &.ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+  }
+
+  &.link {
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

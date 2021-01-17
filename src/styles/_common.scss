@@ -1,0 +1,54 @@
+html {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--background-color);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #0b122f; // TODO: Move to theme style.
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+span {
+  user-select: none;
+}
+
+mark {
+  color: inherit;
+  background-color: #419cff52;
+}
+
+// Scroll bar
+
+::-webkit-scrollbar {
+  width: 6px;
+
+  &-track {
+    background: var(--background-color);
+  }
+
+  &-thumb {
+    background: var(--scroll-thumb-color);
+    border-radius: 3px;
+  }
+}

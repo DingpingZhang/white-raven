@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import '../styles/contact-item.scss';
 
 type ContactItemProps = {
   messageCount: number;
