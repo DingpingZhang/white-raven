@@ -1,12 +1,13 @@
 import classNames from 'classnames';
 
-type ContactItemProps = {
+export type ContactItemProps = {
   messageCount: number;
   selected?: boolean;
   avatar: string;
   username: string;
   lastMessage: string;
   lastMessageTimestamp: string;
+  onSelected?: () => void;
 };
 
 export default function ContactItem({
@@ -16,6 +17,7 @@ export default function ContactItem({
   username,
   lastMessage,
   lastMessageTimestamp,
+  onSelected,
 }: ContactItemProps) {
   const contactItemClass = classNames('contact-item', {
     'has-message': messageCount,
@@ -23,7 +25,7 @@ export default function ContactItem({
   });
 
   return (
-    <div className={contactItemClass}>
+    <div className={contactItemClass} onClick={onSelected}>
       <span className="red-dot"></span>
       <img className="avatar" src={avatar} alt="avatar" />
       <span className="username">{username}</span>

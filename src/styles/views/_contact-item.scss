@@ -7,6 +7,7 @@
   padding: 8px 12px;
   margin: 8px 16px;
   max-width: 200px;
+  cursor: pointer;
 
   &.selected {
     background-color: #3464ff;
@@ -16,12 +17,16 @@
     }
   }
 
+  &.has-message .red-dot {
+    display: inline-block;
+  }
+
   .red-dot {
     $red-dot-size: 4px;
 
     grid-area: 2 / 1 / 3 / 2;
 
-    display: inline-block;
+    display: none;
     width: $red-dot-size;
     height: $red-dot-size;
     border-radius: $red-dot-size / 2;
