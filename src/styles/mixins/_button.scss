@@ -1,0 +1,26 @@
+@mixin non-style-button {
+  background-color: transparent;
+  cursor: pointer;
+  user-select: none;
+  border-width: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+@mixin flatten-button($width, $height) {
+  @include non-style-button();
+  display: inline-flex;
+  width: $width;
+  height: $height;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: var(--clickable-hover-color);
+  }
+}

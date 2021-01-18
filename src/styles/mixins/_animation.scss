@@ -1,0 +1,28 @@
+@mixin css-transition-switch($offset: 30px, $timeout: 0.2s) {
+  &.enter,
+  &.appear {
+    opacity: 0;
+    transform: translateX($offset);
+  }
+
+  &.enter-active,
+  &.appear-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: all $timeout cubic-bezier(0, 0.8, 0.55, 0.85);
+  }
+
+  &.exit {
+    transform: translateX(0);
+  }
+
+  &.exit-active {
+    opacity: 0;
+    transform: translateX($offset);
+    transition: all $timeout cubic-bezier(0, 0.8, 0.55, 0.85);
+  }
+
+  &.exit-done {
+    display: none;
+  }
+}

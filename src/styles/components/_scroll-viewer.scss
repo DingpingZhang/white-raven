@@ -1,0 +1,75 @@
+.scroll-viewer-wrapper {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  grid-template-columns: 1fr auto;
+
+  width: 100%;
+  height: 100%;
+
+  &.inline .scroll-view {
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
+  }
+
+  &.overlay .scroll-view {
+    grid-row: 1 / 3;
+    grid-column: 1 / 3;
+  }
+
+  > .scroll-view {
+    // Ref: https://stackoverflow.com/a/38994837/9078911
+    // Hidden original scroll bar element but don't disable them.
+    // ie
+    -ms-overflow-style: none;
+    // Firefox
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      // Chrome and Safari
+      display: none;
+    }
+    overflow: auto;
+
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    > .scroll-content {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  > .scroll-bar {
+    position: relative;
+    display: none;
+
+    &.active {
+      display: block;
+    }
+
+    .scroll-thumb {
+      $scroll-thumb-size: 4px;
+
+      position: absolute;
+      border-radius: $scroll-thumb-size / 2;
+      height: $scroll-thumb-size;
+      width: $scroll-thumb-size;
+      background-color: var(--scroll-thumb-color);
+    }
+
+    &.vertical {
+      grid-row: 1 / 2;
+      grid-column: 2 / 3;
+      margin: 0 5px;
+      width: 6px;
+    }
+
+    &.horizontal {
+      grid-row: 2 / 3;
+      grid-column: 1 / 2;
+      margin: 5px 0;
+      height: 6px;
+    }
+  }
+}

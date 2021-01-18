@@ -1,3 +1,5 @@
+@import './variables';
+
 @import './common';
 @import './text';
 
@@ -5,6 +7,9 @@
 // Import View Styles
 // *****************************************************
 
+@import './components/dialog-host';
+@import './components/scroll-viewer';
+@import './components/switch';
 @import './components/virtualizing-list-box';
 
 // *****************************************************

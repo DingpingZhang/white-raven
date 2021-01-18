@@ -1,6 +1,7 @@
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { Size, useResizeObserver } from '../hooks';
+import ScrollViewer from './scroll-viewer';
 
 /**
  * Gets the size of items with the specified start index and item count.
@@ -100,22 +101,24 @@ export function VirtualizingListBox({
   );
 
   return (
-    <div ref={wrapperRef} className="virtualizing-list-box" onScroll={handleScroll}>
-      <ul className="virtualizing-list-box-ul">
-        {/* HACK: Hold the height of the scroll area, and place it on top of item elements to
-         * make sure it is in the lower layer of item elements, otherwise, its hit test
-         * may cover item elements.
-         */}
-        <div
-          style={{
-            position: 'absolute',
-            top: `${getItemsSize(sizeProvider)}px`,
-            height: '1px',
-            width: '1px',
-          }}
-        />
-        {itemElements}
-      </ul>
+    <div className="virtualizing-list-box">
+      <ScrollViewer ref={wrapperRef} onScroll={handleScroll} enableVerticalScrollBar>
+        <ul className="virtualizing-list-box-ul">
+          {/* HACK: Hold the height of the scroll area, and place it on top of item elements to
+           * make sure it is in the lower layer of item elements, otherwise, its hit test
+           * may cover item elements.
+           */}
+          <div
+            style={{
+              position: 'absolute',
+              top: `${getItemsSize(sizeProvider)}px`,
+              height: '1px',
+              width: '1px',
+            }}
+          />
+          {itemElements}
+        </ul>
+      </ScrollViewer>
     </div>
   );
 }

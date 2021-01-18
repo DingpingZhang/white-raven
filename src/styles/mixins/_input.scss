@@ -1,0 +1,17 @@
+@mixin non-style-input {
+  outline: none;
+  border-width: 0;
+  width: 100%;
+  height: 38px;
+  font-size: 14px;
+  line-height: 20px;
+  align-self: center;
+  background: transparent;
+  margin: 0 16px;
+  color: var(--text-primary-color);
+  cursor: text;
+
+  &::placeholder {
+    color: var(--text-secondary-color);
+  }
+}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { VirtualizingListBox } from '../components/virtualizing-list-box';
 import { CONTACT_LIST } from '../mocks/contact-list';
 import ContactItem from './contact-item';
 
@@ -9,13 +10,18 @@ export default function WindowContent() {
   return (
     <div className="window-content">
       <div className="contact-list-area">
-        {CONTACT_LIST.map((item, index) => (
-          <ContactItem
-            {...item}
-            selected={selectedIndex === index}
-            onSelected={() => setSelectedIndex(index)}
-          />
-        ))}
+        <VirtualizingListBox
+          sizeProvider={{ itemSize: 108, itemCount: CONTACT_LIST.length }}
+          renderItems={(startIndex, endIndex) =>
+            CONTACT_LIST.slice(startIndex, endIndex).map((item, index) => (
+              <ContactItem
+                {...item}
+                selected={selectedIndex === index}
+                onSelected={() => setSelectedIndex(index)}
+              />
+            ))
+          }
+        />
       </div>
       <div className="chat-area">
         <div className="chat-title-bar">
