@@ -1,7 +1,7 @@
 .window-content {
   display: grid;
   grid-template-columns: auto 28px 256px 24px 1fr;
-  height: 100%;
+  margin: 16px;
 
   .contact-list-area {
     grid-column: 3 / 4;
@@ -19,7 +19,6 @@
 
     background-color: #191e3c;
     border-radius: 10px;
-    margin: 16px 16px 16px 0;
 
     .chat-title-bar {
       display: grid;
