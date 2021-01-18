@@ -1,0 +1,95 @@
+@use '../../mixins/input';
+@use '../../mixins/common';
+
+.message-send-box {
+  display: grid;
+  grid-template-columns: auto 16px 1fr 16px auto;
+  align-items: center;
+
+  .btn-upload-file {
+    grid-column: 1 / 2;
+  }
+
+  .text-edit-area {
+    grid-column: 3 / 4;
+
+    display: grid;
+    grid-template-columns: 1fr 8px auto 8px auto 16px;
+    align-items: center;
+
+    .text-box {
+      @include input.non-style-input();
+
+      grid-column: 1 / 2;
+
+      display: flex;
+      position: relative;
+
+      flex-direction: row;
+      border-width: 0;
+      outline: none;
+      background-color: transparent;
+    }
+
+    .btn-face {
+      grid-column: 3 / 4;
+    }
+
+    .btn-more {
+      grid-column: 5 / 6;
+    }
+  }
+
+  .split-line.vertical {
+    width: 1px;
+    height: 30px;
+    box-sizing: border-box;
+    background-color: #252946;
+  }
+
+  .btn-send {
+    grid-column: 5 / 6;
+  }
+}
+
+.btn-circle {
+  @include common.circle(32px);
+
+  display: inline-block;
+  white-space: nowrap;
+  text-align: center;
+  background-image: none;
+  cursor: pointer;
+  user-select: none;
+  border-width: 0;
+
+  &:focus {
+    outline: none;
+  }
+
+  &.primary {
+    @include common.circle(40px);
+
+    background-color: #2f60ff;
+
+    &:hover {
+      background-color: lighten($color: #2f60ff, $amount: 0.1);
+    }
+  }
+
+  &.secondary {
+    background-color: #262b49;
+
+    &:hover {
+      background-color: lighten($color: #2f60ff, $amount: 0.8);
+    }
+  }
+
+  &.default {
+    background-color: #2e334e;
+
+    &:hover {
+      background-color: #262b49;
+    }
+  }
+}

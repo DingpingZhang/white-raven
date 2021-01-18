@@ -5,6 +5,7 @@ import { CONTACT_LIST } from '../mocks/contact-list';
 import { MESSAGE_LIST } from '../mocks/message-list';
 import ContactItem from './contact-item';
 import BasicMessage from './messages/basic-message';
+import MessageSendBox from './messages/message-send-box';
 
 export default function WindowContent() {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -39,7 +40,9 @@ export default function WindowContent() {
             ))}
           </ScrollViewer>
         </div>
-        <div className="chat-input-box"></div>
+        <div className="chat-input-box">
+          <MessageSendBox />
+        </div>
       </div>
     </div>
   );
