@@ -15,7 +15,7 @@ export default function MainTabHeaderPanel() {
           selected
         />
         <MainTabHeader
-          icon={<GroupIcon width="24px" height="24px" style={{ fill: '#dbecfd' }} />}
+          icon={<GroupIcon width="24px" height="24px" style={{ fill: '#44496d' }} />}
           title="Group"
         />
       </div>

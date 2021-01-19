@@ -4,6 +4,7 @@ import { VirtualizingListBox } from '../components/virtualizing-list-box';
 import { CONTACT_LIST } from '../mocks/contact-list';
 import { MESSAGE_LIST } from '../mocks/message-list';
 import ContactItem from './contact-item';
+import ContactSearchBox from './contact-search-box';
 import MainTabHeaderPanel from './main-tab-header-panel';
 import BasicMessage from './messages/basic-message';
 import MessageSendBox from './messages/message-send-box';
@@ -16,6 +17,7 @@ export default function WindowContent() {
     <div className="window-content">
       <MainTabHeaderPanel />
       <div className="contact-list-area">
+        <ContactSearchBox />
         <VirtualizingListBox
           sizeProvider={{ itemSize: 108, itemCount: CONTACT_LIST.length }}
           renderItems={(startIndex, endIndex) =>

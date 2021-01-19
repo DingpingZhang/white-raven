@@ -1,0 +1,21 @@
+@use '../mixins/input';
+
+.contact-search-box {
+  display: grid;
+  grid-template-columns: auto 1fr;
+
+  background-color: #191e3c;
+  border-radius: 4px;
+  margin-right: 12px;
+  margin-bottom: 32px;
+
+  .icon-search {
+    justify-self: center;
+    align-self: center;
+    margin-left: 12px;
+  }
+
+  .search-box-input {
+    @include input.non-style-input();
+  }
+}
