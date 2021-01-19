@@ -1,3 +1,5 @@
+@use '../mixins/common';
+
 .contact-item {
   display: grid;
   grid-template-rows: auto 8px auto 16px auto;
@@ -24,25 +26,17 @@
   }
 
   .red-dot {
-    $red-dot-size: 4px;
-
     grid-area: 2 / 1 / 3 / 2;
 
     display: none;
-    width: $red-dot-size;
-    height: $red-dot-size;
-    border-radius: $red-dot-size / 2;
+    @include common.circle(4px);
     background-color: #ff5c9e;
   }
 
   img.avatar {
-    $avatar-size: 36px;
-
     grid-area: 1 / 3 / 4 / 4;
 
-    width: $avatar-size;
-    height: $avatar-size;
-    border-radius: $avatar-size / 2;
+    @include common.circle(32px);
     align-self: center;
   }
 

@@ -1,3 +1,5 @@
+@use '../mixins/common';
+
 .window-content {
   display: grid;
   grid-template-columns: auto 28px 256px 24px 1fr;
@@ -32,10 +34,7 @@
       .avatar {
         grid-area: 1 / 1 / 4 / 2;
 
-        $avatar-size: 36px;
-        height: $avatar-size;
-        width: $avatar-size;
-        border-radius: $avatar-size / 2;
+        @include common.circle(32px);
         align-self: center;
       }
 

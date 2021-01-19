@@ -1,19 +1,17 @@
+@use '../../mixins/common';
+
 .basic-message {
   display: grid;
   grid-template-columns: auto 12px auto 1fr;
   grid-template-rows: auto 4px auto;
-  margin: 0 32px;
+  margin: 0 28px;
   padding: 10px 0;
   box-sizing: border-box;
 
   .avatar {
-    $avatar-size: 24px;
-
     grid-area: 1 / 1 / 2 / 2;
 
-    width: $avatar-size;
-    height: $avatar-size;
-    border-radius: $avatar-size / 2;
+    @include common.circle(24px);
     align-self: start;
   }
 
