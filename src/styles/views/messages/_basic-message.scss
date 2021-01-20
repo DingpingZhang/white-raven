@@ -29,6 +29,37 @@
     &.highlight {
       background-color: #3464ff;
     }
+
+    .message-content {
+      .msg-segment {
+        user-select: text;
+
+        &.msg-type-text {
+          white-space: pre-line;
+        }
+
+        &.msg-type-face {
+          width: 28px;
+          height: 28px;
+          vertical-align: text-bottom;
+        }
+
+        &.msg-type-at {
+          color: white;
+          background-color: #f65b9e;
+          border-radius: 8px;
+          padding: 0 4px;
+          margin: 0 4px;
+          user-select: all;
+          cursor: pointer;
+        }
+
+        &.msg-type-image {
+          max-width: 1024px;
+          max-height: 512px;
+        }
+      }
+    }
   }
 
   .timestamp {
