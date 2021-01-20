@@ -1,0 +1,48 @@
+@use '../mixins/common';
+
+.btn-circle {
+  @include common.circle(32px);
+
+  display: inline-flex;
+  white-space: nowrap;
+  text-align: center;
+  background-image: none;
+  cursor: pointer;
+  user-select: none;
+  border-width: 0;
+
+  &:focus {
+    outline: none;
+  }
+
+  svg {
+    fill: #d9ecfc;
+    align-self: center;
+  }
+
+  &.primary {
+    @include common.circle(40px);
+
+    background-color: #2f60ff;
+
+    &:hover {
+      background-color: #4873ff;
+    }
+  }
+
+  &.secondary {
+    background-color: #262b49;
+
+    &:hover {
+      background-color: lighten($color: #2f60ff, $amount: 0.8);
+    }
+  }
+
+  &.default {
+    background-color: #2e334e;
+
+    &:hover {
+      background-color: #262b49;
+    }
+  }
+}
