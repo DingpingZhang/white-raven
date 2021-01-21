@@ -9,9 +9,8 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { equalNumber, FLOAT_TOLERANCE } from '../helpers';
 import { useCombinedRefs, useResizeObserver } from '../hooks';
-
-const FLOAT_TOLERANCE = 1e-3;
 
 type ScrollBarStyle = 'inline' | 'overlay';
 interface ScrollViewerProps extends HTMLAttributes<HTMLDivElement> {
@@ -19,6 +18,10 @@ interface ScrollViewerProps extends HTMLAttributes<HTMLDivElement> {
   scrollBarStyle?: ScrollBarStyle;
   enableVerticalScrollBar?: boolean;
   enableHorizontalScrollBar?: boolean;
+  onArrivedTop?: () => void;
+  onArrivedBottom?: () => void;
+  onArrivedLeft?: () => void;
+  onArrivedRight?: () => void;
 }
 
 const ScrollViewer = React.forwardRef(
@@ -31,6 +34,10 @@ const ScrollViewer = React.forwardRef(
       className,
       onScroll,
       style,
+      onArrivedTop,
+      onArrivedBottom,
+      onArrivedLeft,
+      onArrivedRight,
     }: ScrollViewerProps,
     ref: Ref<HTMLDivElement>
   ) => {
@@ -60,8 +67,10 @@ const ScrollViewer = React.forwardRef(
         setScrollBarTop(view.scrollTop * ratio);
       }
     }, [enableHorizontalScrollBar, enableVerticalScrollBar]);
+    // Trigger the size update when itself changed.
     useResizeObserver(wrapperRef, updateSize);
     useResizeObserver(scrollContentRef, updateSize);
+    // Trigger the size update when its children changed.
     useEffect(() => {
       if (scrollContentRef.current) {
         const mutationObserver = new MutationObserver(() => updateSize());
@@ -73,12 +82,6 @@ const ScrollViewer = React.forwardRef(
       }
     }, [updateSize]);
 
-    const wrapperClass = classNames(
-      'scroll-viewer-wrapper',
-      className,
-      `${scrollBarStyle ?? 'overlay'}`
-    );
-
     const activeHorizontalScrollBar =
       enableHorizontalScrollBar &&
       wrapperRef.current &&
@@ -87,6 +90,43 @@ const ScrollViewer = React.forwardRef(
       enableVerticalScrollBar &&
       wrapperRef.current &&
       wrapperRef.current.scrollHeight - wrapperRef.current.clientHeight > FLOAT_TOLERANCE;
+    useEffect(() => {
+      const view = wrapperRef.current;
+      if (!view) return;
+
+      if (activeHorizontalScrollBar) {
+        if (equalNumber(scrollBarLeft, 0)) {
+          onArrivedLeft && onArrivedLeft();
+        } else if (equalNumber(scrollBarLeft + scrollBarWidth, view.clientWidth, 1)) {
+          onArrivedRight && onArrivedRight();
+        }
+      }
+
+      if (activeVerticalScrollBar) {
+        if (equalNumber(scrollBarTop, 0)) {
+          onArrivedTop && onArrivedTop();
+        } else if (equalNumber(scrollBarTop + scrollBarHeight, view.clientHeight, 0.5)) {
+          onArrivedBottom && onArrivedBottom();
+        }
+      }
+    }, [
+      activeHorizontalScrollBar,
+      activeVerticalScrollBar,
+      onArrivedBottom,
+      onArrivedLeft,
+      onArrivedRight,
+      onArrivedTop,
+      scrollBarHeight,
+      scrollBarLeft,
+      scrollBarTop,
+      scrollBarWidth,
+    ]);
+
+    const wrapperClass = classNames(
+      'scroll-viewer-wrapper',
+      className,
+      `${scrollBarStyle ?? 'overlay'}`
+    );
 
     const horizontalScrollBarClass = classNames('scroll-bar', 'horizontal', {
       active: activeHorizontalScrollBar,

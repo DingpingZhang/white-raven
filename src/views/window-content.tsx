@@ -38,7 +38,11 @@ export default function WindowContent() {
           <span className="text-subtitle">{selectedItem.lastMessageTimestamp}</span>
         </div>
         <div className="chat-message-list">
-          <ScrollViewer enableVerticalScrollBar>
+          <ScrollViewer
+            enableVerticalScrollBar
+            onArrivedTop={() => console.log('onArrivedTop')}
+            onArrivedBottom={() => console.log('onArrivedBottom')}
+          >
             {MESSAGE_LIST.map((item) => (
               <BasicMessage {...item} />
             ))}
