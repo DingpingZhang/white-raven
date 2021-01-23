@@ -1,46 +1,47 @@
-import { ContactItemProps } from '../views/contact-item';
+import { ContactSummary } from '../models/contact';
+import { MESSAGE_LIST } from './message-list';
 
-export const CONTACT_LIST: ContactItemProps[] = [
+export const CONTACT_LIST: ContactSummary[] = [
   {
-    messageCount: 1,
+    unreadCount: 1,
     avatar: 'http://q1.qlogo.cn/g?b=qq&nk={qq}&s=640',
-    username: 'Fuck the word',
-    lastMessage: 'Some common custom markup extensions for WPF.',
-    lastMessageTimestamp: 'Last seen 1 day ago',
+    title: 'Fuck the word',
+    subtitle: MESSAGE_LIST[MESSAGE_LIST.length - 1].content,
+    lastActivityTimestamp: 1611405872525,
   },
   {
-    messageCount: 1,
+    unreadCount: 1,
     avatar: 'http://q1.qlogo.cn/g?b=qq&nk=787673395&s=640',
-    username: 'Jack Sparrow',
-    lastMessage: 'Some common custom markup extensions for WPF.',
-    lastMessageTimestamp: 'Last seen 1 day ago',
+    title: 'Jack Sparrow',
+    subtitle: MESSAGE_LIST[1].content,
+    lastActivityTimestamp: 1611405812525,
   },
   {
-    messageCount: 0,
+    unreadCount: 0,
     avatar: 'http://q1.qlogo.cn/g?b=qq&nk={qq}&s=640',
-    username: 'Jack Sparrow',
-    lastMessage: 'Some common custom markup extensions for WPF.',
-    lastMessageTimestamp: 'Last seen 1 day ago',
+    title: 'Jack Sparrow',
+    subtitle: MESSAGE_LIST[2].content,
+    lastActivityTimestamp: 1611405872525,
   },
   {
-    messageCount: 1,
+    unreadCount: 1,
     avatar: 'http://q1.qlogo.cn/g?b=qq&nk=1844812067&s=640',
-    username: '昵称什么的能吃么',
-    lastMessage: 'Some common custom markup extensions for WPF.',
-    lastMessageTimestamp: 'Last seen 1 day ago',
+    title: '昵称什么的能吃么',
+    subtitle: MESSAGE_LIST[0].content,
+    lastActivityTimestamp: 1611405872525,
   },
   {
-    messageCount: 0,
+    unreadCount: 0,
     avatar: 'http://q1.qlogo.cn/g?b=qq&nk={qq}&s=640',
-    username: 'Jack Sparrow',
-    lastMessage: 'Some common custom markup extensions for WPF.',
-    lastMessageTimestamp: 'Last seen 1 day ago',
+    title: 'Jack Sparrow',
+    subtitle: MESSAGE_LIST[3].content,
+    lastActivityTimestamp: 1611405872525,
   },
   {
-    messageCount: 0,
+    unreadCount: 0,
     avatar: 'http://q1.qlogo.cn/g?b=qq&nk={qq}&s=640',
-    username: 'Jack Sparrow',
-    lastMessage: 'Some common custom markup extensions for WPF.',
-    lastMessageTimestamp: 'Last seen 1 day ago',
+    title: 'Jack Sparrow',
+    subtitle: MESSAGE_LIST[4].content,
+    lastActivityTimestamp: 1611405872525,
   },
 ];

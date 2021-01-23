@@ -1,3 +1,5 @@
+import { IdType } from './basic';
+
 export type TextMessage = {
   type: 'text';
   data: {
@@ -26,4 +28,13 @@ export type AtMessage = {
   };
 };
 
-export type Message = TextMessage | ImageMessage | FaceMessage | AtMessage;
+export type MessageSegment = TextMessage | ImageMessage | FaceMessage | AtMessage;
+
+export type MessageContent = ReadonlyArray<MessageSegment>;
+
+export type Message = {
+  id: IdType;
+  sender: IdType;
+  content: MessageContent;
+  timestamp: number;
+};

@@ -7,21 +7,18 @@
 
   .contact-list-area {
     grid-column: 1 / 2;
-
-    display: flex;
-    flex-direction: column;
   }
 
   .chat-area {
     grid-column: 3 / 4;
 
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto 1fr;
 
     background-color: #191e3c;
     border-radius: 10px;
 
-    .chat-title-bar {
+    .private-chat-title-bar {
       display: grid;
       grid-template-columns: auto 16px 1fr;
       grid-template-rows: auto 8px auto;
@@ -52,19 +49,6 @@
         font-size: 10px;
         align-self: flex-start;
       }
-    }
-
-    .chat-message-list {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .chat-input-box {
-      display: grid;
-
-      height: 72px;
-      padding: 0 20px;
-      border-top: 2px solid #242945;
     }
   }
 }

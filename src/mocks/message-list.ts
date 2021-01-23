@@ -1,9 +1,10 @@
-import { BasicMessageProps } from '../views/messages/basic-message';
+import { Message } from '../models/message';
 
-export const MESSAGE_LIST: ReadonlyArray<BasicMessageProps> = [
+export const MESSAGE_LIST: ReadonlyArray<Message> = [
   {
-    avatar: 'http://q1.qlogo.cn/g?b=qq&nk={qq}&s=640',
-    message: [
+    id: '',
+    sender: '787673395',
+    content: [
       {
         type: 'text',
         data: {
@@ -45,8 +46,9 @@ export const MESSAGE_LIST: ReadonlyArray<BasicMessageProps> = [
     timestamp: 1610977530419,
   },
   {
-    avatar: 'http://q1.qlogo.cn/g?b=qq&nk={qq}&s=640',
-    message: [
+    id: '',
+    sender: '1844812067',
+    content: [
       {
         type: 'text',
         data: {
@@ -65,8 +67,9 @@ export const MESSAGE_LIST: ReadonlyArray<BasicMessageProps> = [
     timestamp: 1610977530419,
   },
   {
-    avatar: 'http://q1.qlogo.cn/g?b=qq&nk={qq}&s=640',
-    message: [
+    id: '',
+    sender: '1844812067',
+    content: [
       {
         type: 'text',
         data: {
@@ -77,8 +80,9 @@ export const MESSAGE_LIST: ReadonlyArray<BasicMessageProps> = [
     timestamp: 1610977530419,
   },
   {
-    avatar: 'http://q1.qlogo.cn/g?b=qq&nk={qq}&s=640',
-    message: [
+    id: '',
+    sender: '787673395',
+    content: [
       {
         type: 'text',
         data: {
@@ -90,8 +94,9 @@ export const MESSAGE_LIST: ReadonlyArray<BasicMessageProps> = [
     timestamp: 1610977530419,
   },
   {
-    avatar: 'http://q1.qlogo.cn/g?b=qq&nk={qq}&s=640',
-    message: [
+    id: '',
+    sender: '622811874',
+    content: [
       {
         type: 'text',
         data: {
@@ -101,11 +106,11 @@ export const MESSAGE_LIST: ReadonlyArray<BasicMessageProps> = [
       },
     ],
     timestamp: 1610977530419,
-    highlight: true,
   },
   {
-    avatar: 'http://q1.qlogo.cn/g?b=qq&nk={qq}&s=640',
-    message: [
+    id: '',
+    sender: '622811874',
+    content: [
       {
         type: 'text',
         data: {
@@ -114,11 +119,11 @@ export const MESSAGE_LIST: ReadonlyArray<BasicMessageProps> = [
       },
     ],
     timestamp: 1610977530419,
-    highlight: true,
   },
   {
-    avatar: 'http://q1.qlogo.cn/g?b=qq&nk={qq}&s=640',
-    message: [
+    id: '',
+    sender: '622811874',
+    content: [
       {
         type: 'text',
         data: {
@@ -129,8 +134,9 @@ export const MESSAGE_LIST: ReadonlyArray<BasicMessageProps> = [
     timestamp: 1610977530419,
   },
   {
-    avatar: 'http://q1.qlogo.cn/g?b=qq&nk={qq}&s=640',
-    message: [
+    id: '',
+    sender: '622811874',
+    content: [
       {
         type: 'text',
         data: {
@@ -140,11 +146,11 @@ export const MESSAGE_LIST: ReadonlyArray<BasicMessageProps> = [
       },
     ],
     timestamp: 1610977530419,
-    highlight: true,
   },
   {
-    avatar: 'http://q1.qlogo.cn/g?b=qq&nk={qq}&s=640',
-    message: [
+    id: '',
+    sender: '622811874',
+    content: [
       {
         type: 'text',
         data: {

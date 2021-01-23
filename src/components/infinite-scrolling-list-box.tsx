@@ -32,7 +32,6 @@ export default function InfiniteScrollingListBox({ renderItems }: InfiniteScroll
 
     const observer = new IntersectionObserver(
       (entities) => {
-        console.log(entities);
         if (entities.length === 2) {
           const initialItems = renderItems('initial');
           if (initialItems && initialItems.length > 0) {
