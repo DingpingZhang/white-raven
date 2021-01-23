@@ -1,70 +1,13 @@
-@use '../mixins/common';
-
 .window-content {
   display: grid;
-  grid-template-columns: auto 28px 256px 24px 1fr;
+  grid-template-columns: auto 28px 1fr;
   margin: 16px;
 
-  .contact-list-area {
-    grid-column: 3 / 4;
-
-    display: flex;
-    flex-direction: column;
+  .main-window-tab-header-panel {
+    grid-column: 1 / 2;
   }
 
-  .chat-area {
-    grid-column: 5 / 6;
-
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-
-    background-color: #191e3c;
-    border-radius: 10px;
-
-    .chat-title-bar {
-      display: grid;
-      grid-template-columns: auto 16px 1fr;
-      grid-template-rows: auto 8px auto;
-
-      height: 72px;
-      border-bottom: 2px solid #242945;
-      padding: 0 24px;
-
-      .avatar {
-        grid-area: 1 / 1 / 4 / 2;
-
-        @include common.circle(32px);
-        align-self: center;
-      }
-
-      .text-title {
-        grid-area: 1 / 3 / 2 / 4;
-
-        color: #bcbfcf;
-        font-size: 12px;
-        align-self: flex-end;
-      }
-
-      .text-subtitle {
-        grid-area: 3 / 3 / 4 / 4;
-
-        color: #565f81;
-        font-size: 10px;
-        align-self: flex-start;
-      }
-    }
-
-    .chat-message-list {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .chat-input-box {
-      display: grid;
-
-      height: 72px;
-      padding: 0 20px;
-      border-top: 2px solid #242945;
-    }
+  .main-window-tab-content {
+    grid-column: 3 / 4;
   }
 }

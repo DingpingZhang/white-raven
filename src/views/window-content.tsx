@@ -1,63 +1,45 @@
-import { useCallback, useRef, useState } from 'react';
-import InfiniteScrollingListBox, {
-  FetchItemsType,
-} from '../components/infinite-scrolling-list-box';
-import { VirtualizingListBox } from '../components/virtualizing-list-box';
-import { CONTACT_LIST } from '../mocks/contact-list';
-import { MESSAGE_LIST } from '../mocks/message-list';
-import ContactItem from './contact-item';
-import ContactSearchBox from './contact-search-box';
+import { useEffect, useMemo, useState } from 'react';
+import { CaseItem, Switch } from '../components/switch';
+import { useNavigator } from '../components/switch-host';
+import GroupChatView from './group-chat-view';
 import MainTabHeaderPanel from './main-tab-header-panel';
-import BasicMessage from './messages/basic-message';
-import MessageSendBox from './messages/message-send-box';
+import PrivateChatView from './private-chat-view';
+
+export const SWITCH_NAME_MAIN = 'main-window';
+export type MainWindowViewName = 'private-chat' | 'group-view';
 
 export default function WindowContent() {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const messageCountRef = useRef(0);
-  const selectedItem = CONTACT_LIST[selectedIndex];
-  const renderMessage = useCallback((type: FetchItemsType) => {
-    switch (type) {
-      case 'initial':
-      case 'previous':
-        messageCountRef.current += MESSAGE_LIST.length;
-        return MESSAGE_LIST.map((item, index) => (
-          <BasicMessage key={`${messageCountRef.current}-${index}`} {...item} />
-        ));
-      case 'next':
-        return [];
+  const mainWindowNavigator = useNavigator<MainWindowViewName>(SWITCH_NAME_MAIN);
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  useEffect(() => {
+    switch (selectedTabIndex) {
+      case 0:
+        mainWindowNavigator('private-chat');
+        break;
+      case 1:
+        mainWindowNavigator('group-view');
+        break;
     }
-  }, []);
+  }, [mainWindowNavigator, selectedTabIndex]);
+
+  const mainWindowCases = useMemo<CaseItem<MainWindowViewName>[]>(
+    () => [
+      { label: 'private-chat', renderer: () => <PrivateChatView /> },
+      { label: 'group-view', renderer: () => <GroupChatView /> },
+    ],
+    []
+  );
 
   return (
     <div className="window-content">
-      <MainTabHeaderPanel />
-      <div className="contact-list-area">
-        <ContactSearchBox />
-        <VirtualizingListBox
-          sizeProvider={{ itemSize: 108, itemCount: CONTACT_LIST.length }}
-          renderItems={(startIndex, endIndex) =>
-            CONTACT_LIST.slice(startIndex, endIndex).map((item, index) => (
-              <ContactItem
-                {...item}
-                selected={selectedIndex === index}
-                onSelected={() => setSelectedIndex(index)}
-              />
-            ))
-          }
+      <div className="main-window-tab-header-panel">
+        <MainTabHeaderPanel
+          selectedIndex={selectedTabIndex}
+          setSelectedIndex={setSelectedTabIndex}
         />
       </div>
-      <div className="chat-area">
-        <div className="chat-title-bar">
-          <img className="avatar" src={selectedItem.avatar} alt="avatar" />
-          <span className="text-title">{selectedItem.username}</span>
-          <span className="text-subtitle">{selectedItem.lastMessageTimestamp}</span>
-        </div>
-        <div className="chat-message-list">
-          <InfiniteScrollingListBox renderItems={renderMessage} />
-        </div>
-        <div className="chat-input-box">
-          <MessageSendBox />
-        </div>
+      <div className="main-window-tab-content">
+        <Switch<MainWindowViewName> name={SWITCH_NAME_MAIN} cases={mainWindowCases} />
       </div>
     </div>
   );

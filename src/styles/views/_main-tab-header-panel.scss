@@ -5,6 +5,7 @@
   grid-template-rows: auto 1fr auto;
 
   width: 72px;
+  height: 100%;
   border-radius: 10px;
   background-color: #191e3c;
 
@@ -50,6 +51,9 @@
       grid-area: 1 / 1 / 2 / 3;
 
       color: #42496d;
+      fill: #42496d;
+      width: 24px;
+      height: 24px;
     }
 
     .tab-header-title {
@@ -66,6 +70,7 @@
 
       .tab-header-icon {
         color: #3364ff;
+        fill: #3364ff;
       }
 
       .tab-header-title {
