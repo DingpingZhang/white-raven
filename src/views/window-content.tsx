@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import ScrollViewer from '../components/scroll-viewer';
+import { useCallback, useRef, useState } from 'react';
+import InfiniteScrollingListBox, {
+  FetchItemsType,
+} from '../components/infinite-scrolling-list-box';
 import { VirtualizingListBox } from '../components/virtualizing-list-box';
 import { CONTACT_LIST } from '../mocks/contact-list';
 import { MESSAGE_LIST } from '../mocks/message-list';
@@ -11,7 +13,20 @@ import MessageSendBox from './messages/message-send-box';
 
 export default function WindowContent() {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const messageCountRef = useRef(0);
   const selectedItem = CONTACT_LIST[selectedIndex];
+  const renderMessage = useCallback((type: FetchItemsType) => {
+    switch (type) {
+      case 'initial':
+      case 'previous':
+        messageCountRef.current += MESSAGE_LIST.length;
+        return MESSAGE_LIST.map((item, index) => (
+          <BasicMessage key={`${messageCountRef.current}-${index}`} {...item} />
+        ));
+      case 'next':
+        return [];
+    }
+  }, []);
 
   return (
     <div className="window-content">
@@ -38,15 +53,7 @@ export default function WindowContent() {
           <span className="text-subtitle">{selectedItem.lastMessageTimestamp}</span>
         </div>
         <div className="chat-message-list">
-          <ScrollViewer
-            enableVerticalScrollBar
-            onArrivedTop={() => console.log('onArrivedTop')}
-            onArrivedBottom={() => console.log('onArrivedBottom')}
-          >
-            {MESSAGE_LIST.map((item) => (
-              <BasicMessage {...item} />
-            ))}
-          </ScrollViewer>
+          <InfiniteScrollingListBox renderItems={renderMessage} />
         </div>
         <div className="chat-input-box">
           <MessageSendBox />

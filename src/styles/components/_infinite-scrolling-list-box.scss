@@ -1,0 +1,18 @@
+@use '../mixins/list';
+
+.infinite-scrolling-list-box {
+  height: 100%;
+  .anchor-element-top {
+    width: 100%;
+    height: 128px;
+  }
+
+  .anchor-element-bottom {
+    width: 100%;
+    height: 8px;
+  }
+
+  .infinite-scrolling-list-box-ul {
+    @include list.non-style-list();
+  }
+}

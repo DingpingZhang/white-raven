@@ -1,19 +1,13 @@
-@mixin non-style-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+@use '../mixins/list';
 
 .virtualizing-list-box {
-  @include non-style-list();
-
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
 
   .virtualizing-list-box-ul {
-    @include non-style-list();
+    @include list.non-style-list();
     position: relative;
     width: 100%;
     height: 100%;

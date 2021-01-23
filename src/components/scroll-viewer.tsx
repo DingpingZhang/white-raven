@@ -9,7 +9,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { equalNumber, FLOAT_TOLERANCE } from '../helpers';
+import { FLOAT_TOLERANCE } from '../helpers';
 import { useCombinedRefs, useResizeObserver } from '../hooks';
 
 type ScrollBarStyle = 'inline' | 'overlay';
@@ -18,10 +18,6 @@ interface ScrollViewerProps extends HTMLAttributes<HTMLDivElement> {
   scrollBarStyle?: ScrollBarStyle;
   enableVerticalScrollBar?: boolean;
   enableHorizontalScrollBar?: boolean;
-  onArrivedTop?: () => void;
-  onArrivedBottom?: () => void;
-  onArrivedLeft?: () => void;
-  onArrivedRight?: () => void;
 }
 
 const ScrollViewer = React.forwardRef(
@@ -34,10 +30,6 @@ const ScrollViewer = React.forwardRef(
       className,
       onScroll,
       style,
-      onArrivedTop,
-      onArrivedBottom,
-      onArrivedLeft,
-      onArrivedRight,
     }: ScrollViewerProps,
     ref: Ref<HTMLDivElement>
   ) => {
@@ -90,37 +82,6 @@ const ScrollViewer = React.forwardRef(
       enableVerticalScrollBar &&
       wrapperRef.current &&
       wrapperRef.current.scrollHeight - wrapperRef.current.clientHeight > FLOAT_TOLERANCE;
-    useEffect(() => {
-      const view = wrapperRef.current;
-      if (!view) return;
-
-      if (activeHorizontalScrollBar) {
-        if (equalNumber(scrollBarLeft, 0)) {
-          onArrivedLeft && onArrivedLeft();
-        } else if (equalNumber(scrollBarLeft + scrollBarWidth, view.clientWidth, 1)) {
-          onArrivedRight && onArrivedRight();
-        }
-      }
-
-      if (activeVerticalScrollBar) {
-        if (equalNumber(scrollBarTop, 0)) {
-          onArrivedTop && onArrivedTop();
-        } else if (equalNumber(scrollBarTop + scrollBarHeight, view.clientHeight, 0.5)) {
-          onArrivedBottom && onArrivedBottom();
-        }
-      }
-    }, [
-      activeHorizontalScrollBar,
-      activeVerticalScrollBar,
-      onArrivedBottom,
-      onArrivedLeft,
-      onArrivedRight,
-      onArrivedTop,
-      scrollBarHeight,
-      scrollBarLeft,
-      scrollBarTop,
-      scrollBarWidth,
-    ]);
 
     const wrapperClass = classNames(
       'scroll-viewer-wrapper',
