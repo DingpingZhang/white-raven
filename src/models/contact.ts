@@ -1,8 +1,11 @@
 import { MessageContent } from './message';
 
-export type ContactSummary = {
+export type ContactInfo = {
   avatar: string;
   title: string;
+};
+
+export type SessionSummary = ContactInfo & {
   subtitle: MessageContent;
   lastActivityTimestamp: number;
   unreadCount: number;
@@ -10,5 +13,5 @@ export type ContactSummary = {
 
 export type ContactSummaryList = {
   selctedIndex: number;
-  items: ReadonlyArray<ContactSummary>;
+  items: ReadonlyArray<SessionSummary>;
 };

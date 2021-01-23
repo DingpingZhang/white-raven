@@ -1,0 +1,31 @@
+@use '../mixins/common';
+
+.group-member-item {
+  display: grid;
+  grid-template-columns: auto 16px 1fr;
+  height: 20px;
+  margin: 4px 20px;
+  padding: 4px;
+  border-radius: 4px;
+  align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #272b48;
+  }
+
+  .avatar {
+    grid-column: 1 / 2;
+
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+  }
+
+  .username {
+    grid-column: 3 / 4;
+
+    color: #a5a7b1;
+    font-size: 12px;
+  }
+}

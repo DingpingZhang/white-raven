@@ -1,13 +1,13 @@
 import React from 'react';
 import { VirtualizingListBox } from '../components/virtualizing-list-box';
-import { ContactSummary } from '../models/contact';
+import { SessionSummary } from '../models/contact';
 import ContactItem from './contact-item';
 import ContactSearchBox from './contact-search-box';
 
 type ContactListControlProps = {
-  selectedItem: ContactSummary;
-  setSelectedItem: (value: ContactSummary) => void;
-  items: ReadonlyArray<ContactSummary>;
+  selectedItem: SessionSummary;
+  setSelectedItem: (value: SessionSummary) => void;
+  items: ReadonlyArray<SessionSummary>;
 };
 
 export default function ContactListControl({

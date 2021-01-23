@@ -1,7 +1,7 @@
-import { ContactSummary } from '../models/contact';
+import { SessionSummary } from '../models/contact';
 import { MESSAGE_LIST } from './message-list';
 
-export const CONTACT_LIST: ContactSummary[] = [
+export const CONTACT_LIST: SessionSummary[] = [
   {
     unreadCount: 1,
     avatar: 'http://q1.qlogo.cn/g?b=qq&nk={qq}&s=640',

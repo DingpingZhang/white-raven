@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import { getDisplayTimestamp } from '../helpers';
-import { ContactSummary } from '../models/contact';
+import { SessionSummary } from '../models/contact';
 import { MessageSegment } from '../models/message';
 
-export type ContactItemProps = ContactSummary & {
+export type ContactItemProps = SessionSummary & {
   selected?: boolean;
   onSelected?: () => void;
 };
