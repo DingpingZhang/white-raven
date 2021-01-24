@@ -38,7 +38,9 @@ export default function GroupChatView() {
           <VirtualizingListBox
             sizeProvider={{ itemSize: 32, itemCount: CONTACT_LIST.length }}
             renderItems={(startIndex, endIndex) =>
-              CONTACT_LIST.slice(startIndex, endIndex).map((item) => <GroupMemberItem {...item} />)
+              CONTACT_LIST.slice(startIndex, endIndex).map((item) => (
+                <GroupMemberItem avatar={item.avatar} title={item.title} />
+              ))
             }
           />
         </div>

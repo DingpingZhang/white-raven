@@ -55,8 +55,9 @@
         }
 
         &.msg-type-image {
-          max-width: 1024px;
-          max-height: 512px;
+          max-width: 240px;
+          max-height: 120px;
+          cursor: pointer;
         }
       }
     }
