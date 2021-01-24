@@ -39,6 +39,7 @@ export default function PrivateChatView() {
             isValidLabel: () => true,
             getRenderer: (sessionId) => () => <ChatControl />,
           }}
+          animation={{ className: 'fade-in-out', timeout: 200 }}
         />
       </div>
     </div>

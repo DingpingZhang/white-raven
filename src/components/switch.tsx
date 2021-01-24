@@ -1,11 +1,5 @@
-import React, {
-  ReactNode,
-  useContext,
-  useEffect,
-  useCallback,
-  useState,
-  ReactElement,
-} from 'react';
+import classNames from 'classnames';
+import { ReactNode, useContext, useEffect, useCallback, useState, ReactElement } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useForceUpdate, useLazyRef } from '../hooks';
 import { SwitchHostContext } from './switch-host';
@@ -35,6 +29,10 @@ export function convertToContentProvider<T extends string>(
 type SwitchProps<T extends string> = {
   name: string;
   contentProvider: ContentProvider<T>;
+  animation?: {
+    className: string;
+    timeout: number;
+  };
 };
 
 function isReactElement(node: ReactNode): node is ReactElement {
@@ -53,7 +51,7 @@ function equalProps(left: any, right: any) {
   );
 }
 
-export function Switch<T extends string>({ name, contentProvider }: SwitchProps<T>) {
+export function Switch<T extends string>({ name, contentProvider, animation }: SwitchProps<T>) {
   const forceUpdate = useForceUpdate();
   const loadedViewCache = useLazyRef(() => new Map<T, ReactNode>());
   const [selectedLabel, setSelectedLabel] = useState('');
@@ -102,10 +100,21 @@ export function Switch<T extends string>({ name, contentProvider }: SwitchProps<
     <div className="switch-wrapper">
       {Array.from(loadedViewCache.entries()).map(([label, view]) => {
         const selected = selectedLabel === label;
-        return (
-          <CSSTransition key={label} appear in={selected} timeout={200}>
-            <div className="switch-item">{view}</div>
+        const switchItemClass = classNames('switch-item', { animated: animation, selected });
+        return animation ? (
+          <CSSTransition
+            key={label}
+            appear
+            in={selected}
+            classNames={animation.className}
+            timeout={animation.timeout}
+          >
+            <div className={switchItemClass}>{view}</div>
           </CSSTransition>
+        ) : (
+          <div key={label} className={switchItemClass}>
+            {view}
+          </div>
         );
       })}
     </div>

@@ -1,0 +1,95 @@
+// Abbreviations:
+// * rtl = right-to-left
+// * btt = bottom-to-top
+
+@mixin css-transition-float-in-out-rtl($offset: 30px, $timeout: 0.2s) {
+  &-enter,
+  &-appear {
+    opacity: 0;
+    transform: translateX($offset);
+  }
+
+  &-enter-active,
+  &-appear-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: all $timeout cubic-bezier(0, 0.8, 0.55, 0.85);
+  }
+
+  &-exit {
+    transform: translateX(0);
+  }
+
+  &-exit-active {
+    opacity: 0;
+    transform: translateX($offset);
+    transition: all $timeout cubic-bezier(0, 0.8, 0.55, 0.85);
+  }
+
+  &-exit-done {
+    display: none;
+  }
+}
+
+@mixin css-transition-float-in-out-btt($offset: 30px, $timeout: 0.2s) {
+  &-enter,
+  &-appear {
+    opacity: 0;
+    transform: translateY($offset);
+  }
+
+  &-enter-active,
+  &-appear-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all $timeout cubic-bezier(0, 0.8, 0.55, 0.85);
+  }
+
+  &-exit {
+    transform: translateY(0);
+  }
+
+  &-exit-active {
+    opacity: 0;
+    transform: translateY($offset);
+    transition: all $timeout cubic-bezier(0, 0.8, 0.55, 0.85);
+  }
+
+  &-exit-done {
+    display: none;
+  }
+}
+
+@mixin css-transition-fade-in-out($offset: 30px, $timeout: 0.2s) {
+  &-enter,
+  &-appear {
+    opacity: 0;
+  }
+
+  &-enter-active,
+  &-appear-active {
+    opacity: 1;
+    transition: all $timeout cubic-bezier(0, 0.8, 0.55, 0.85);
+  }
+
+  &-exit-active {
+    opacity: 0;
+    transition: all $timeout cubic-bezier(0, 0.8, 0.55, 0.85);
+  }
+
+  &-exit-done {
+    display: none;
+  }
+}
+
+.switch-item.animated.float-in-out-rtl {
+  @include css-transition-float-in-out-rtl();
+}
+
+.switch-item.animated.float-in-out-btt {
+  @include css-transition-float-in-out-btt();
+}
+
+.switch-item.animated.fade-in-out {
+  @include css-transition-fade-in-out();
+}
