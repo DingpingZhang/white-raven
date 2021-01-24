@@ -1,6 +1,7 @@
 .chat-control {
   display: grid;
   grid-template-rows: 1fr auto;
+  height: 100%;
 
   .chat-message-list {
     display: flex;

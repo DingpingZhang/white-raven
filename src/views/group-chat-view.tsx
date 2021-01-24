@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Switch } from '../components/switch';
+import { useNavigator } from '../components/switch-host';
 import { VirtualizingListBox } from '../components/virtualizing-list-box';
 import { getDisplayTimestamp } from '../helpers';
 import { CONTACT_LIST } from '../mocks/contact-list';
 import ChatControl from './chat-control';
+import { SWITCH_NAME } from './constants';
 import ContactListControl from './contact-list-control';
 import GroupMemberItem from './group-member-item';
 
 export default function GroupChatView() {
   const [selectedItem, setSelectedItem] = useState(CONTACT_LIST[0]);
+  const chatControlNavigator = useNavigator(SWITCH_NAME.CHAT_GROUP);
+  useEffect(() => chatControlNavigator(selectedItem.title, selectedItem), [
+    chatControlNavigator,
+    selectedItem,
+    selectedItem.title,
+  ]);
 
   return (
     <div className="group-chat-view">
@@ -26,7 +35,13 @@ export default function GroupChatView() {
             {getDisplayTimestamp(selectedItem.lastActivityTimestamp)}
           </span>
         </div>
-        <ChatControl />
+        <Switch
+          name={SWITCH_NAME.CHAT_GROUP}
+          contentProvider={{
+            isValidLabel: () => true,
+            getRenderer: (sessionId) => () => <ChatControl />,
+          }}
+        />
       </div>
       <div className="group-info-area">
         <div className="group-info-card">
