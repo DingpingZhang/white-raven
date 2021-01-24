@@ -6,11 +6,11 @@ import WindowContent from './views/window-content';
 function App() {
   return (
     <RecoilRoot>
-      <DialogHost>
-        <SwitchHost>
-          <WindowContent />
-        </SwitchHost>
-      </DialogHost>
+      {/* <DialogHost> */}
+      <SwitchHost>
+        <WindowContent />
+      </SwitchHost>
+      {/* </DialogHost> */}
     </RecoilRoot>
   );
 }

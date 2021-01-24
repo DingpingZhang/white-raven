@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { CaseItem, Switch } from '../components/switch';
+import { CaseItem, convertToContentProvider, Switch } from '../components/switch';
 import { useNavigator } from '../components/switch-host';
 import GroupChatView from './group-chat-view';
 import MainTabHeaderPanel from './main-tab-header-panel';
@@ -39,7 +39,10 @@ export default function WindowContent() {
         />
       </div>
       <div className="main-window-tab-content">
-        <Switch<MainWindowViewName> name={SWITCH_NAME_MAIN} cases={mainWindowCases} />
+        <Switch<MainWindowViewName>
+          name={SWITCH_NAME_MAIN}
+          contentProvider={convertToContentProvider(mainWindowCases)}
+        />
       </div>
     </div>
   );

@@ -17,9 +17,24 @@ export type CaseItem<T extends string> = {
   renderer: (props: any) => ReactNode;
 };
 
+export type ContentProvider<T extends string> = {
+  isValidLabel: (label: T) => boolean;
+  getRenderer: (label: T) => (props: any) => ReactNode;
+};
+
+export function convertToContentProvider<T extends string>(
+  cases: ReadonlyArray<CaseItem<T>>
+): ContentProvider<T> {
+  return {
+    isValidLabel: (label) => cases.some((item) => item.label === label),
+    getRenderer: (label) => (props: any) =>
+      cases.find((item) => item.label === label)!.renderer(props),
+  };
+}
+
 type SwitchProps<T extends string> = {
   name: string;
-  cases: ReadonlyArray<CaseItem<T>>;
+  contentProvider: ContentProvider<T>;
 };
 
 function isReactElement(node: ReactNode): node is ReactElement {
@@ -38,44 +53,45 @@ function equalProps(left: any, right: any) {
   );
 }
 
-export function Switch<T extends string>({ name, cases }: SwitchProps<T>) {
+export function Switch<T extends string>({ name, contentProvider }: SwitchProps<T>) {
   const forceUpdate = useForceUpdate();
-  const loadedViewCache = useLazyRef(() => new Map<string, ReactNode>());
+  const loadedViewCache = useLazyRef(() => new Map<T, ReactNode>());
   const [selectedLabel, setSelectedLabel] = useState('');
   const { registerSwitch, unregisterSwitch } = useContext(SwitchHostContext);
 
   // Clear loaded view cache
   useEffect(() => {
-    const toRemovedKeys = Array.from(loadedViewCache.keys()).filter((label) =>
-      cases.every((item) => item.label !== label)
+    const toRemovedKeys = Array.from(loadedViewCache.keys()).filter(
+      (label) => !contentProvider.isValidLabel(label)
     );
     if (toRemovedKeys) {
       toRemovedKeys.forEach((label) => loadedViewCache.delete(label));
     }
-  }, [cases, loadedViewCache]);
+  }, [contentProvider, loadedViewCache]);
 
   const navigate = useCallback(
     (viewName: string, props: any) => {
-      const selectedItem = cases.find((item) => item.label === viewName);
-      if (selectedItem) {
+      const actualViewName = viewName as T;
+      const selectedRenderer = contentProvider.getRenderer(actualViewName);
+      if (selectedRenderer) {
         const viewCache = loadedViewCache;
-        const oldNextView = viewCache.get(viewName);
+        const oldNextView = viewCache.get(actualViewName);
         const requireForceUpdate =
           isReactElement(oldNextView) && !equalProps(oldNextView.props, props);
-        const newNextView = selectedItem.renderer(props ? props : EMPTY_OBJECT);
+        const newNextView = selectedRenderer(props ? props : EMPTY_OBJECT);
         // Update the cache of the selected view.
-        viewCache.set(viewName, newNextView);
+        viewCache.set(actualViewName, newNextView);
 
         setSelectedLabel((oldValue) => {
-          if (oldValue === viewName && requireForceUpdate) {
+          if (oldValue === actualViewName && requireForceUpdate) {
             forceUpdate();
           }
 
-          return viewName;
+          return actualViewName;
         });
       }
     },
-    [cases, forceUpdate, loadedViewCache]
+    [contentProvider, forceUpdate, loadedViewCache]
   );
   useEffect(() => {
     registerSwitch(name, navigate);

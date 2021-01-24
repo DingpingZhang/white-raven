@@ -13,4 +13,7 @@ export type GroupInfo = {
 export type GroupSession = GroupInfo & {
   messages: ReadonlyArray<Message>;
 };
-  
+
+export type PersonInfo = {};
+
+export type PersonSession = {};
