@@ -3,7 +3,6 @@ import { VirtualizingListBox } from '../components/virtualizing-list-box';
 import { getDisplayTimestamp } from '../helpers';
 import { CONTACT_LIST } from '../mocks/contact-list';
 import ChatControl from './chat-control';
-import ContactItem from './contact-item';
 import ContactListControl from './contact-list-control';
 import GroupMemberItem from './group-member-item';
 
