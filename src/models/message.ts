@@ -1,4 +1,4 @@
-import { IdType } from './basic';
+import { IdType } from './basic-types';
 
 export type TextMessage = {
   type: 'text';
