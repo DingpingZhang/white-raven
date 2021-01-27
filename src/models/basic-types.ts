@@ -118,13 +118,12 @@ export type Ok<T> = {
   content: T;
 };
 
-export type Error<T> = {
+export type Err<T> = {
   code: 500;
   reason: T;
 };
 
 export type MessageResponse = {
   id: IdType;
-  senderId: IdType;
   timestamp: number;
 };

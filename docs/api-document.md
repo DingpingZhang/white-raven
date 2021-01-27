@@ -2,9 +2,9 @@
 
 > `api/v1/`
 > 
-> Actual Response = `Ok<Response> | Error<ReasonType>`
+> Actual Response = `Ok<Response> | Err<ReasonType>`
 
-## 0. Uncategorized
+## 0. Uncategorized Api
 
 | Method | Api             | Response       |
 | ------ | --------------- | -------------- |
