@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Session } from 'inspector';
-import { getMessages } from '../mocks/message-list';
+import { getMessages } from '../mocks/message';
 import {
   Err,
   FriendInfo,

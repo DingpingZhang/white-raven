@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Switch } from '../components/switch';
 import { useNavigator } from '../components/switch-host';
 import { getDisplayTimestamp } from '../helpers';
-import { CONTACT_LIST } from '../mocks/contact-list';
+import { CONTACT_LIST } from '../mocks/contact';
 import ChatControl from './chat-control';
 import { SWITCH_NAME } from './constants';
 import SessionListControl from './session-list-control';
