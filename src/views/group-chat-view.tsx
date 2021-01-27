@@ -3,10 +3,9 @@ import { Switch } from '../components/switch';
 import { useNavigator } from '../components/switch-host';
 import { VirtualizingListBox } from '../components/virtualizing-list-box';
 import { getDisplayTimestamp } from '../helpers';
-import { CONTACT_LIST } from '../mocks/contact-list';
 import ChatControl from './chat-control';
 import { SWITCH_NAME } from './constants';
-import ContactListControl from './contact-list-control';
+import SessionListControl from './session-list-control';
 import GroupMemberItem from './group-member-item';
 
 export default function GroupChatView() {
@@ -21,7 +20,7 @@ export default function GroupChatView() {
   return (
     <div className="group-chat-view">
       <div className="group-list-area">
-        <ContactListControl
+        <SessionListControl
           selectedItem={selectedItem}
           setSelectedItem={setSelectedItem}
           items={CONTACT_LIST}
@@ -55,7 +54,7 @@ export default function GroupChatView() {
             sizeProvider={{ itemSize: 32, itemCount: CONTACT_LIST.length }}
             renderItems={(startIndex, endIndex) =>
               CONTACT_LIST.slice(startIndex, endIndex).map((item) => (
-                <GroupMemberItem avatar={item.avatar} title={item.title} />
+                <GroupMemberItem avatar={item.avatar} name={item.title} />
               ))
             }
           />

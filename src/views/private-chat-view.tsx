@@ -5,7 +5,7 @@ import { getDisplayTimestamp } from '../helpers';
 import { CONTACT_LIST } from '../mocks/contact-list';
 import ChatControl from './chat-control';
 import { SWITCH_NAME } from './constants';
-import ContactListControl from './contact-list-control';
+import SessionListControl from './session-list-control';
 
 export default function PrivateChatView() {
   const [selectedItem, setSelectedItem] = useState(CONTACT_LIST[0]);
@@ -19,7 +19,7 @@ export default function PrivateChatView() {
   return (
     <div className="private-chat-view">
       <div className="contact-list-area">
-        <ContactListControl
+        <SessionListControl
           selectedItem={selectedItem}
           setSelectedItem={setSelectedItem}
           items={CONTACT_LIST}

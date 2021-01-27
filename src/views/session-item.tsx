@@ -1,35 +1,37 @@
 import classNames from 'classnames';
 import { getDisplayTimestamp } from '../helpers';
-import { SessionSummary } from '../models/contact';
-import { MessageSegment } from '../models/message';
+import { Message, MessageSegment } from '../models';
 
-export type ContactItemProps = SessionSummary & {
+export type ContactItemProps = {
+  avatar: string;
+  name: string;
+  lastMessage: Message;
+  unreadCount: number;
   selected?: boolean;
   onSelected?: () => void;
 };
 
-export default function ContactItem({
+export default function SessionItem({
   unreadCount,
   selected,
   avatar,
-  title,
-  subtitle,
-  lastActivityTimestamp,
+  name,
+  lastMessage,
   onSelected,
 }: ContactItemProps) {
-  const contactItemClass = classNames('contact-item', {
+  const contactItemClass = classNames('session-item', {
     'has-message': unreadCount,
     selected,
   });
 
-  const messageSummary = subtitle.map(convertToHtmlElement);
+  const messageSummary = lastMessage.content.map(convertToHtmlElement);
 
   return (
     <div className={contactItemClass} onClick={onSelected}>
       <span className="red-dot"></span>
       <img className="avatar" src={avatar} alt="avatar" />
-      <span className="username">{title}</span>
-      <span className="last-message-time">{getDisplayTimestamp(lastActivityTimestamp)}</span>
+      <span className="username">{name}</span>
+      <span className="last-message-time">{getDisplayTimestamp(lastMessage.timestamp)}</span>
       <span className="last-message text ellipsis" title={messageSummary.join('')}>
         {messageSummary}
       </span>
@@ -40,11 +42,11 @@ export default function ContactItem({
 function convertToHtmlElement(message: MessageSegment) {
   switch (message.type) {
     case 'text':
-      return message.data.text;
+      return message.text;
     case 'at':
-      return `@${message.data.qq} `;
+      return `@${message.targetId} `;
     case 'face':
-      return `[face:${message.data.id}]`;
+      return `[face:${message.faceId}]`;
     case 'image':
       // TODO: I18n
       return '[image]';

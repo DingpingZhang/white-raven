@@ -1,31 +1,33 @@
-import React from 'react';
 import { VirtualizingListBox } from '../components/virtualizing-list-box';
-import { SessionSummary } from '../models/contact';
-import ContactItem from './contact-item';
-import ContactSearchBox from './contact-search-box';
+import SessionItem from './session-item';
+import SearchBox from './search-box';
+import { Session } from '../models';
 
 type ContactListControlProps = {
-  selectedItem: SessionSummary;
-  setSelectedItem: (value: SessionSummary) => void;
-  items: ReadonlyArray<SessionSummary>;
+  selectedItem: Session;
+  setSelectedItem: (value: Session) => void;
+  items: ReadonlyArray<Session>;
 };
 
-export default function ContactListControl({
+export default function SessionListControl({
   selectedItem,
   setSelectedItem,
   items,
 }: ContactListControlProps) {
   return (
-    <div className="contact-list-control">
-      <ContactSearchBox />
+    <div className="session-list-control">
+      <SearchBox />
       <VirtualizingListBox
         sizeProvider={{ itemSize: 108, itemCount: items.length }}
         renderItems={(startIndex, endIndex) =>
           items
             .slice(startIndex, endIndex)
             .map((item) => (
-              <ContactItem
-                {...item}
+              <SessionItem
+                avatar={item.contact.avatar}
+                name={item.contact.name}
+                lastMessage={item.lastMessages[item.lastMessages.length]}
+                unreadCount={item.unreadCount}
                 selected={selectedItem === item}
                 onSelected={() => setSelectedItem(item)}
               />

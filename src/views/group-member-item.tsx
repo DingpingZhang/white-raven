@@ -1,12 +1,13 @@
-import { ContactInfo } from '../models/contact';
+type GroupMemberItemProps = {
+  avatar: string;
+  name: string;
+};
 
-type GroupMemberItemProps = ContactInfo;
-
-export default function GroupMemberItem({ avatar, title }: GroupMemberItemProps) {
+export default function GroupMemberItem({ avatar, name }: GroupMemberItemProps) {
   return (
     <div className="group-member-item">
       <img className="avatar" src={avatar} alt="avatar" />
-      <span className="username">{title}</span>
+      <span className="username">{name}</span>
     </div>
   );
 }

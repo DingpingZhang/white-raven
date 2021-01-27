@@ -1,6 +1,6 @@
 @use '../mixins/common';
 
-.contact-item {
+.session-item {
   display: grid;
   grid-template-rows: auto 8px auto 16px auto;
   grid-template-columns: 4px 8px auto 16px 1fr;
