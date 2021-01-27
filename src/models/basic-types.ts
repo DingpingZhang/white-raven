@@ -43,7 +43,6 @@ export type Message = {
 // Contact Info
 // ***************************************************
 
-export type Gender = 'male' | 'female' | 'unknown';
 export type GroupRole = 'owner' | 'admin' | 'member';
 
 export type PersonInfo = {
@@ -53,8 +52,8 @@ export type PersonInfo = {
 };
 
 export type FriendInfo = PersonInfo & {
-  remark: string;
-  category: string;
+  remark?: string;
+  category?: string;
 };
 
 export type StrangerInfo = PersonInfo & {
@@ -63,40 +62,42 @@ export type StrangerInfo = PersonInfo & {
 
 export type GroupInfo = PersonInfo & {
   ownerId: IdType;
-  selfMuteExpire: number;
-  allMuteExpire: number;
-  description: string;
   memberCount: number;
   memberCapacity: number;
+  selfMuteExpire?: number;
+  allMuteExpire?: number;
+  description?: string;
 };
 
 export type GroupMemberInfo = PersonInfo & {
   groupId: IdType;
-  remark: string;
   joinTime: number;
   role: GroupRole;
+  remark?: string;
 };
 
 // ***************************************************
 // Session
 // ***************************************************
 
-export type FriendSession = {
+type SessionBase = {
+  unreadCount: number;
+  lastMessages: ReadonlyArray<Message>;
+};
+
+export type FriendSession = SessionBase & {
   type: 'friend';
   contact: FriendInfo;
-  lastMessage: Message;
 };
 
-export type StrangerSession = {
+export type StrangerSession = SessionBase & {
   type: 'stranger';
   contact: StrangerInfo;
-  lastMessage: Message;
 };
 
-export type GroupSession = {
+export type GroupSession = SessionBase & {
   type: 'group';
   contact: GroupInfo;
-  lastMessage: Message;
 };
 
 export type Session = FriendSession | StrangerSession | GroupSession;

@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { Session } from 'inspector';
+import { getMessages } from '../mocks/message-list';
 import {
   Err,
   FriendInfo,
   GroupInfo,
   GroupMemberInfo,
   IdType,
-  Message,
   MessageBody,
   MessageResponse,
   Ok,
@@ -29,6 +29,13 @@ async function get<TOk, TErr = CommonErr>(url: string) {
 async function post<TOk, TErr = CommonErr>(url: string, data?: any) {
   const res = await client.post<Ok<TOk> | Err<TErr | CommonErr>>(url, data);
   return res.data;
+}
+
+export function getMockResult<T>(result: T): Ok<T> | Err<CommonErr> {
+  return {
+    code: 200,
+    content: result,
+  };
 }
 
 // ********************************************************
@@ -56,11 +63,11 @@ export async function getFriendInfos() {
 }
 
 export async function getFriendMessage(id: IdType, messageId: IdType) {
-  return get<Message>(`friend/${id}/message/${messageId}`);
+  return getMockResult(getMessages(1)[0]);
 }
 
 export async function getFriendMessages(id: IdType, startId?: IdType) {
-  return get<ReadonlyArray<Message>>(`friend/${id}/message/items/${startId}`);
+  return getMockResult(getMessages(20));
 }
 
 export async function getStrangerInfo(id: IdType) {
@@ -68,11 +75,11 @@ export async function getStrangerInfo(id: IdType) {
 }
 
 export async function getStrangerMessage(id: IdType, messageId: IdType) {
-  return get<Message>(`stranger/${id}/message/${messageId}`);
+  return getMockResult(getMessages(1)[0]);
 }
 
 export async function getStrangerMessages(id: IdType, startId?: IdType) {
-  return get<ReadonlyArray<Message>>(`stranger/${id}/message/items/{${startId}}`);
+  return getMockResult(getMessages(20));
 }
 
 export async function sendMessageToFriend(id: IdType, message: MessageBody) {
@@ -104,11 +111,11 @@ export async function getGroupMembers(id: IdType) {
 }
 
 export async function getGroupMessage(id: IdType, messageId: IdType) {
-  return get<Message>(`group/${id}/message/${messageId}`);
+  return getMockResult(getMessages(1)[0]);
 }
 
 export async function getGroupMessages(id: IdType, startId?: IdType) {
-  return get<ReadonlyArray<Message>>(`group/${id}/message/items/${startId}`);
+  return getMockResult(getMessages(20));
 }
 
 export async function sendMessageToGroup(id: IdType, message: MessageBody) {
