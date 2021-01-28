@@ -1,10 +1,11 @@
-import { Message } from '../models';
+import { Message } from '../api';
+import { uuidv4 } from '../helpers';
 import { getMockItems } from './common';
 
 export function getMessages(count: number): ReadonlyArray<Message> {
   return getMockItems(MESSAGE_LIST, count, (item, index) => ({
     ...item,
-    id: `${item.id}${index}`,
+    id: `${uuidv4()}`,
   }));
 }
 

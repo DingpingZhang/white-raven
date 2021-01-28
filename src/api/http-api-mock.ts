@@ -12,7 +12,7 @@ import {
   Ok,
   PersonInfo,
   StrangerInfo,
-} from '../models';
+} from './basic-types';
 
 type CommonErr = 'connection-timeout';
 

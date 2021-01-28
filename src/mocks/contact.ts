@@ -1,31 +1,32 @@
-import { FriendInfo, GroupInfo, GroupMemberInfo, StrangerInfo } from '../models';
+import { FriendInfo, GroupInfo, GroupMemberInfo, StrangerInfo } from '../api';
+import { uuidv4 } from '../helpers';
 import { getMockItems } from './common';
 
 export function getFriends(count: number) {
   return getMockItems(FRIEND_LIST, count, (item, index) => ({
     ...item,
-    id: `${item.id}${index}`,
+    id: `${uuidv4()}`,
   }));
 }
 
 export function getStrangers(count: number) {
   return getMockItems(STRANGER_LIST, count, (item, index) => ({
     ...item,
-    id: `${item.id}${index}`,
+    id: `${uuidv4()}`,
   }));
 }
 
 export function getGroups(count: number) {
   return getMockItems(GROUP_LIST, count, (item, index) => ({
     ...item,
-    id: `${item.id}${index}`,
+    id: `${uuidv4()}`,
   }));
 }
 
 export function getGroupMembers(count: number) {
   return getMockItems(GROUP_MEMBER_LIST, count, (item, index) => ({
     ...item,
-    id: `${item.id}${index}`,
+    id: `${uuidv4()}`,
   }));
 }
 

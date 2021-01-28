@@ -1,7 +1,7 @@
 import { VirtualizingListBox } from '../components/virtualizing-list-box';
 import SessionItem from './session-item';
 import SearchBox from './search-box';
-import { Session } from '../models';
+import { Session } from '../api';
 
 type ContactListControlProps = {
   selectedItem: Session;
