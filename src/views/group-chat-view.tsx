@@ -1,47 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { Switch } from '../components/switch';
-import { useNavigator } from '../components/switch-host';
+import { useEffect, useState } from 'react';
+import { getGroupMembers, GroupMemberInfo, GroupSession } from '../api';
 import { VirtualizingListBox } from '../components/virtualizing-list-box';
 import { getDisplayTimestamp } from '../helpers';
 import ChatControl from './chat-control';
-import { SWITCH_NAME } from './constants';
-import SessionListControl from './session-list-control';
 import GroupMemberItem from './group-member-item';
 
-export default function GroupChatView() {
-  const [selectedItem, setSelectedItem] = useState(CONTACT_LIST[0]);
-  const chatControlNavigator = useNavigator(SWITCH_NAME.CHAT_GROUP);
-  useEffect(() => chatControlNavigator(selectedItem.title, selectedItem), [
-    chatControlNavigator,
-    selectedItem,
-    selectedItem.title,
-  ]);
+type GroupChatViewProps = {
+  selectedItem: GroupSession;
+};
+
+export default function GroupChatView({ selectedItem }: GroupChatViewProps) {
+  const lastMessage = selectedItem.lastMessages[selectedItem.lastMessages.length - 1];
+  const [members, setMembers] = useState<GroupMemberInfo[]>([]);
+  useEffect(() => {
+    const fetchMembers = async () => {
+      const response = await getGroupMembers(selectedItem.contact.id);
+      if (response.code === 200) {
+        setMembers([...response.content]);
+      }
+    };
+
+    fetchMembers();
+  }, [selectedItem.contact.id]);
 
   return (
     <div className="group-chat-view">
-      <div className="group-list-area">
-        <SessionListControl
-          selectedItem={selectedItem}
-          setSelectedItem={setSelectedItem}
-          items={CONTACT_LIST}
-        />
-      </div>
-      <div className="chat-area">
+      <div className="group-chat-area">
         <div className="group-chat-title-bar">
-          <img className="avatar" src={selectedItem.avatar} alt="avatar" />
-          <span className="text-title">{selectedItem.title}</span>
-          <span className="text-subtitle">
-            {getDisplayTimestamp(selectedItem.lastActivityTimestamp)}
-          </span>
+          <img className="avatar" src={selectedItem.contact.avatar} alt="avatar" />
+          <span className="text-title">{selectedItem.contact.name}</span>
+          <span className="text-subtitle">{getDisplayTimestamp(lastMessage.timestamp)}</span>
         </div>
-        <Switch
-          name={SWITCH_NAME.CHAT_GROUP}
-          contentProvider={{
-            isValidLabel: () => true,
-            getRenderer: (sessionId) => () => <ChatControl />,
-          }}
-          animation={{ className: 'fade-in-out', timeout: 200 }}
-        />
+        <ChatControl />
       </div>
       <div className="group-info-area">
         <div className="group-info-card">
@@ -51,11 +41,11 @@ export default function GroupChatView() {
         <div className="group-members">
           <div className="group-members-title">Group Members</div>
           <VirtualizingListBox
-            sizeProvider={{ itemSize: 32, itemCount: CONTACT_LIST.length }}
+            sizeProvider={{ itemSize: 32, itemCount: selectedItem.contact.memberCount }}
             renderItems={(startIndex, endIndex) =>
-              CONTACT_LIST.slice(startIndex, endIndex).map((item) => (
-                <GroupMemberItem avatar={item.avatar} name={item.title} />
-              ))
+              members
+                .slice(startIndex, endIndex)
+                .map((item) => <GroupMemberItem avatar={item.avatar} name={item.name} />)
             }
           />
         </div>

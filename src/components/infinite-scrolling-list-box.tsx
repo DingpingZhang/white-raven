@@ -33,6 +33,13 @@ export default function InfiniteScrollingListBox({ renderItems }: InfiniteScroll
     const observer = new IntersectionObserver(
       (entities) => {
         if (entities.length === 2) {
+          if (
+            equalNumber(entities[0].intersectionRatio, 0) &&
+            equalNumber(entities[1].intersectionRatio, 0)
+          ) {
+            return;
+          }
+
           const initialItems = renderItems('initial');
           if (initialItems && initialItems.length > 0) {
             const initialLIs = initialItems.map(
@@ -61,7 +68,7 @@ export default function InfiniteScrollingListBox({ renderItems }: InfiniteScroll
             if (nextItems && nextItems.length) {
               setItems((prev) => {
                 const nextLIs = nextItems.map(renderLIElement(anchorElementRef, 0));
-                return [...nextLIs, ...prev];
+                return [...prev, ...nextLIs];
               });
             }
           }

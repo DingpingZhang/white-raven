@@ -1,7 +1,6 @@
 export const SWITCH_NAME = {
   MAIN: 'main-window',
-  CHAT_GROUP: 'group/chat-control',
-  CHAT_PRIVATE: 'private/chat-control',
+  CHAT_AREA: 'chat/chat-area',
 };
 
-export type MainWindowViewName = 'private-chat' | 'group-view';
+export type MainWindowViewName = 'chat-tab' | 'contact-tab';

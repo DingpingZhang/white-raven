@@ -4,7 +4,7 @@ import SearchBox from './search-box';
 import { Session } from '../api';
 
 type ContactListControlProps = {
-  selectedItem: Session;
+  selectedItem: Session | null;
   setSelectedItem: (value: Session) => void;
   items: ReadonlyArray<Session>;
 };
@@ -26,7 +26,7 @@ export default function SessionListControl({
               <SessionItem
                 avatar={item.contact.avatar}
                 name={item.contact.name}
-                lastMessage={item.lastMessages[item.lastMessages.length]}
+                lastMessage={item.lastMessages[item.lastMessages.length - 1]}
                 unreadCount={item.unreadCount}
                 selected={selectedItem === item}
                 onSelected={() => setSelectedItem(item)}

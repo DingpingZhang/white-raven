@@ -3,7 +3,7 @@ import { uuidv4 } from '../helpers';
 import { getMockItems } from './common';
 
 export function getMessages(count: number): ReadonlyArray<Message> {
-  return getMockItems(MESSAGE_LIST, count, (item, index) => ({
+  return getMockItems(MESSAGE_LIST, count, (item) => ({
     ...item,
     id: `${uuidv4()}`,
   }));

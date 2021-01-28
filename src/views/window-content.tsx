@@ -1,29 +1,22 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CaseItem, convertToContentProvider, Switch } from '../components/switch';
 import { useNavigator } from '../components/switch-host';
+import ChatTabContent from './chat-tab-content';
 import { MainWindowViewName, SWITCH_NAME } from './constants';
-import GroupChatView from './group-chat-view';
 import MainTabHeaderPanel from './main-tab-header-panel';
-import PrivateChatView from './private-chat-view';
 
 export default function WindowContent() {
   const mainWindowNavigator = useNavigator<MainWindowViewName>(SWITCH_NAME.MAIN);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-  useEffect(() => {
-    switch (selectedTabIndex) {
-      case 0:
-        mainWindowNavigator('private-chat');
-        break;
-      case 1:
-        mainWindowNavigator('group-view');
-        break;
-    }
-  }, [mainWindowNavigator, selectedTabIndex]);
+  useEffect(() => mainWindowNavigator(convertIndexToViewName(selectedTabIndex)), [
+    mainWindowNavigator,
+    selectedTabIndex,
+  ]);
 
   const mainWindowCases = useMemo<CaseItem<MainWindowViewName>[]>(
     () => [
-      { label: 'private-chat', renderer: () => <PrivateChatView /> },
-      { label: 'group-view', renderer: () => <GroupChatView /> },
+      { label: 'chat-tab', renderer: () => <ChatTabContent /> },
+      { label: 'contact-tab', renderer: () => <div>TODO</div> },
     ],
     []
   );
@@ -45,4 +38,14 @@ export default function WindowContent() {
       </div>
     </div>
   );
+}
+
+function convertIndexToViewName(index: number): MainWindowViewName {
+  switch (index) {
+    case 0:
+    default:
+      return 'chat-tab';
+    case 1:
+      return 'contact-tab';
+  }
 }

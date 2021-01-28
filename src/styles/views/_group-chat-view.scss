@@ -13,15 +13,11 @@
 
 .group-chat-view {
   display: grid;
-  grid-template-columns: 256px 8px 1fr 8px 256px;
+  grid-template-columns: 1fr 8px 256px;
   height: 100%;
 
-  .group-list-area {
+  .group-chat-area {
     grid-column: 1 / 2;
-  }
-
-  .chat-area {
-    grid-column: 3 / 4;
 
     display: grid;
     grid-template-rows: auto 1fr;
@@ -64,7 +60,7 @@
   }
 
   .group-info-area {
-    grid-column: 5 / 6;
+    grid-column: 3 / 4;
 
     display: grid;
     grid-template-rows: auto 1fr;

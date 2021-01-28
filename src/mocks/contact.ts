@@ -3,28 +3,28 @@ import { uuidv4 } from '../helpers';
 import { getMockItems } from './common';
 
 export function getFriends(count: number) {
-  return getMockItems(FRIEND_LIST, count, (item, index) => ({
+  return getMockItems(FRIEND_LIST, count, (item) => ({
     ...item,
     id: `${uuidv4()}`,
   }));
 }
 
 export function getStrangers(count: number) {
-  return getMockItems(STRANGER_LIST, count, (item, index) => ({
+  return getMockItems(STRANGER_LIST, count, (item) => ({
     ...item,
     id: `${uuidv4()}`,
   }));
 }
 
 export function getGroups(count: number) {
-  return getMockItems(GROUP_LIST, count, (item, index) => ({
+  return getMockItems(GROUP_LIST, count, (item) => ({
     ...item,
     id: `${uuidv4()}`,
   }));
 }
 
 export function getGroupMembers(count: number) {
-  return getMockItems(GROUP_MEMBER_LIST, count, (item, index) => ({
+  return getMockItems(GROUP_MEMBER_LIST, count, (item) => ({
     ...item,
     id: `${uuidv4()}`,
   }));

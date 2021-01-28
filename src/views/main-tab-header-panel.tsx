@@ -1,6 +1,8 @@
 import MainTabHeader from './main-tab-header';
 import { ReactComponent as PersonIcon } from '../images/person.svg';
 import { ReactComponent as GroupIcon } from '../images/group.svg';
+import { useRecoilValueLoadable } from 'recoil';
+import { userInfoState } from '../models/basic-models';
 
 type MainTabHeaderPanelProps = {
   selectedIndex: number;
@@ -11,6 +13,8 @@ export default function MainTabHeaderPanel({
   selectedIndex,
   setSelectedIndex,
 }: MainTabHeaderPanelProps) {
+  const userInfoLoadable = useRecoilValueLoadable(userInfoState);
+
   return (
     <div className="main-tab-header-panel">
       <div className="tab-headers-container top">
@@ -28,7 +32,11 @@ export default function MainTabHeaderPanel({
         />
       </div>
       <div className="tab-headers-container bottom">
-        <img className="avatar" src="http://q1.qlogo.cn/g?b=qq&nk={qq}&s=640" alt="avatar" />
+        <img
+          className="avatar"
+          src={userInfoLoadable.state === 'hasValue' ? userInfoLoadable.contents.avatar : undefined}
+          alt="avatar"
+        />
       </div>
     </div>
   );

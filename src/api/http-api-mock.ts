@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { Session } from 'inspector';
 import { getMessages } from '../mocks/message';
+import { getMockSessions } from '../mocks/session';
 import {
   Err,
   FriendInfo,
@@ -43,11 +43,15 @@ export function getMockResult<T>(result: T): Ok<T> | Err<CommonErr> {
 // ********************************************************
 
 export async function getUserInfo() {
-  return get<PersonInfo>('user/self');
+  return getMockResult<PersonInfo>({
+    id: '12312413412',
+    avatar: 'http://q1.qlogo.cn/g?b=qq&nk=787673395&s=640',
+    name: '卧龙岗扯淡的人',
+  });
 }
 
 export async function getSessions() {
-  return get<ReadonlyArray<Session>>('session/items');
+  return getMockResult(getMockSessions(20));
 }
 
 // ********************************************************

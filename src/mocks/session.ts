@@ -1,4 +1,5 @@
 import { FriendSession, GroupSession, Session, StrangerSession } from '../api';
+import { uuidv4 } from '../helpers';
 import { getMockItems } from './common';
 import { getFriends, getGroups, getStrangers } from './contact';
 import { getMessages } from './message';
@@ -9,9 +10,18 @@ export function getMockSessions(count: number): ReadonlyArray<Session> {
   const groupCount = count - friendCount - strangerCount;
 
   return [
-    ...getMockItems(FRIEND_SESSION_LIST, friendCount),
-    ...getMockItems(STRANGER_SESSION_LIST, strangerCount),
-    ...getMockItems(GROUP_SESSION_LIST, groupCount),
+    ...getMockItems(FRIEND_SESSION_LIST, friendCount, (item) => ({
+      ...item,
+      id: `${uuidv4()}`,
+    })),
+    ...getMockItems(STRANGER_SESSION_LIST, strangerCount, (item) => ({
+      ...item,
+      id: `${uuidv4()}`,
+    })),
+    ...getMockItems(GROUP_SESSION_LIST, groupCount, (item) => ({
+      ...item,
+      id: `${uuidv4()}`,
+    })),
   ];
 }
 
