@@ -7,7 +7,12 @@ export type BasicMessageProps = Message & {
   highlight?: boolean;
 };
 
-export default function BasicMessage({ senderId, content, timestamp, highlight }: BasicMessageProps) {
+export default function BasicMessage({
+  senderId,
+  content,
+  timestamp,
+  highlight,
+}: BasicMessageProps) {
   const messageBoxClass = classNames('BasicMessage__messageArea', { highlight });
   return (
     <div className="BasicMessage">

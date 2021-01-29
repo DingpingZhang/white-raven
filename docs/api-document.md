@@ -1,7 +1,7 @@
 # API Document
 
 > `api/v1/`
-> 
+>
 > Actual Response = `Ok<Response> | Err<ReasonType>`
 
 ## 0. Uncategorized Api

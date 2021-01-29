@@ -27,9 +27,15 @@ export default function GroupChatView({ selectedItem }: GroupChatViewProps) {
     <div className="GroupChatView">
       <div className="GroupChatView__chatArea">
         <div className="GroupChatView__titleBar">
-          <img className="GroupChatView__chatAvatar" src={selectedItem.contact.avatar} alt="avatar" />
+          <img
+            className="GroupChatView__chatAvatar"
+            src={selectedItem.contact.avatar}
+            alt="avatar"
+          />
           <span className="GroupChatView__chatTitle">{selectedItem.contact.name}</span>
-          <span className="GroupChatView__chatSubtitle">{getDisplayTimestamp(lastMessage.timestamp)}</span>
+          <span className="GroupChatView__chatSubtitle">
+            {getDisplayTimestamp(lastMessage.timestamp)}
+          </span>
         </div>
         <ChatControl />
       </div>
@@ -42,7 +48,7 @@ export default function GroupChatView({ selectedItem }: GroupChatViewProps) {
           <div className="GroupChatView__memberTitle">Group Members</div>
           <div className="GroupChatView__memberList">
             <VirtualizingListBox
-              sizeProvider={{ itemSize: 32, itemCount: selectedItem.contact.memberCount }}
+              sizeProvider={{ itemSize: 32, itemCount: members.length }}
               renderItems={(startIndex, endIndex) =>
                 members
                   .slice(startIndex, endIndex)
