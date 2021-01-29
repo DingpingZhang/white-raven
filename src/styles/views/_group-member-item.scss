@@ -11,7 +11,7 @@
   cursor: pointer;
 
   &:hover {
-    background-color: #272b48;
+    background-color: var(--background-color);
   }
 
   .GroupMemberItem__avatar {
@@ -25,7 +25,7 @@
   .GroupMemberItem__name {
     grid-column: 3 / 4;
 
-    color: #a5a7b1;
+    color: var(--text-1-color);
     font-size: 12px;
   }
 }

@@ -4,20 +4,29 @@
   display: grid;
   grid-template-rows: auto 8px auto 16px auto;
   grid-template-columns: 4px 8px auto 16px 1fr;
-  background-color: #191e3c;
   border-radius: 8px;
+  border: var(--default-border);
+  background-color: var(--surface-color);
   padding: 8px 12px;
   margin: 8px 0;
   margin-right: 12px;
   min-width: 200px;
-  height: 76px;
+  height: 74px;
   cursor: pointer;
 
   &.selected {
-    background-color: #3464ff;
+    background-color: var(--primary-color);
+
+    .SessionItem__title {
+      color: var(--text-on-primary-0-color);
+    }
 
     .SessionItem__subtitle {
-      color: #bcbfcf;
+      color: var(--text-on-primary-1-color);
+    }
+
+    .SessionItem__message {
+      color: var(--text-on-primary-2-color);
     }
   }
 
@@ -30,7 +39,7 @@
 
     display: none;
     @include common.circle(4px);
-    background-color: #ff5c9e;
+    background-color: var(--secondary-color);
   }
 
   .SessionItem__avatar {
@@ -43,7 +52,7 @@
   .SessionItem__title {
     grid-area: 1 / 5 / 2 / 6;
 
-    color: #bcbfcf;
+    color: var(--text-1-color);
     font-size: 12px;
     align-self: center;
   }
@@ -51,7 +60,7 @@
   .SessionItem__subtitle {
     grid-area: 3 / 5 / 4 / 6;
 
-    color: #565f81;
+    color: var(--text-2-color);
     font-size: 10px;
     align-self: center;
   }
@@ -59,7 +68,7 @@
   .SessionItem__message {
     grid-area: 5 / 3 / 6 / 6;
 
-    color: #bcbfcf;
+    color: var(--text-2-color);
     font-size: 10px;
   }
 }

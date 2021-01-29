@@ -44,7 +44,7 @@
     width: 1px;
     height: 30px;
     box-sizing: border-box;
-    background-color: #252946;
+    background-color: var(--border-color);
   }
 
   .MessageSendBox__btnSend {

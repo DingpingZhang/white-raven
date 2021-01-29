@@ -16,33 +16,30 @@
   }
 
   .CircleButton__icon {
-    fill: #d9ecfc;
+    fill: var(--text-2-color);
     align-self: center;
+  }
+
+  &:hover {
+    filter: brightness(120%);
   }
 
   &.primary {
     @include common.circle(40px);
 
-    background-color: #2f60ff;
-
-    &:hover {
-      background-color: #4873ff;
+    .CircleButton__icon {
+      fill: var(--text-on-primary-0-color);
     }
+
+    background-color: var(--primary-color);
   }
 
   &.secondary {
-    background-color: #262b49;
-
-    &:hover {
-      background-color: lighten($color: #2f60ff, $amount: 0.8);
-    }
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
   }
 
   &.default {
-    background-color: #2e334e;
-
-    &:hover {
-      background-color: #262b49;
-    }
+    background-color: var(--surface-color);
   }
 }

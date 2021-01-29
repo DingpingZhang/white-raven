@@ -7,7 +7,8 @@
   width: 72px;
   height: 100%;
   border-radius: 10px;
-  background-color: #191e3c;
+  border: var(--default-border);
+  background-color: var(--surface-color);
 
   .MainTabHeaderPanel__tabHeaderContainer {
     &.top {
@@ -43,15 +44,15 @@
 
       display: none;
 
-      background-color: #3364ff;
+      background-color: var(--primary-color);
       width: 4px;
     }
 
     .MainTabHeader__icon {
       grid-area: 1 / 1 / 2 / 3;
 
-      color: #42496d;
-      fill: #42496d;
+      color: var(--text-1-color);
+      fill: var(--text-1-color);
       width: 24px;
       height: 24px;
     }
@@ -59,7 +60,7 @@
     .MainTabHeader__title {
       grid-area: 3 / 1 / 4 / 3;
 
-      color: #42496d;
+      color: var(--text-1-color);
       font-size: 10px;
     }
 
@@ -69,12 +70,12 @@
       }
 
       .MainTabHeader__icon {
-        color: #3364ff;
-        fill: #3364ff;
+        color: var(--primary-color);
+        fill: var(--primary-color);
       }
 
       .MainTabHeader__title {
-        color: #3364ff;
+        color: var(--primary-color);
       }
     }
   }

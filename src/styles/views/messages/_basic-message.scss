@@ -19,15 +19,17 @@
     grid-area: 1 / 3 / 2 / 4;
 
     border-radius: 4px 16px 16px 16px;
-    background-color: #262b47;
-    color: #c8cddf;
+    border: var(--default-border);
+    background-color: var(--background-color);
+    color: var(--text-1-color);
     padding: 12px;
 
     font-size: 12px;
     line-height: 18px;
 
     &.highlight {
-      background-color: #3464ff;
+      color: var(--text-on-primary-1-color);
+      background-color: var(--primary-color);
     }
 
     .BasicMessage__messageContent {
@@ -46,7 +48,7 @@
 
         &.msgAt {
           color: white;
-          background-color: #f65b9e;
+          background-color: var(--secondary-color);
           border-radius: 8px;
           padding: 0 4px;
           margin: 0 4px;
@@ -67,6 +69,6 @@
     grid-area: 3 / 3 / 4 / 4;
 
     font-size: 10px;
-    color: #474c6b;
+    color: var(--text-2-color);
   }
 }
