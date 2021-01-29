@@ -6,22 +6,22 @@
 
 ## 0. Uncategorized Api
 
-| Method | Api         | Response       |
-| ------ | ----------- | -------------- |
-| `GET`  | `user/self` | `PersonInfo`   |
-| `GET`  | `sessions`  | `Session[All]` |
+| Method | Api        | Response       |
+| ------ | ---------- | -------------- |
+| `GET`  | `user`     | `PersonInfo`   |
+| `GET`  | `sessions` | `Session[All]` |
 
 ## 1. Person Api
 
-| Method | Api                                 | Response          |
-| ------ | ----------------------------------- | ----------------- |
-| `GET`  | `friends/:id`                       | `FriendInfo`      |
-| `GET`  | `friends`                           | `FriendInfo[All]` |
-| `GET`  | `friends/:id/messages/:id`          | `Message`         |
-| `GET`  | `friends/:id/messages/[:startId]`   | `Message[20]`     |
-| `GET`  | `strangers/:id`                     | `StrangerInfo`    |
-| `GET`  | `strangers/:id/messages/:id`        | `Message`         |
-| `GET`  | `strangers/:id/messages/[:startId]` | `Message[20]`     |
+| Method | Api                                    | Response          |
+| ------ | -------------------------------------- | ----------------- |
+| `GET`  | `friends/:id`                          | `FriendInfo`      |
+| `GET`  | `friends`                              | `FriendInfo[All]` |
+| `GET`  | `friends/:id/messages/:id`             | `Message`         |
+| `GET`  | `friends/:id/messages[?startId=:id]`   | `Message[20]`     |
+| `GET`  | `strangers/:id`                        | `StrangerInfo`    |
+| `GET`  | `strangers/:id/messages/:id`           | `Message`         |
+| `GET`  | `strangers/:id/messages[?startId=:id]` | `Message[20]`     |
 
 | Method | Api                      | Body          | Response          |
 | ------ | ------------------------ | ------------- | ----------------- |
@@ -30,14 +30,14 @@
 
 ## 2. Group Api
 
-| Method | Api                              | Response               |
-| ------ | -------------------------------- | ---------------------- |
-| `GET`  | `groups/:id`                     | `GroupInfo`            |
-| `GET`  | `groups`                         | `GroupInfo[All]`       |
-| `GET`  | `groups/:id/members/:id`         | `GroupMemberInfo`      |
-| `GET`  | `groups/:id/members`             | `GroupMemberInfo[All]` |
-| `GET`  | `groups/:id/messages/:id`        | `Message`              |
-| `GET`  | `groups/:id/messages/[:startId]` | `Message[20]`          |
+| Method | Api                                 | Response               |
+| ------ | ----------------------------------- | ---------------------- |
+| `GET`  | `groups/:id`                        | `GroupInfo`            |
+| `GET`  | `groups`                            | `GroupInfo[All]`       |
+| `GET`  | `groups/:id/members/:id`            | `GroupMemberInfo`      |
+| `GET`  | `groups/:id/members`                | `GroupMemberInfo[All]` |
+| `GET`  | `groups/:id/messages/:id`           | `Message`              |
+| `GET`  | `groups/:id/messages[?startId=:id]` | `Message[20]`          |
 
 | Method | Api                   | Body          | Response          |
 | ------ | --------------------- | ------------- | ----------------- |
