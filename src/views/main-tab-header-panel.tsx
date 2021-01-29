@@ -16,8 +16,8 @@ export default function MainTabHeaderPanel({
   const userInfoLoadable = useRecoilValueLoadable(userInfoState);
 
   return (
-    <div className="main-tab-header-panel">
-      <div className="tab-headers-container top">
+    <div className="MainTabHeaderPanel">
+      <div className="MainTabHeaderPanel__tabHeaderContainer top">
         <MainTabHeader
           icon={<PersonIcon />}
           title="Person"
@@ -31,9 +31,9 @@ export default function MainTabHeaderPanel({
           onClick={() => setSelectedIndex(1)}
         />
       </div>
-      <div className="tab-headers-container bottom">
+      <div className="MainTabHeaderPanel__tabHeaderContainer bottom">
         <img
-          className="avatar"
+          className="MainTabHeaderPanel__avatar"
           src={userInfoLoadable.state === 'hasValue' ? userInfoLoadable.contents.avatar : undefined}
           alt="avatar"
         />

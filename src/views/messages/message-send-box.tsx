@@ -6,15 +6,27 @@ import CircleButton from '../../components/circle-button';
 
 export default function MessageSendBox() {
   return (
-    <div className="message-send-box">
-      <CircleButton buttonType="secondary" className="btn-upload-file" icon={<AttachmentIcon />} />
-      <div className="text-edit-area">
-        <input type="text" className="text-box" placeholder="Write a message..." />
-        <CircleButton buttonType="default" className="btn-face" icon={<FaceIcon />} />
-        <CircleButton buttonType="default" className="btn-more" icon={<MoreVerticalIcon />} />
+    <div className="MessageSendBox">
+      <CircleButton
+        buttonType="secondary"
+        className="MessageSendBox__btnUpload"
+        icon={<AttachmentIcon />}
+      />
+      <div className="MessageSendBox__editArea">
+        <input type="text" className="MessageSendBox__input" placeholder="Write a message..." />
+        <CircleButton
+          buttonType="default"
+          className="MessageSendBox__btnFace"
+          icon={<FaceIcon />}
+        />
+        <CircleButton
+          buttonType="default"
+          className="MessageSendBox__btnMore"
+          icon={<MoreVerticalIcon />}
+        />
       </div>
-      <div className="split-line vertical"></div>
-      <CircleButton buttonType="primary" className="btn-send" icon={<SendIcon />} />
+      <div className="MessageSendBox__splitLine vertical"></div>
+      <CircleButton buttonType="primary" className="MessageSendBox__btnSend" icon={<SendIcon />} />
     </div>
   );
 }

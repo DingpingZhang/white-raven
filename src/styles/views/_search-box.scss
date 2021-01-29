@@ -1,6 +1,6 @@
 @use '../mixins/input';
 
-.search-box {
+.SearchBox {
   display: grid;
   grid-template-columns: auto 1fr;
 
@@ -9,13 +9,13 @@
   margin-right: 12px;
   margin-bottom: 32px;
 
-  .icon-search {
+  .SearchBox__icon {
     justify-self: center;
     align-self: center;
     margin-left: 12px;
   }
 
-  .search-box-input {
+  .SearchBox__input {
     @include input.non-style-input();
   }
 }

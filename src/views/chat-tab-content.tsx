@@ -20,15 +20,15 @@ export default function ChatTabContent() {
   }, [chatAreaNavigator, selectedSession]);
 
   return (
-    <div className="chat-tab-content">
-      <div className="session-list-area">
+    <div className="ChatTabContent">
+      <div className="ChatTabContent__sessionListArea">
         <SessionListControl
           selectedItem={selectedSession}
           setSelectedItem={setSelectedSession}
           items={sessionList}
         />
       </div>
-      <div className="chat-area">
+      <div className="ChatTabContent__chatArea">
         <Switch<IdType>
           name={SWITCH_NAME.CHAT_AREA}
           contentProvider={{

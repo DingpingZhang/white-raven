@@ -22,14 +22,14 @@ export default function WindowContent() {
   );
 
   return (
-    <div className="window-content">
-      <div className="main-window-tab-header-panel">
+    <div className="WindowContent">
+      <div className="WindowContent__tabHeaderPanel">
         <MainTabHeaderPanel
           selectedIndex={selectedTabIndex}
           setSelectedIndex={setSelectedTabIndex}
         />
       </div>
-      <div className="main-window-tab-content">
+      <div className="WindowContent__tabContent">
         <Switch<MainWindowViewName>
           name={SWITCH_NAME.MAIN}
           contentProvider={convertToContentProvider(mainWindowCases)}

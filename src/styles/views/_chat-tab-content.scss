@@ -1,13 +1,13 @@
-.chat-tab-content {
+.ChatTabContent {
   display: grid;
   grid-template-columns: 256px 8px 1fr;
   height: 100%;
 
-  .contact-list-area {
+  .ChatTabContent__sessionListArea {
     grid-column: 1 / 2;
   }
 
-  .chat-area {
+  .ChatTabContent__chatArea {
     grid-column: 3 / 4;
   }
 }

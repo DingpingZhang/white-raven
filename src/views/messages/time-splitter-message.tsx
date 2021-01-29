@@ -1,3 +1,3 @@
 export default function TimeSplitterMessage() {
-  return <div className="time-splitter-message"></div>;
+  return <div className="TimeSplitterMessage"></div>;
 }

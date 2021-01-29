@@ -24,23 +24,23 @@ export default function GroupChatView({ selectedItem }: GroupChatViewProps) {
   }, [selectedItem.contact.id]);
 
   return (
-    <div className="group-chat-view">
-      <div className="group-chat-area">
-        <div className="group-chat-title-bar">
-          <img className="avatar" src={selectedItem.contact.avatar} alt="avatar" />
-          <span className="text-title">{selectedItem.contact.name}</span>
-          <span className="text-subtitle">{getDisplayTimestamp(lastMessage.timestamp)}</span>
+    <div className="GroupChatView">
+      <div className="GroupChatView__chatArea">
+        <div className="GroupChatView__titleBar">
+          <img className="GroupChatView__chatAvatar" src={selectedItem.contact.avatar} alt="avatar" />
+          <span className="GroupChatView__chatTitle">{selectedItem.contact.name}</span>
+          <span className="GroupChatView__chatSubtitle">{getDisplayTimestamp(lastMessage.timestamp)}</span>
         </div>
         <ChatControl />
       </div>
-      <div className="group-info-area">
-        <div className="group-info-card">
-          <div className="group-info-title">Group Info</div>
-          <div className="group-info-content"></div>
+      <div className="GroupChatView__infoArea">
+        <div className="GroupChatView__infoCard">
+          <div className="GroupChatView__infoTitle">Group Info</div>
+          <div className="GroupChatView__infoContent"></div>
         </div>
-        <div className="group-members">
-          <div className="group-members-title">Group Members</div>
-          <div className="group-members-list">
+        <div className="GroupChatView__member">
+          <div className="GroupChatView__memberTitle">Group Members</div>
+          <div className="GroupChatView__memberList">
             <VirtualizingListBox
               sizeProvider={{ itemSize: 32, itemCount: selectedItem.contact.memberCount }}
               renderItems={(startIndex, endIndex) =>

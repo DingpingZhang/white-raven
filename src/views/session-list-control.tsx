@@ -15,7 +15,7 @@ export default function SessionListControl({
   items,
 }: ContactListControlProps) {
   return (
-    <div className="session-list-control">
+    <div className="SessionListControl">
       <SearchBox />
       <VirtualizingListBox
         sizeProvider={{ itemSize: 108, itemCount: items.length }}

@@ -23,11 +23,11 @@ export default function ChatControl() {
   }, []);
 
   return (
-    <div className="chat-control">
-      <div className="chat-message-list">
+    <div className="ChatControl">
+      <div className="ChatControl__messageList">
         <InfiniteScrollingListBox renderItems={renderMessage} />
       </div>
-      <div className="chat-input-box">
+      <div className="ChatControl__inputBox">
         <MessageSendBox />
       </div>
     </div>

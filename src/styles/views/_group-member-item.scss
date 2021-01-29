@@ -1,6 +1,6 @@
 @use '../mixins/common';
 
-.group-member-item {
+.GroupMemberItem {
   display: grid;
   grid-template-columns: auto 16px 1fr;
   height: 20px;
@@ -14,7 +14,7 @@
     background-color: #272b48;
   }
 
-  .avatar {
+  .GroupMemberItem__avatar {
     grid-column: 1 / 2;
 
     width: 20px;
@@ -22,7 +22,7 @@
     border-radius: 4px;
   }
 
-  .username {
+  .GroupMemberItem__name {
     grid-column: 3 / 4;
 
     color: #a5a7b1;

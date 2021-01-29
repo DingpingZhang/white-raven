@@ -10,11 +10,13 @@ export default function PrivateChatView({ selectedItem }: PrivateChatViewProps) 
   const lastMessage = selectedItem.lastMessages[selectedItem.lastMessages.length - 1];
 
   return (
-    <div className="private-chat-view">
-      <div className="private-chat-title-bar">
-        <img className="avatar" src={selectedItem.contact.avatar} alt="avatar" />
-        <span className="text-title">{selectedItem.contact.name}</span>
-        <span className="text-subtitle">{getDisplayTimestamp(lastMessage.timestamp)}</span>
+    <div className="PrivateChatView">
+      <div className="PrivateChatView__titleBar">
+        <img className="PrivateChatView__avatar" src={selectedItem.contact.avatar} alt="avatar" />
+        <span className="PrivateChatView__title">{selectedItem.contact.name}</span>
+        <span className="PrivateChatView__subtitle">
+          {getDisplayTimestamp(lastMessage.timestamp)}
+        </span>
       </div>
       <ChatControl />
     </div>

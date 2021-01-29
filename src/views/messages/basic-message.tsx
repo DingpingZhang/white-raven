@@ -8,14 +8,14 @@ export type BasicMessageProps = Message & {
 };
 
 export default function BasicMessage({ senderId, content, timestamp, highlight }: BasicMessageProps) {
-  const messageBoxClass = classNames('message-box', { highlight });
+  const messageBoxClass = classNames('BasicMessage__messageArea', { highlight });
   return (
-    <div className="basic-message">
-      <img className="avatar" src={getAvatarById(senderId)} alt="avatar" />
+    <div className="BasicMessage">
+      <img className="BasicMessage__avatar" src={getAvatarById(senderId)} alt="avatar" />
       <div className={messageBoxClass}>
-        <div className="message-content">{content.map(convertToHtmlElement)}</div>
+        <div className="BasicMessage__messageContent">{content.map(convertToHtmlElement)}</div>
       </div>
-      <span className="timestamp">{getDisplayTimestamp(timestamp)}</span>
+      <span className="BasicMessage__timestamp">{getDisplayTimestamp(timestamp)}</span>
     </div>
   );
 }
@@ -24,13 +24,13 @@ function convertToHtmlElement(message: MessageSegment, index: number) {
   switch (message.type) {
     case 'text':
       return (
-        <span key={`${index}-${message.text}`} className="msg-segment msg-type-text">
+        <span key={`${index}-${message.text}`} className="BasicMessage__msgSegment msgText">
           {message.text}
         </span>
       );
     case 'at':
       return (
-        <span key={`${index}-${message.targetId}`} className="msg-segment msg-type-at">
+        <span key={`${index}-${message.targetId}`} className="BasicMessage__msgSegment msgAt">
           @{message.targetId}{' '}
         </span>
       );
@@ -39,7 +39,7 @@ function convertToHtmlElement(message: MessageSegment, index: number) {
       return (
         <img
           key={`${index}-${message.faceId}`}
-          className="msg-segment msg-type-face"
+          className="BasicMessage__msgSegment msgFace"
           src={imageSource.default}
           alt={`[CQ:face,id=${message.faceId}]`}
         />
@@ -49,7 +49,7 @@ function convertToHtmlElement(message: MessageSegment, index: number) {
         // eslint-disable-next-line jsx-a11y/img-redundant-alt
         <img
           key={`${index}-${message.url}`}
-          className="msg-segment msg-type-image"
+          className="BasicMessage__msgSegment msgImage"
           src={message.url}
           alt={`[CQ:image,file=${message.url}]`}
         />

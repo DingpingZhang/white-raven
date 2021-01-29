@@ -1,6 +1,6 @@
 @use '../../mixins/common';
 
-.basic-message {
+.BasicMessage {
   display: grid;
   grid-template-columns: auto 12px auto 1fr;
   grid-template-rows: auto 4px auto;
@@ -8,14 +8,14 @@
   padding: 10px 0;
   box-sizing: border-box;
 
-  .avatar {
+  .BasicMessage__avatar {
     grid-area: 1 / 1 / 2 / 2;
 
     @include common.circle(24px);
     align-self: start;
   }
 
-  .message-box {
+  .BasicMessage__messageArea {
     grid-area: 1 / 3 / 2 / 4;
 
     border-radius: 4px 16px 16px 16px;
@@ -30,21 +30,21 @@
       background-color: #3464ff;
     }
 
-    .message-content {
-      .msg-segment {
+    .BasicMessage__messageContent {
+      .BasicMessage__msgSegment {
         user-select: text;
 
-        &.msg-type-text {
+        &.msgText {
           white-space: pre-line;
         }
 
-        &.msg-type-face {
+        &.msgFace {
           width: 28px;
           height: 28px;
           vertical-align: text-bottom;
         }
 
-        &.msg-type-at {
+        &.msgAt {
           color: white;
           background-color: #f65b9e;
           border-radius: 8px;
@@ -54,7 +54,7 @@
           cursor: pointer;
         }
 
-        &.msg-type-image {
+        &.msgImage {
           max-width: 240px;
           max-height: 120px;
           cursor: pointer;
@@ -63,7 +63,7 @@
     }
   }
 
-  .timestamp {
+  .BasicMessage__timestamp {
     grid-area: 3 / 3 / 4 / 4;
 
     font-size: 10px;

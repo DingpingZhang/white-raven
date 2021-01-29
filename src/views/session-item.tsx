@@ -19,8 +19,8 @@ export default function SessionItem({
   lastMessage,
   onSelected,
 }: ContactItemProps) {
-  const contactItemClass = classNames('session-item', {
-    'has-message': unreadCount,
+  const contactItemClass = classNames('SessionItem', {
+    hasMessage: unreadCount,
     selected,
   });
 
@@ -28,11 +28,11 @@ export default function SessionItem({
 
   return (
     <div className={contactItemClass} onClick={onSelected}>
-      <span className="red-dot"></span>
-      <img className="avatar" src={avatar} alt="avatar" />
-      <span className="username">{name}</span>
-      <span className="last-message-time">{getDisplayTimestamp(lastMessage.timestamp)}</span>
-      <span className="last-message text ellipsis" title={messageSummary.join('')}>
+      <span className="SessionItem__redDot"></span>
+      <img className="SessionItem__avatar" src={avatar} alt="avatar" />
+      <span className="SessionItem__title">{name}</span>
+      <span className="SessionItem__subtitle">{getDisplayTimestamp(lastMessage.timestamp)}</span>
+      <span className="SessionItem__message text ellipsis" title={messageSummary.join('')}>
         {messageSummary}
       </span>
     </div>

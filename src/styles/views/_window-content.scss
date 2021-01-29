@@ -1,13 +1,13 @@
-.window-content {
+.WindowContent {
   display: grid;
   grid-template-columns: auto 28px 1fr;
   margin: 16px;
 
-  .main-window-tab-header-panel {
+  .WindowContent__tabHeaderPanel {
     grid-column: 1 / 2;
   }
 
-  .main-window-tab-content {
+  .WindowContent__tabContent {
     grid-column: 3 / 4;
   }
 }

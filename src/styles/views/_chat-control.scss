@@ -1,14 +1,14 @@
-.chat-control {
+.ChatControl {
   display: grid;
   grid-template-rows: 1fr auto;
   height: 100%;
 
-  .chat-message-list {
+  .ChatControl__messageList {
     display: flex;
     flex-direction: column;
   }
 
-  .chat-input-box {
+  .ChatControl__inputBox {
     display: grid;
 
     height: 72px;
