@@ -79,7 +79,7 @@ export function VirtualizingListBox({
     () =>
       renderItems(startIndex, endIndex).map((item, index) => {
         const offsetIndex = startIndex + index;
-        const itemClass = classNames('virtualizing-list-box-item', {
+        const itemClass = classNames('VirtualizingListBox__item', {
           selected: selectable && offsetIndex === selectedIndex,
         });
         return (
@@ -101,9 +101,9 @@ export function VirtualizingListBox({
   );
 
   return (
-    <div className="virtualizing-list-box">
+    <div className="VirtualizingListBox">
       <ScrollViewer ref={wrapperRef} onScroll={handleScroll} enableVerticalScrollBar>
-        <ul className="virtualizing-list-box-ul">
+        <ul className="VirtualizingListBox__list">
           {/* HACK: Hold the height of the scroll area, and place it on top of item elements to
            * make sure it is in the lower layer of item elements, otherwise, its hit test
            * may cover item elements.

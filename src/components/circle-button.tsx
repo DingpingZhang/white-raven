@@ -13,7 +13,7 @@ type CustomProps = {
 type CircleButtonProps = CustomProps & Partial<ButtonHTMLAttributes<HTMLButtonElement>>;
 
 export default function CircleButton({ buttonType, diameter, icon, className }: CircleButtonProps) {
-  const wrapperClass = classNames('btn-circle', {
+  const wrapperClass = classNames('CircleButton', {
     [`${buttonType}`]: buttonType,
     [`${className}`]: className,
   });
@@ -28,27 +28,10 @@ export default function CircleButton({ buttonType, diameter, icon, className }: 
       }}
     >
       {typeof icon === 'string' ? (
-        <img className="button-icon" src={icon} alt={icon} />
+        <img className="CircleButton__icon" src={icon} alt={icon} />
       ) : (
-        React.cloneElement(icon, { className: 'button-icon' })
+        React.cloneElement(icon, { className: 'CircleButton__icon' })
       )}
     </button>
   );
-}
-
-function getSize(size: number | undefined, type: ButtonType) {
-  if (!size) {
-    switch (type) {
-      case 'primary':
-        return '40px';
-      case 'secondary':
-        return '32px';
-      case 'default':
-        return '32px';
-      default:
-        return '32px';
-    }
-  } else {
-    return `${size}px`;
-  }
 }

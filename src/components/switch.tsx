@@ -97,10 +97,10 @@ export function Switch<T extends string>({ name, contentProvider, animation }: S
   }, [name, navigate, registerSwitch, unregisterSwitch]);
 
   return (
-    <div className="switch-wrapper">
+    <div className="Switch">
       {Array.from(loadedViewCache.entries()).map(([label, view]) => {
         const selected = selectedLabel === label;
-        const switchItemClass = classNames('switch-item', { animated: animation, selected });
+        const switchItemClass = classNames('Switch__item', { animated: animation, selected });
         return animation ? (
           <CSSTransition
             key={label}

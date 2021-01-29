@@ -1,19 +1,19 @@
 @use '../mixins/list';
 
-.virtualizing-list-box {
+.VirtualizingListBox {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
 
-  .virtualizing-list-box-ul {
+  .VirtualizingListBox__list {
     @include list.non-style-list();
     position: relative;
     width: 100%;
     height: 100%;
   }
 
-  .virtualizing-list-box-item {
+  .VirtualizingListBox__item {
     position: absolute;
     width: 100%;
   }

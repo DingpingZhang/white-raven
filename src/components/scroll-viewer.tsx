@@ -83,16 +83,12 @@ const ScrollViewer = React.forwardRef(
       wrapperRef.current &&
       wrapperRef.current.scrollHeight - wrapperRef.current.clientHeight > FLOAT_TOLERANCE;
 
-    const wrapperClass = classNames(
-      'scroll-viewer-wrapper',
-      className,
-      `${scrollBarStyle ?? 'overlay'}`
-    );
+    const wrapperClass = classNames('ScrollViewer', className, `${scrollBarStyle ?? 'overlay'}`);
 
-    const horizontalScrollBarClass = classNames('scroll-bar', 'horizontal', {
+    const horizontalScrollBarClass = classNames('ScrollViewer__bar', 'horizontal', {
       active: activeHorizontalScrollBar,
     });
-    const verticalScrollBarClass = classNames('scroll-bar', 'vertical', {
+    const verticalScrollBarClass = classNames('ScrollViewer__bar', 'vertical', {
       active: activeVerticalScrollBar,
     });
 
@@ -133,18 +129,18 @@ const ScrollViewer = React.forwardRef(
       <div className={wrapperClass} style={style}>
         <div
           ref={combinedRef}
-          className="scroll-view"
+          className="ScrollViewer__view"
           onScroll={innerOnScroll}
           onWheel={handleHorizontalScroll}
         >
-          <div ref={scrollContentRef} className="scroll-content">
+          <div ref={scrollContentRef} className="ScrollViewer__content">
             {children}
           </div>
         </div>
         {enableHorizontalScrollBar ? (
           <div className={horizontalScrollBarClass}>
             <div
-              className="scroll-thumb"
+              className="ScrollViewer__thumb"
               style={{
                 left: scrollBarLeft || 0,
                 width: activeHorizontalScrollBar && scrollBarWidth ? scrollBarWidth : 0,
@@ -155,7 +151,7 @@ const ScrollViewer = React.forwardRef(
         {enableVerticalScrollBar ? (
           <div className={verticalScrollBarClass}>
             <div
-              className="scroll-thumb"
+              className="ScrollViewer__thumb"
               style={{
                 top: scrollBarTop || 0,
                 height: activeVerticalScrollBar && scrollBarHeight ? scrollBarHeight : 0,

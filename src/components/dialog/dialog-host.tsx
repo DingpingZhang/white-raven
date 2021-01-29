@@ -64,19 +64,19 @@ export function DialogHost({ children }: DialogHostProps) {
   const [currentDialog, setCurrentDialog] = useState<ReactNode>();
   const dialogManagerRef = useRef(new DialogManager(setCurrentDialog));
 
-  const contentPlaceholderClass = classNames('content-placeholder', {
+  const contentClass = classNames('DialogHost__content', {
     blur: currentDialog,
   });
-  const maskLayerClass = classNames('dialog-mask-layer', {
+  const maskClass = classNames('DialogHost__mask', {
     active: currentDialog,
   });
 
   return (
-    <div className="dialog-host">
+    <div className="DialogHost">
       <DialogHostContext.Provider value={dialogManagerRef.current}>
-        <div className={contentPlaceholderClass}>{children}</div>
-        <div className={maskLayerClass}>
-          <div className="dialog-placeholder">{currentDialog}</div>
+        <div className={contentClass}>{children}</div>
+        <div className={maskClass}>
+          <div className="DialogHost__placeholder">{currentDialog}</div>
         </div>
       </DialogHostContext.Provider>
     </div>

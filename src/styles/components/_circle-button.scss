@@ -1,6 +1,6 @@
 @use '../mixins/common';
 
-.btn-circle {
+.CircleButton {
   @include common.circle(32px);
 
   display: inline-flex;
@@ -15,7 +15,7 @@
     outline: none;
   }
 
-  svg {
+  .CircleButton__icon {
     fill: #d9ecfc;
     align-self: center;
   }

@@ -85,13 +85,17 @@ export default function InfiniteScrollingListBox({ renderItems }: InfiniteScroll
   }, [anchorElementRef, renderItems]);
 
   return (
-    <div className="infinite-scrolling-list-box">
+    <div className="InfiniteScrollingListBox">
       <ScrollViewer ref={scrollViewRef} enableVerticalScrollBar>
-        <div key="anchor-element-top" className="anchor-element-top" ref={topElementRef}></div>
-        <ul className="infinite-scrolling-list-box-ul">{items}</ul>
         <div
-          key="anchor-element-bottom"
-          className="anchor-element-bottom"
+          key="InfiniteScrollingListBox__anchor top"
+          className="InfiniteScrollingListBox__anchor top"
+          ref={topElementRef}
+        ></div>
+        <ul className="InfiniteScrollingListBox__list">{items}</ul>
+        <div
+          key="InfiniteScrollingListBox__anchor bottom"
+          className="InfiniteScrollingListBox__anchor bottom"
           ref={bottomElementRef}
         ></div>
       </ScrollViewer>
@@ -104,7 +108,7 @@ function renderLIElement(ref: (element: HTMLLIElement | null) => void, anchorInd
     <li
       ref={index === anchorIndex ? ref : null}
       key={item.key}
-      className="infinite-scrolling-list-box-item"
+      className="InfiniteScrollingListBox__item"
     >
       {item}
     </li>

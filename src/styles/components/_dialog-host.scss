@@ -1,4 +1,4 @@
-.dialog-host {
+.DialogHost {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
@@ -6,7 +6,7 @@
   height: 100%;
   overflow: hidden;
 
-  .content-placeholder {
+  .DialogHost__content {
     grid-column-start: 1;
     grid-column-end: 2;
     grid-row-start: 1;
@@ -17,7 +17,7 @@
     }
   }
 
-  .dialog-mask-layer {
+  .DialogHost__mask {
     z-index: 1000;
     background: #00000080;
 
@@ -33,7 +33,7 @@
       grid-template-rows: 1fr auto 1fr;
     }
 
-    .dialog-placeholder {
+    .DialogHost__placeholder {
       grid-row-start: 2;
       grid-row-end: 3;
       grid-column-start: 2;
