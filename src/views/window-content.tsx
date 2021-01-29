@@ -33,7 +33,7 @@ export default function WindowContent() {
         <Switch<MainWindowViewName>
           name={SWITCH_NAME.MAIN}
           contentProvider={convertToContentProvider(mainWindowCases)}
-          animation={{ className: 'float-in-out-rtl', timeout: 200 }}
+          // animation={{ className: 'float-in-out-rtl', timeout: 200 }}
         />
       </div>
     </div>

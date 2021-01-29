@@ -40,14 +40,16 @@ export default function GroupChatView({ selectedItem }: GroupChatViewProps) {
         </div>
         <div className="group-members">
           <div className="group-members-title">Group Members</div>
-          <VirtualizingListBox
-            sizeProvider={{ itemSize: 32, itemCount: selectedItem.contact.memberCount }}
-            renderItems={(startIndex, endIndex) =>
-              members
-                .slice(startIndex, endIndex)
-                .map((item) => <GroupMemberItem avatar={item.avatar} name={item.name} />)
-            }
-          />
+          <div className="group-members-list">
+            <VirtualizingListBox
+              sizeProvider={{ itemSize: 32, itemCount: selectedItem.contact.memberCount }}
+              renderItems={(startIndex, endIndex) =>
+                members
+                  .slice(startIndex, endIndex)
+                  .map((item) => <GroupMemberItem avatar={item.avatar} name={item.name} />)
+              }
+            />
+          </div>
         </div>
       </div>
     </div>

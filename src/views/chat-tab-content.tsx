@@ -44,7 +44,7 @@ export default function ChatTabContent() {
               }
             },
           }}
-          animation={{ className: 'float-in-out-rtl', timeout: 200 }}
+          // animation={{ className: 'float-in-out-rtl', timeout: 200 }}
         />
       </div>
     </div>

@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { getMessages } from '../mocks/message';
+import { getMockGroupMembers } from '../mocks/contact';
+import { getMockMessages } from '../mocks/message';
 import { getMockSessions } from '../mocks/session';
 import {
   Err,
@@ -67,11 +68,11 @@ export async function getFriendInfos() {
 }
 
 export async function getFriendMessage(id: IdType, messageId: IdType) {
-  return getMockResult(getMessages(1)[0]);
+  return getMockResult(getMockMessages(1)[0]);
 }
 
 export async function getFriendMessages(id: IdType, startId?: IdType) {
-  return getMockResult(getMessages(20));
+  return getMockResult(getMockMessages(20));
 }
 
 export async function getStrangerInfo(id: IdType) {
@@ -79,11 +80,11 @@ export async function getStrangerInfo(id: IdType) {
 }
 
 export async function getStrangerMessage(id: IdType, messageId: IdType) {
-  return getMockResult(getMessages(1)[0]);
+  return getMockResult(getMockMessages(1)[0]);
 }
 
 export async function getStrangerMessages(id: IdType, startId?: IdType) {
-  return getMockResult(getMessages(20));
+  return getMockResult(getMockMessages(20));
 }
 
 export async function sendMessageToFriend(id: IdType, message: MessageBody) {
@@ -111,15 +112,15 @@ export async function getGroupMember(id: IdType, memberId: IdType) {
 }
 
 export async function getGroupMembers(id: IdType) {
-  return get<ReadonlyArray<GroupMemberInfo>>(`group/${id}/member/items`);
+  return getMockResult(getMockGroupMembers(200));
 }
 
 export async function getGroupMessage(id: IdType, messageId: IdType) {
-  return getMockResult(getMessages(1)[0]);
+  return getMockResult(getMockMessages(1)[0]);
 }
 
 export async function getGroupMessages(id: IdType, startId?: IdType) {
-  return getMockResult(getMessages(20));
+  return getMockResult(getMockMessages(20));
 }
 
 export async function sendMessageToGroup(id: IdType, message: MessageBody) {

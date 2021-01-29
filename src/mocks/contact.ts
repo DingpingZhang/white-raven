@@ -2,28 +2,28 @@ import { FriendInfo, GroupInfo, GroupMemberInfo, StrangerInfo } from '../api';
 import { uuidv4 } from '../helpers';
 import { getMockItems } from './common';
 
-export function getFriends(count: number) {
+export function getMockFriends(count: number) {
   return getMockItems(FRIEND_LIST, count, (item) => ({
     ...item,
     id: `${uuidv4()}`,
   }));
 }
 
-export function getStrangers(count: number) {
+export function getMockStrangers(count: number) {
   return getMockItems(STRANGER_LIST, count, (item) => ({
     ...item,
     id: `${uuidv4()}`,
   }));
 }
 
-export function getGroups(count: number) {
+export function getMockGroups(count: number) {
   return getMockItems(GROUP_LIST, count, (item) => ({
     ...item,
     id: `${uuidv4()}`,
   }));
 }
 
-export function getGroupMembers(count: number) {
+export function getMockGroupMembers(count: number) {
   return getMockItems(GROUP_MEMBER_LIST, count, (item) => ({
     ...item,
     id: `${uuidv4()}`,
@@ -78,23 +78,23 @@ export const GROUP_LIST: ReadonlyArray<GroupInfo> = [
     name: '刀塔2代练',
     avatar: 'http://q1.qlogo.cn/g?b=qq&nk=48615854&s=640',
     ownerId: '123123412',
-    memberCount: 211,
-    memberCapacity: 500,
+    memberCount: 200,
+    memberCapacity: 2000,
   },
   {
     id: '8654561561',
     name: 'Rust编程从入门到放弃',
     avatar: 'http://q1.qlogo.cn/g?b=qq&nk=456154552&s=640',
     ownerId: '123123412',
-    memberCount: 1211,
-    memberCapacity: 2000,
+    memberCount: 200,
+    memberCapacity: 500,
   },
   {
     id: '8654561561',
     name: '开车群',
     avatar: 'http://q1.qlogo.cn/g?b=qq&nk=2344415111&s=640',
     ownerId: '123123412',
-    memberCount: 11,
+    memberCount: 200,
     memberCapacity: 200,
   },
 ];
@@ -103,7 +103,7 @@ export const GROUP_MEMBER_LIST: ReadonlyArray<GroupMemberInfo> = [
   {
     id: '8654561561',
     name: '狗管理',
-    avatar: 'http://q1.qlogo.cn/g?b=qq&nk=584564334&s=640',
+    avatar: 'http://q1.qlogo.cn/g?b=qq&nk=395700145&s=640',
     groupId: '1231231412',
     joinTime: 1611762780292,
     role: 'member',

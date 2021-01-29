@@ -88,8 +88,12 @@
 
       .group-members-title {
         @include title-bar-style(48px);
+      }
 
-        margin-bottom: 20px;
+      .group-members-list {
+        flex: 1;
+
+        margin: 10px 0;
       }
     }
   }
