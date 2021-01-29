@@ -6,39 +6,39 @@
 
 ## 0. Uncategorized Api
 
-| Method | Api             | Response       |
-| ------ | --------------- | -------------- |
-| `GET`  | `user/self`     | `PersonInfo`   |
-| `GET`  | `session/items` | `Session[All]` |
+| Method | Api         | Response       |
+| ------ | ----------- | -------------- |
+| `GET`  | `user/self` | `PersonInfo`   |
+| `GET`  | `sessions`  | `Session[All]` |
 
 ## 1. Person Api
 
-| Method | Api                                     | Response          |
-| ------ | --------------------------------------- | ----------------- |
-| `GET`  | `friend/:id`                            | `FriendInfo`      |
-| `GET`  | `friend/items`                          | `FriendInfo[All]` |
-| `GET`  | `friend/:id/message/:id`                | `Message`         |
-| `GET`  | `friend/:id/message/items/[:startId]`   | `Message[20]`     |
-| `GET`  | `stranger/:id`                          | `StrangerInfo`    |
-| `GET`  | `stranger/:id/message/:id`              | `Message`         |
-| `GET`  | `stranger/:id/message/items/[:startId]` | `Message[20]`     |
+| Method | Api                                 | Response          |
+| ------ | ----------------------------------- | ----------------- |
+| `GET`  | `friends/:id`                       | `FriendInfo`      |
+| `GET`  | `friends`                           | `FriendInfo[All]` |
+| `GET`  | `friends/:id/messages/:id`          | `Message`         |
+| `GET`  | `friends/:id/messages/[:startId]`   | `Message[20]`     |
+| `GET`  | `strangers/:id`                     | `StrangerInfo`    |
+| `GET`  | `strangers/:id/messages/:id`        | `Message`         |
+| `GET`  | `strangers/:id/messages/[:startId]` | `Message[20]`     |
 
-| Method | Api                    | Body          | Response          |
-| ------ | ---------------------- | ------------- | ----------------- |
-| `POST` | `friend/:id/message`   | `MessageBody` | `MessageResponse` |
-| `POST` | `stranger/:id/message` | `MessageBody` | `MessageResponse` |
+| Method | Api                      | Body          | Response          |
+| ------ | ------------------------ | ------------- | ----------------- |
+| `POST` | `friends/:id/messages`   | `MessageBody` | `MessageResponse` |
+| `POST` | `strangers/:id/messages` | `MessageBody` | `MessageResponse` |
 
 ## 2. Group Api
 
-| Method | Api                                  | Response               |
-| ------ | ------------------------------------ | ---------------------- |
-| `GET`  | `group/:id`                          | `GroupInfo`            |
-| `GET`  | `group/items`                        | `GroupInfo[All]`       |
-| `GET`  | `group/:id/member/:id`               | `GroupMemberInfo`      |
-| `GET`  | `group/:id/member/items`             | `GroupMemberInfo[All]` |
-| `GET`  | `group/:id/message/:id`              | `Message`              |
-| `GET`  | `group/:id/message/items/[:startId]` | `Message[20]`          |
+| Method | Api                              | Response               |
+| ------ | -------------------------------- | ---------------------- |
+| `GET`  | `groups/:id`                     | `GroupInfo`            |
+| `GET`  | `groups`                         | `GroupInfo[All]`       |
+| `GET`  | `groups/:id/members/:id`         | `GroupMemberInfo`      |
+| `GET`  | `groups/:id/members`             | `GroupMemberInfo[All]` |
+| `GET`  | `groups/:id/messages/:id`        | `Message`              |
+| `GET`  | `groups/:id/messages/[:startId]` | `Message[20]`          |
 
-| Method | Api                 | Body          | Response          |
-| ------ | ------------------- | ------------- | ----------------- |
-| `POST` | `group/:id/message` | `MessageBody` | `MessageResponse` |
+| Method | Api                   | Body          | Response          |
+| ------ | --------------------- | ------------- | ----------------- |
+| `POST` | `groups/:id/messages` | `MessageBody` | `MessageResponse` |
