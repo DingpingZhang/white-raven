@@ -12,7 +12,13 @@ type CustomProps = {
 
 type CircleButtonProps = CustomProps & Partial<ButtonHTMLAttributes<HTMLButtonElement>>;
 
-export default function CircleButton({ buttonType, diameter, icon, className }: CircleButtonProps) {
+export default function CircleButton({
+  buttonType,
+  diameter,
+  icon,
+  className,
+  ...otherProps
+}: CircleButtonProps) {
   const wrapperClass = classNames('CircleButton', {
     [`${buttonType}`]: buttonType,
     [`${className}`]: className,
@@ -20,6 +26,7 @@ export default function CircleButton({ buttonType, diameter, icon, className }: 
 
   return (
     <button
+      {...otherProps}
       className={wrapperClass}
       style={{
         width: diameter ? `${diameter}px` : undefined,

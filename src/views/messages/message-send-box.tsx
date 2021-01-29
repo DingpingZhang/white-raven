@@ -26,7 +26,18 @@ export default function MessageSendBox() {
         />
       </div>
       <div className="MessageSendBox__splitLine vertical"></div>
-      <CircleButton buttonType="primary" className="MessageSendBox__btnSend" icon={<SendIcon />} />
+      <CircleButton
+        buttonType="primary"
+        className="MessageSendBox__btnSend"
+        icon={<SendIcon />}
+        onClick={() => {
+          if (document.body.classList.contains('theme-dark')) {
+            document.body.classList.remove('theme-dark');
+          } else {
+            document.body.classList.add('theme-dark');
+          }
+        }}
+      />
     </div>
   );
 }
