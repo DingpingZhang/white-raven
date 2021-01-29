@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { IdType, Session } from '../api';
-import { Switch } from '../components/switch';
-import { useNavigator } from '../components/switch-host';
-import { sessionListState, selectedSessionState } from '../models/basic-models';
+import { IdType, Session } from 'api';
+import { Switch } from 'components/switch';
+import { useNavigator } from 'components/switch-host';
+import { sessionListState, selectedSessionState } from 'models/basic-models';
 import { SWITCH_NAME } from './constants';
 import GroupChatView from './group-chat-view';
 import PrivateChatView from './private-chat-view';

@@ -1,5 +1,5 @@
-import { Message } from '../api';
-import { uuidv4 } from '../helpers';
+import { Message } from 'api';
+import { uuidv4 } from 'helpers';
 import { getMockItems } from './common';
 
 export function getMockMessages(count: number): ReadonlyArray<Message> {

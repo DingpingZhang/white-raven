@@ -1,5 +1,5 @@
-import { FriendInfo, GroupInfo, GroupMemberInfo, StrangerInfo } from '../api';
-import { uuidv4 } from '../helpers';
+import { FriendInfo, GroupInfo, GroupMemberInfo, StrangerInfo } from 'api';
+import { uuidv4 } from 'helpers';
 import { getMockItems } from './common';
 
 export function getMockFriends(count: number) {

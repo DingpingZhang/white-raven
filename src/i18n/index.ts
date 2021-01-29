@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useI18nBuilder, TranslatorType } from '../hooks';
+import { useI18nBuilder, TranslatorType } from 'hooks';
 
 export * from './language-code';
 export * from './i18n-context';

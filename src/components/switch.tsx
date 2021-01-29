@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { ReactNode, useContext, useEffect, useCallback, useState, ReactElement } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { useForceUpdate, useLazyRef } from '../hooks';
+import { useForceUpdate, useLazyRef } from 'hooks';
 import { SwitchHostContext } from './switch-host';
 
 const EMPTY_OBJECT = {};

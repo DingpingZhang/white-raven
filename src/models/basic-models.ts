@@ -1,5 +1,5 @@
 import { atom, selector } from 'recoil';
-import { getSessions, getUserInfo, PersonInfo, Session } from '../api';
+import { getSessions, getUserInfo, PersonInfo, Session } from 'api';
 
 export const userInfoState = atom<PersonInfo>({
   key: 'userInfoState',

@@ -1,8 +1,8 @@
-import { ReactComponent as SendIcon } from '../../images/send.svg';
-import { ReactComponent as MoreVerticalIcon } from '../../images/more-vertical.svg';
-import { ReactComponent as AttachmentIcon } from '../../images/attachment.svg';
-import { ReactComponent as FaceIcon } from '../../images/face.svg';
-import CircleButton from '../../components/circle-button';
+import { ReactComponent as SendIcon } from 'images/send.svg';
+import { ReactComponent as MoreVerticalIcon } from 'images/more-vertical.svg';
+import { ReactComponent as AttachmentIcon } from 'images/attachment.svg';
+import { ReactComponent as FaceIcon } from 'images/face.svg';
+import CircleButton from 'components/circle-button';
 
 export default function MessageSendBox() {
   return (

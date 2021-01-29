@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { CaseItem, convertToContentProvider, Switch } from '../components/switch';
-import { useNavigator } from '../components/switch-host';
+import { CaseItem, convertToContentProvider, Switch } from 'components/switch';
+import { useNavigator } from 'components/switch-host';
 import ChatTabContent from './chat-tab-content';
 import { MainWindowViewName, SWITCH_NAME } from './constants';
 import MainTabHeaderPanel from './main-tab-header-panel';

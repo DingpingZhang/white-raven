@@ -1,5 +1,5 @@
-import { FriendSession, StrangerSession } from '../api';
-import { getDisplayTimestamp } from '../helpers';
+import { FriendSession, StrangerSession } from 'api';
+import { getDisplayTimestamp } from 'helpers';
 import ChatControl from './chat-control';
 
 type PrivateChatViewProps = {

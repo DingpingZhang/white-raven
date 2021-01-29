@@ -9,8 +9,8 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { FLOAT_TOLERANCE } from '../helpers';
-import { useCombinedRefs, useResizeObserver } from '../hooks';
+import { FLOAT_TOLERANCE } from 'helpers';
+import { useCombinedRefs, useResizeObserver } from 'hooks';
 
 type ScrollBarStyle = 'inline' | 'overlay';
 interface ScrollViewerProps extends HTMLAttributes<HTMLDivElement> {

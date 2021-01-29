@@ -1,8 +1,8 @@
 import MainTabHeader from './main-tab-header';
-import { ReactComponent as PersonIcon } from '../images/person.svg';
-import { ReactComponent as GroupIcon } from '../images/group.svg';
+import { ReactComponent as PersonIcon } from 'images/person.svg';
+import { ReactComponent as GroupIcon } from 'images/group.svg';
 import { useRecoilValueLoadable } from 'recoil';
-import { userInfoState } from '../models/basic-models';
+import { userInfoState } from 'models/basic-models';
 
 type MainTabHeaderPanelProps = {
   selectedIndex: number;

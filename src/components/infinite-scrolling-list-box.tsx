@@ -1,5 +1,5 @@
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
-import { equalNumber } from '../helpers';
+import { equalNumber } from 'helpers';
 import ScrollViewer from './scroll-viewer';
 
 export type FetchItemsType = 'initial' | 'previous' | 'next';

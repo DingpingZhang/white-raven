@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import { getDisplayTimestamp } from '../../helpers';
-import { Message, MessageSegment } from '../../api';
+import { getDisplayTimestamp } from 'helpers';
+import { Message, MessageSegment } from 'api';
 import { getAvatarById } from './common';
 
 export type BasicMessageProps = Message & {
@@ -40,7 +40,7 @@ function convertToHtmlElement(message: MessageSegment, index: number) {
         </span>
       );
     case 'face':
-      const imageSource = require(`../../images/face/${message.faceId}.gif`);
+      const imageSource = require(`images/face/${message.faceId}.gif`);
       return (
         <img
           key={`${index}-${message.faceId}`}

@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { getMockGroupMembers } from '../mocks/contact';
-import { getMockMessages } from '../mocks/message';
-import { getMockSessions } from '../mocks/session';
+import { getMockGroupMembers } from 'mocks/contact';
+import { getMockMessages } from 'mocks/message';
+import { getMockSessions } from 'mocks/session';
 import {
   Err,
   FriendInfo,

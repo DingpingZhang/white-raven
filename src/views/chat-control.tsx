@@ -1,9 +1,9 @@
 import React, { useCallback, useRef } from 'react';
 import InfiniteScrollingListBox, {
   FetchItemsType,
-} from '../components/infinite-scrolling-list-box';
-import { uuidv4 } from '../helpers';
-import { MESSAGE_LIST } from '../mocks/message';
+} from 'components/infinite-scrolling-list-box';
+import { uuidv4 } from 'helpers';
+import { MESSAGE_LIST } from 'mocks/message';
 import BasicMessage from './messages/basic-message';
 import MessageSendBox from './messages/message-send-box';
 

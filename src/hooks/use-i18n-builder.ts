@@ -1,6 +1,6 @@
 import { useMemo, useContext } from 'react';
-import { LanguageCode, I18nContext } from '../i18n';
-import { stringFormat } from '../helpers';
+import { LanguageCode, I18nContext } from 'i18n';
+import { stringFormat } from 'helpers';
 
 export type I18nResourcePair<T> = {
   culture: LanguageCode;

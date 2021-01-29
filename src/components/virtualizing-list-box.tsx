@@ -1,6 +1,6 @@
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
-import { Size, useResizeObserver } from '../hooks';
+import { Size, useResizeObserver } from 'hooks';
 import ScrollViewer from './scroll-viewer';
 
 /**

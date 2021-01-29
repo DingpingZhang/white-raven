@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { getGroupMembers, GroupMemberInfo, GroupSession } from '../api';
-import { VirtualizingListBox } from '../components/virtualizing-list-box';
-import { getDisplayTimestamp } from '../helpers';
+import { getGroupMembers, GroupMemberInfo, GroupSession } from 'api';
+import { VirtualizingListBox } from 'components/virtualizing-list-box';
+import { getDisplayTimestamp } from 'helpers';
 import ChatControl from './chat-control';
 import GroupMemberItem from './group-member-item';
 

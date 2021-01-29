@@ -1,5 +1,5 @@
-import { FriendSession, GroupSession, Session, StrangerSession } from '../api';
-import { uuidv4 } from '../helpers';
+import { FriendSession, GroupSession, Session, StrangerSession } from 'api';
+import { uuidv4 } from 'helpers';
 import { getMockItems } from './common';
 import { getMockFriends, getMockGroups, getMockStrangers } from './contact';
 import { getMockMessages } from './message';

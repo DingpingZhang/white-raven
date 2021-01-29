@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import { getDisplayTimestamp } from '../helpers';
-import { Message, MessageSegment } from '../api';
+import { getDisplayTimestamp } from 'helpers';
+import { Message, MessageSegment } from 'api';
 
 export type ContactItemProps = {
   avatar: string;
