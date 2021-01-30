@@ -5,7 +5,7 @@ import ScrollViewer from './scroll-viewer';
 export type FetchItemsType = 'initial' | 'previous' | 'next';
 
 type InfiniteScrollingListBoxProps = {
-  renderItems: (type: FetchItemsType) => ReadonlyArray<ReactElement>;
+  renderItems: (type: FetchItemsType) => Promise<ReadonlyArray<ReactElement>>;
 };
 
 // TODO: Virtualizing
@@ -31,7 +31,7 @@ export default function InfiniteScrollingListBox({ renderItems }: InfiniteScroll
     if (!scrollViewRef.current || !topElementRef.current || !bottomElementRef.current) return;
 
     const observer = new IntersectionObserver(
-      (entities) => {
+      async (entities) => {
         if (entities.length === 2) {
           if (
             equalNumber(entities[0].intersectionRatio, 0) &&
@@ -40,7 +40,7 @@ export default function InfiniteScrollingListBox({ renderItems }: InfiniteScroll
             return;
           }
 
-          const initialItems = renderItems('initial');
+          const initialItems = await renderItems('initial');
           if (initialItems && initialItems.length > 0) {
             const initialLIs = initialItems.map(
               renderLIElement(anchorElementRef, initialItems.length - 1)
@@ -54,7 +54,7 @@ export default function InfiniteScrollingListBox({ renderItems }: InfiniteScroll
           if (equalNumber(firstElement.intersectionRatio, 0)) return;
 
           if (firstElement.target === topElementRef.current) {
-            const prevItems = renderItems('previous');
+            const prevItems = await renderItems('previous');
             if (prevItems && prevItems.length > 0) {
               setItems((prev) => {
                 const prevLIs = prevItems.map(
@@ -64,7 +64,7 @@ export default function InfiniteScrollingListBox({ renderItems }: InfiniteScroll
               });
             }
           } else {
-            const nextItems = renderItems('next');
+            const nextItems = await renderItems('next');
             if (nextItems && nextItems.length) {
               setItems((prev) => {
                 const nextLIs = nextItems.map(renderLIElement(anchorElementRef, 0));

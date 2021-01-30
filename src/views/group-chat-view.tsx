@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
-import { getGroupMembers, GroupMemberInfo, GroupSession } from 'api';
+import { useCallback } from 'react';
+import { getGroupMembers, getGroupMessages, GroupSession, IdType } from 'api';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import { getDisplayTimestamp } from 'helpers';
 import ChatControl from './chat-control';
 import GroupMemberItem from './group-member-item';
+import { useHttpApi } from 'hooks/use-async-value';
 
 type GroupChatViewProps = {
   selectedItem: GroupSession;
@@ -11,17 +12,17 @@ type GroupChatViewProps = {
 
 export default function GroupChatView({ selectedItem }: GroupChatViewProps) {
   const lastMessage = selectedItem.lastMessages[selectedItem.lastMessages.length - 1];
-  const [members, setMembers] = useState<GroupMemberInfo[]>([]);
-  useEffect(() => {
-    const fetchMembers = async () => {
-      const response = await getGroupMembers(selectedItem.contact.id);
-      if (response.code === 200) {
-        setMembers([...response.content]);
-      }
-    };
-
-    fetchMembers();
-  }, [selectedItem.contact.id]);
+  const fetchGroupMembers = useCallback(() => getGroupMembers(selectedItem.contact.id), [
+    selectedItem.contact.id,
+  ]);
+  const groupMembers = useHttpApi(fetchGroupMembers, []);
+  const fetchMessages = useCallback(
+    async (startId?: IdType) => {
+      const response = await getGroupMessages(selectedItem.contact.id, startId);
+      return response.code === 200 ? response.content : [];
+    },
+    [selectedItem.contact.id]
+  );
 
   return (
     <div className="GroupChatView">
@@ -37,7 +38,7 @@ export default function GroupChatView({ selectedItem }: GroupChatViewProps) {
             {getDisplayTimestamp(lastMessage.timestamp)}
           </span>
         </div>
-        <ChatControl />
+        <ChatControl fetchAsync={fetchMessages} />
       </div>
       <div className="GroupChatView__infoArea">
         <div className="GroupChatView__infoCard">
@@ -48,9 +49,9 @@ export default function GroupChatView({ selectedItem }: GroupChatViewProps) {
           <div className="GroupChatView__memberTitle">Group Members</div>
           <div className="GroupChatView__memberList">
             <VirtualizingListBox
-              sizeProvider={{ itemSize: 32, itemCount: members.length }}
+              sizeProvider={{ itemSize: 32, itemCount: groupMembers.length }}
               renderItems={(startIndex, endIndex) =>
-                members
+                groupMembers
                   .slice(startIndex, endIndex)
                   .map((item) => <GroupMemberItem avatar={item.avatar} name={item.name} />)
               }

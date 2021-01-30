@@ -1,26 +1,35 @@
 import React, { useCallback, useRef } from 'react';
-import InfiniteScrollingListBox, {
-  FetchItemsType,
-} from 'components/infinite-scrolling-list-box';
-import { uuidv4 } from 'helpers';
-import { MESSAGE_LIST } from 'mocks/message';
+import InfiniteScrollingListBox, { FetchItemsType } from 'components/infinite-scrolling-list-box';
 import BasicMessage from './messages/basic-message';
 import MessageSendBox from './messages/message-send-box';
+import { IdType, Message } from 'api';
 
-export default function ChatControl() {
-  const messageCountRef = useRef(0);
-  const renderMessage = useCallback((type: FetchItemsType) => {
-    switch (type) {
-      case 'initial':
-      case 'previous':
-        messageCountRef.current += MESSAGE_LIST.length;
-        return MESSAGE_LIST.map((item, index) => (
-          <BasicMessage key={uuidv4()} {...item} highlight={!!(index % 2)} />
-        ));
-      case 'next':
-        return [];
-    }
-  }, []);
+type Props = {
+  fetchAsync: (startId?: IdType) => Promise<ReadonlyArray<Message>>;
+};
+
+export default function ChatControl({ fetchAsync }: Props) {
+  const earliestMessageIdRef = useRef<IdType | undefined>(undefined);
+  const renderMessage = useCallback(
+    async (type: FetchItemsType) => {
+      if (type === 'next') return [];
+
+      const messages = await fetchAsync(earliestMessageIdRef.current);
+      if (!messages.length) return [];
+
+      earliestMessageIdRef.current = messages[0].id;
+      return messages.map(({ id, senderId, content, timestamp }) => (
+        <BasicMessage
+          key={id}
+          id={id}
+          senderId={senderId}
+          content={content}
+          timestamp={timestamp}
+        />
+      ));
+    },
+    [fetchAsync]
+  );
 
   return (
     <div className="ChatControl">

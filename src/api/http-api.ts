@@ -36,11 +36,11 @@ async function post<TOk, TErr = CommonErr>(url: string, data?: any) {
 // ********************************************************
 
 export async function getUserInfo() {
-  return get<PersonInfo>('user/self');
+  return get<PersonInfo>('user');
 }
 
 export async function getSessions() {
-  return get<ReadonlyArray<Session>>('session/items');
+  return get<ReadonlyArray<Session>>('sessions');
 }
 
 // ********************************************************
@@ -48,39 +48,43 @@ export async function getSessions() {
 // ********************************************************
 
 export async function getFriendInfo(id: IdType) {
-  return get<FriendInfo>(`friend/${id}`);
+  return get<FriendInfo>(`friends/${id}`);
 }
 
 export async function getFriendInfos() {
-  return get<ReadonlyArray<FriendInfo>>('friend/items');
+  return get<ReadonlyArray<FriendInfo>>('friends');
 }
 
 export async function getFriendMessage(id: IdType, messageId: IdType) {
-  return get<Message>(`friend/${id}/message/${messageId}`);
+  return get<Message>(`friends/${id}/messages/${messageId}`);
 }
 
 export async function getFriendMessages(id: IdType, startId?: IdType) {
-  return get<ReadonlyArray<Message>>(`friend/${id}/message/items/${startId}`);
+  return get<ReadonlyArray<Message>>(
+    `friends/${id}/messages${startId ? `?startId=${startId}` : ''}`
+  );
 }
 
 export async function getStrangerInfo(id: IdType) {
-  return get<StrangerInfo>(`stranger/${id}`);
+  return get<StrangerInfo>(`strangers/${id}`);
 }
 
 export async function getStrangerMessage(id: IdType, messageId: IdType) {
-  return get<Message>(`stranger/${id}/message/${messageId}`);
+  return get<Message>(`strangers/${id}/messages/${messageId}`);
 }
 
 export async function getStrangerMessages(id: IdType, startId?: IdType) {
-  return get<ReadonlyArray<Message>>(`stranger/${id}/message/items/{${startId}}`);
+  return get<ReadonlyArray<Message>>(
+    `strangers/${id}/messages${startId ? `?startId=${startId}` : ''}`
+  );
 }
 
 export async function sendMessageToFriend(id: IdType, message: MessageBody) {
-  return post<MessageResponse>(`friend/${id}/message`, message);
+  return post<MessageResponse>(`friends/${id}/messages`, message);
 }
 
 export async function sendMessageToStranger(id: IdType, message: MessageBody) {
-  return post<MessageResponse>(`stranger/${id}/message`, message);
+  return post<MessageResponse>(`strangers/${id}/messages`, message);
 }
 
 // ********************************************************
@@ -88,29 +92,31 @@ export async function sendMessageToStranger(id: IdType, message: MessageBody) {
 // ********************************************************
 
 export async function getGroupInfo(id: IdType) {
-  return get<GroupInfo>(`group/${id}`);
+  return get<GroupInfo>(`groups/${id}`);
 }
 
 export async function getGroupInfos() {
-  return get<ReadonlyArray<GroupInfo>>('group/items');
+  return get<ReadonlyArray<GroupInfo>>('groups');
 }
 
 export async function getGroupMember(id: IdType, memberId: IdType) {
-  return get<GroupMemberInfo>(`group/${id}/member/${memberId}`);
+  return get<GroupMemberInfo>(`groups/${id}/members/${memberId}`);
 }
 
 export async function getGroupMembers(id: IdType) {
-  return get<ReadonlyArray<GroupMemberInfo>>(`group/${id}/member/items`);
+  return get<ReadonlyArray<GroupMemberInfo>>(`groups/${id}/members`);
 }
 
 export async function getGroupMessage(id: IdType, messageId: IdType) {
-  return get<Message>(`group/${id}/message/${messageId}`);
+  return get<Message>(`groups/${id}/messages/${messageId}`);
 }
 
 export async function getGroupMessages(id: IdType, startId?: IdType) {
-  return get<ReadonlyArray<Message>>(`group/${id}/message/items/${startId}`);
+  return get<ReadonlyArray<Message>>(
+    `groups/${id}/messages${startId ? `?startId=${startId}` : ''}`
+  );
 }
 
 export async function sendMessageToGroup(id: IdType, message: MessageBody) {
-  return post<MessageResponse>(`group/${id}/message`, message);
+  return post<MessageResponse>(`groups/${id}/messages`, message);
 }

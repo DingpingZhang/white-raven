@@ -12,7 +12,6 @@ import {
   MessageResponse,
   Ok,
   PersonInfo,
-  StrangerInfo,
 } from './basic-types';
 
 type CommonErr = 'connection-timeout';
@@ -76,7 +75,7 @@ export async function getFriendMessages(id: IdType, startId?: IdType) {
 }
 
 export async function getStrangerInfo(id: IdType) {
-  return get<StrangerInfo>(`stranger/${id}`);
+  return getMockResult(getMockMessages(20));
 }
 
 export async function getStrangerMessage(id: IdType, messageId: IdType) {

@@ -1,5 +1,12 @@
-import { FriendSession, StrangerSession } from 'api';
+import {
+  FriendSession,
+  getFriendMessages,
+  getStrangerMessages,
+  IdType,
+  StrangerSession,
+} from 'api';
 import { getDisplayTimestamp } from 'helpers';
+import { useCallback } from 'react';
 import ChatControl from './chat-control';
 
 type PrivateChatViewProps = {
@@ -8,6 +15,17 @@ type PrivateChatViewProps = {
 
 export default function PrivateChatView({ selectedItem }: PrivateChatViewProps) {
   const lastMessage = selectedItem.lastMessages[selectedItem.lastMessages.length - 1];
+
+  const fetchMessages = useCallback(
+    async (startId?: IdType) => {
+      const response =
+        selectedItem.type === 'friend'
+          ? await getFriendMessages(selectedItem.contact.id, startId)
+          : await getStrangerMessages(selectedItem.contact.id, startId);
+      return response.code === 200 ? response.content : [];
+    },
+    [selectedItem.contact.id, selectedItem.type]
+  );
 
   return (
     <div className="PrivateChatView">
@@ -18,7 +36,7 @@ export default function PrivateChatView({ selectedItem }: PrivateChatViewProps) 
           {getDisplayTimestamp(lastMessage.timestamp)}
         </span>
       </div>
-      <ChatControl />
+      <ChatControl fetchAsync={fetchMessages} />
     </div>
   );
 }
