@@ -1,6 +1,6 @@
 import MainTabHeader from './main-tab-header';
-import { ReactComponent as PersonIcon } from 'images/person.svg';
-import { ReactComponent as GroupIcon } from 'images/group.svg';
+import { ReactComponent as ChatIcon } from 'images/chat.svg';
+import { ReactComponent as ContactIcon } from 'images/contact.svg';
 import { useRecoilValueLoadable } from 'recoil';
 import { userInfoState } from 'models/basic-models';
 
@@ -19,14 +19,14 @@ export default function MainTabHeaderPanel({
     <div className="MainTabHeaderPanel">
       <div className="MainTabHeaderPanel__tabHeaderContainer top">
         <MainTabHeader
-          icon={<PersonIcon />}
-          title="Person"
+          icon={<ChatIcon />}
+          title="Chat"
           selected={selectedIndex === 0}
           onClick={() => setSelectedIndex(0)}
         />
         <MainTabHeader
-          icon={<GroupIcon />}
-          title="Group"
+          icon={<ContactIcon />}
+          title="Contact"
           selected={selectedIndex === 1}
           onClick={() => setSelectedIndex(1)}
         />
