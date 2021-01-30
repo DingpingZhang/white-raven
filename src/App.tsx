@@ -1,3 +1,4 @@
+import { GlobalContextRoot } from 'models/global-context';
 import { useEffect } from 'react';
 import { DialogHost } from './components/dialog';
 import { SwitchHost } from './components/switch-host';
@@ -9,11 +10,13 @@ function App() {
   }, []);
 
   return (
-    <DialogHost>
-      <SwitchHost>
-        <WindowContent />
-      </SwitchHost>
-    </DialogHost>
+    <GlobalContextRoot>
+      <DialogHost>
+        <SwitchHost>
+          <WindowContent />
+        </SwitchHost>
+      </DialogHost>
+    </GlobalContextRoot>
   );
 }
 

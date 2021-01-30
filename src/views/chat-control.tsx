@@ -1,8 +1,9 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useContext, useRef } from 'react';
 import InfiniteScrollingListBox, { FetchItemsType } from 'components/infinite-scrolling-list-box';
 import BasicMessage from './messages/basic-message';
 import MessageSendBox from './messages/message-send-box';
 import { IdType, Message } from 'api';
+import { GlobalContext } from 'models/global-context';
 
 type Props = {
   fetchAsync: (startId?: IdType) => Promise<ReadonlyArray<Message>>;
@@ -10,6 +11,7 @@ type Props = {
 
 export default function ChatControl({ fetchAsync }: Props) {
   const earliestMessageIdRef = useRef<IdType | undefined>(undefined);
+  const { id: currentUserId } = useContext(GlobalContext);
   const renderMessage = useCallback(
     async (type: FetchItemsType) => {
       if (type === 'next') return [];
@@ -25,10 +27,11 @@ export default function ChatControl({ fetchAsync }: Props) {
           senderId={senderId}
           content={content}
           timestamp={timestamp}
+          highlight={senderId === currentUserId}
         />
       ));
     },
-    [fetchAsync]
+    [currentUserId, fetchAsync]
   );
 
   return (
