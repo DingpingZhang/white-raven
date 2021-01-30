@@ -22,7 +22,7 @@
     }
 
     .SessionItem__subtitle {
-      color: var(--fore-on-primary-primary-color);
+      color: var(--fore-on-primary-subtle-color);
     }
 
     .SessionItem__message {
@@ -60,7 +60,7 @@
   .SessionItem__subtitle {
     grid-area: 3 / 5 / 4 / 6;
 
-    color: var(--fore-secondary-color);
+    color: var(--fore-subtle-color);
     font-size: 10px;
     align-self: center;
   }
