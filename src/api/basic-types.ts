@@ -100,7 +100,7 @@ export type GroupSession = SessionBase & {
   contact: GroupInfo;
 };
 
-export type Session = FriendSession | StrangerSession | GroupSession;
+export type SessionInfo = FriendSession | StrangerSession | GroupSession;
 
 // ***************************************************
 // Request

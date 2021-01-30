@@ -1,10 +1,10 @@
-import { FriendSession, GroupSession, Session, StrangerSession } from 'api';
+import { FriendSession, GroupSession, SessionInfo, StrangerSession } from 'api';
 import { uuidv4 } from 'helpers';
 import { getMockItems } from './common';
 import { getMockFriends, getMockGroups, getMockStrangers } from './contact';
 import { getMockMessages } from './message';
 
-export function getMockSessions(count: number): ReadonlyArray<Session> {
+export function getMockSessions(count: number): ReadonlyArray<SessionInfo> {
   const friendCount = Math.random() * count;
   const strangerCount = Math.random() * (count - friendCount);
   const groupCount = count - friendCount - strangerCount;

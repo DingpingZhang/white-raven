@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getSessions, IdType, Session } from 'api';
+import { getSessions, IdType, SessionInfo } from 'api';
 import { Switch } from 'components/switch';
 import { useNavigator } from 'components/switch-host';
 import { SWITCH_NAME } from './constants';
@@ -11,7 +11,7 @@ import { useHttpApi } from 'hooks/use-async-value';
 
 export default function ChatTabContent() {
   const sessionList = useHttpApi(getSessions, []);
-  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  const [selectedSession, setSelectedSession] = useState<SessionInfo | null>(null);
 
   useEffect(() => {
     if (sessionList.length) {
@@ -41,7 +41,7 @@ export default function ChatTabContent() {
           contentProvider={{
             isValidLabel: (id) => sessionList.some((item) => item.contact.id === id),
             getRenderer: () => (props) => {
-              const session = props as Session;
+              const session = props as SessionInfo;
               switch (session.type) {
                 case 'friend':
                 case 'stranger':

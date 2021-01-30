@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Session } from 'inspector';
 import {
   Err,
   FriendInfo,
@@ -11,6 +10,7 @@ import {
   MessageResponse,
   Ok,
   PersonInfo,
+  SessionInfo,
   StrangerInfo,
 } from './basic-types';
 
@@ -40,7 +40,7 @@ export async function getUserInfo() {
 }
 
 export async function getSessions() {
-  return get<ReadonlyArray<Session>>('sessions');
+  return get<ReadonlyArray<SessionInfo>>('sessions');
 }
 
 // ********************************************************

@@ -1,13 +1,13 @@
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import SessionItem from './session-item';
 import SearchBox from './search-box';
-import { Session } from 'api';
+import { SessionInfo } from 'api';
 import { useState } from 'react';
 
 type ContactListControlProps = {
-  selectedItem: Session | null;
-  setSelectedItem: (value: Session) => void;
-  items: ReadonlyArray<Session>;
+  selectedItem: SessionInfo | null;
+  setSelectedItem: (value: SessionInfo) => void;
+  items: ReadonlyArray<SessionInfo>;
 };
 
 export default function SessionListControl({
