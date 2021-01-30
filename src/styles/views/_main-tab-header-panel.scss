@@ -25,11 +25,9 @@
     @include common.gap(40px, 0);
   }
 
-  .MainTabHeaderPanel__tabHeaderContainer.bottom .MainTabHeaderPanel__avatar {
-    @include common.circle(36px);
-    justify-self: center;
-    align-self: center;
-    margin: 8px 0;
+  .MainTabHeaderPanel__tabHeaderContainer.bottom {
+    justify-items: center;
+    align-items: center;
   }
 
   .MainTabHeader {
@@ -64,7 +62,8 @@
       font-size: 10px;
     }
 
-    &.selected {
+    &.selected,
+    &:hover {
       .MainTabHeader__decorativeElement {
         display: inline-block;
       }

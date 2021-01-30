@@ -23,7 +23,7 @@ export default function MainTabHeader({
   });
   return (
     <div className={mainTabHeaderClass} onClick={() => onClick && onClick()}>
-      <div className="MainTabHeader__decorativeElement"></div>
+      {/* <div className="MainTabHeader__decorativeElement"></div> */}
       {typeof icon === 'string' ? (
         <img className="MainTabHeader__icon" src={icon} alt="icon" />
       ) : (

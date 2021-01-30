@@ -1,51 +1,36 @@
-import { useEffect, useMemo, useState } from 'react';
-import { CaseItem, convertToContentProvider, Switch } from 'components/switch';
-import { useNavigator } from 'components/switch-host';
-import ChatTabContent from './chat-tab-content';
-import { MainWindowViewName, SWITCH_NAME } from './constants';
 import MainTabHeaderPanel from './main-tab-header-panel';
+import ChatTabContent from './chat-tab-content';
+import MainTabHeader from './main-tab-header';
+import { ReactComponent as ChatIcon } from 'images/chat.svg';
+import { ReactComponent as ContactIcon } from 'images/contact.svg';
+import { useRecoilValueLoadable } from 'recoil';
+import { userInfoState } from 'models/basic-models';
+import CircleIcon from 'components/circle-icon';
 
 export default function WindowContent() {
-  const mainWindowNavigator = useNavigator<MainWindowViewName>(SWITCH_NAME.MAIN);
-  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-  useEffect(() => mainWindowNavigator(convertIndexToViewName(selectedTabIndex)), [
-    mainWindowNavigator,
-    selectedTabIndex,
-  ]);
-
-  const mainWindowCases = useMemo<CaseItem<MainWindowViewName>[]>(
-    () => [
-      { label: 'chat-tab', renderer: () => <ChatTabContent /> },
-      { label: 'contact-tab', renderer: () => <div>TODO</div> },
-    ],
-    []
-  );
+  const userInfoLoadable = useRecoilValueLoadable(userInfoState);
 
   return (
     <div className="WindowContent">
       <div className="WindowContent__tabHeaderPanel">
         <MainTabHeaderPanel
-          selectedIndex={selectedTabIndex}
-          setSelectedIndex={setSelectedTabIndex}
+          topHeaders={[
+            <MainTabHeader icon={<ChatIcon />} title="Chat" selected />,
+            <MainTabHeader icon={<ContactIcon />} title="Contact" />,
+          ]}
+          bottomHeaders={[
+            <CircleIcon
+              icon={
+                userInfoLoadable.state === 'hasValue' ? userInfoLoadable.contents.avatar : undefined
+              }
+              diameter={36}
+            />,
+          ]}
         />
       </div>
       <div className="WindowContent__tabContent">
-        <Switch<MainWindowViewName>
-          name={SWITCH_NAME.MAIN}
-          contentProvider={convertToContentProvider(mainWindowCases)}
-          // animation={{ className: 'float-in-out-rtl', timeout: 200 }}
-        />
+        <ChatTabContent />
       </div>
     </div>
   );
-}
-
-function convertIndexToViewName(index: number): MainWindowViewName {
-  switch (index) {
-    case 0:
-    default:
-      return 'chat-tab';
-    case 1:
-      return 'contact-tab';
-  }
 }
