@@ -1,4 +1,4 @@
-import { FriendInfo, getFriendInfos, GroupInfo } from 'api';
+import { FriendInfo, getFriendInfos, getGroupInfos, GroupInfo } from 'api';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import { useHttpApi } from 'hooks/use-async-value';
 import { useMemo, useState } from 'react';
@@ -19,11 +19,15 @@ export function buildContactDialog(close: OnClose) {
 
 export default function ContactDialog({ close }: Props) {
   const friendInfos = useHttpApi(getFriendInfos, []);
+  const groupInfos = useHttpApi(getGroupInfos, []);
+
   const [queriesText, setQueriesText] = useState('');
-  const filteredFirendInfos = useMemo(
+  const contactInfos = useMemo(() => [...friendInfos, ...groupInfos], [friendInfos, groupInfos]);
+
+  const filteredcontactInfos = useMemo(
     () =>
-      friendInfos.filter((item) => (queriesText ? item.name.includes(queriesText) : friendInfos)),
-    [friendInfos, queriesText]
+      contactInfos.filter((item) => (queriesText ? item.name.includes(queriesText) : contactInfos)),
+    [contactInfos, queriesText]
   );
 
   return (
@@ -31,9 +35,9 @@ export default function ContactDialog({ close }: Props) {
       <div className="ContactDialog">
         <SearchBox text={queriesText} setText={setQueriesText} />
         <VirtualizingListBox
-          sizeProvider={{ itemSize: 40, itemCount: filteredFirendInfos.length }}
+          sizeProvider={{ itemSize: 40, itemCount: filteredcontactInfos.length }}
           renderItems={(startIndex, endIndex) =>
-            filteredFirendInfos
+            filteredcontactInfos
               .slice(startIndex, endIndex)
               .map((item) => (
                 <ContactItem
