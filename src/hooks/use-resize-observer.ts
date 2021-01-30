@@ -18,9 +18,13 @@ export function useResizeObserver<T extends HTMLElement>(
 
     if (window.ResizeObserver) {
       log('debug', 'The current browser is support the ResizeObserver.');
+      let cancel = false;
       const resizeObserver = new ResizeObserver((entities) =>
         // Ref: https://stackoverflow.com/a/58701523/9078911
         window.requestAnimationFrame(() => {
+          // [BUGFIX]: Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in a useEffect cleanup function.
+          if (cancel) return;
+
           const entity = entities[0];
           callback({
             width: entity.contentRect.width,
@@ -35,7 +39,10 @@ export function useResizeObserver<T extends HTMLElement>(
         height: target.offsetHeight,
       });
 
-      return () => resizeObserver.disconnect();
+      return () => {
+        cancel = true;
+        resizeObserver.disconnect();
+      };
     } else {
       // Fall back to resize event.
       log('debug', 'Fallback to resize event.');
