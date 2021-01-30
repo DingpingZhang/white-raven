@@ -16,7 +16,7 @@
   }
 
   .CircleButton__icon {
-    fill: var(--text-2-color);
+    fill: var(--fore-secondary-color);
     align-self: center;
   }
 
@@ -28,7 +28,7 @@
     @include common.circle(40px);
 
     .CircleButton__icon {
-      fill: var(--text-on-primary-0-color);
+      fill: var(--fore-on-primary-title-color);
     }
 
     background-color: var(--primary-color);

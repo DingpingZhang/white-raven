@@ -21,14 +21,14 @@
     border-radius: 4px 16px 16px 16px;
     border: var(--default-border);
     background-color: var(--background-color);
-    color: var(--text-1-color);
+    color: var(--fore-primary-color);
     padding: 12px;
 
     font-size: 12px;
     line-height: 18px;
 
     &.highlight {
-      color: var(--text-on-primary-1-color);
+      color: var(--fore-on-primary-primary-color);
       background-color: var(--primary-color);
     }
 
@@ -69,6 +69,6 @@
     grid-area: 3 / 3 / 4 / 4;
 
     font-size: 10px;
-    color: var(--text-2-color);
+    color: var(--fore-secondary-color);
   }
 }

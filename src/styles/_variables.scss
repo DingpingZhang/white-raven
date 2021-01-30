@@ -1,15 +1,20 @@
 :root {
+  // Basic colros:
   --background-color: #f8f9fc;
   --surface-color: #ffffff;
   --primary-color: #3464ff;
   --secondary-color: #f16397;
 
-  --text-0-color: #4d4e6d;
-  --text-1-color: #5b5e69;
-  --text-2-color: #8a929f;
-  --text-on-primary-0-color: #ffffff;
-  --text-on-primary-1-color: #f8f9fc;
-  --text-on-primary-2-color: #c1c4d3;
+  // Foreground colors: text, icon
+  --fore-title-color: #4d4e6d;
+  --fore-primary-color: #5b5e69;
+  --fore-secondary-color: #8a929f;
+  --fore-subtle-color: #bfbfbf;
+  --fore-disable-color: #bfbfbf;
+
+  --fore-on-primary-title-color: #ffffff;
+  --fore-on-primary-primary-color: #dee3f0;
+  --fore-on-primary-secondary-color: #9ea3bb;
 
   --border-color: #f2f4f8;
   --default-border: 1px solid var(--border-color);

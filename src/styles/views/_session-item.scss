@@ -18,15 +18,15 @@
     background-color: var(--primary-color);
 
     .SessionItem__title {
-      color: var(--text-on-primary-0-color);
+      color: var(--fore-on-primary-title-color);
     }
 
     .SessionItem__subtitle {
-      color: var(--text-on-primary-1-color);
+      color: var(--fore-on-primary-primary-color);
     }
 
     .SessionItem__message {
-      color: var(--text-on-primary-2-color);
+      color: var(--fore-on-primary-secondary-color);
     }
   }
 
@@ -52,7 +52,7 @@
   .SessionItem__title {
     grid-area: 1 / 5 / 2 / 6;
 
-    color: var(--text-1-color);
+    color: var(--fore-primary-color);
     font-size: 12px;
     align-self: center;
   }
@@ -60,7 +60,7 @@
   .SessionItem__subtitle {
     grid-area: 3 / 5 / 4 / 6;
 
-    color: var(--text-2-color);
+    color: var(--fore-secondary-color);
     font-size: 10px;
     align-self: center;
   }
@@ -68,7 +68,7 @@
   .SessionItem__message {
     grid-area: 5 / 3 / 6 / 6;
 
-    color: var(--text-2-color);
+    color: var(--fore-secondary-color);
     font-size: 10px;
   }
 }

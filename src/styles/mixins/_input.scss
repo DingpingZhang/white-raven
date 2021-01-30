@@ -7,10 +7,10 @@
   align-self: center;
   background: transparent;
   margin: 0 16px;
-  color: var(--text-primary-color);
+  color: var(--fore-secondary-color);
   cursor: text;
 
   &::placeholder {
-    color: var(--text-secondary-color);
+    color: var(--fore-subtle-color);
   }
 }

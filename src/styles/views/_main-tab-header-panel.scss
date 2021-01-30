@@ -51,8 +51,8 @@
     .MainTabHeader__icon {
       grid-area: 1 / 1 / 2 / 3;
 
-      color: var(--text-1-color);
-      fill: var(--text-1-color);
+      color: var(--fore-primary-color);
+      fill: var(--fore-primary-color);
       width: 24px;
       height: 24px;
     }
@@ -60,7 +60,7 @@
     .MainTabHeader__title {
       grid-area: 3 / 1 / 4 / 3;
 
-      color: var(--text-1-color);
+      color: var(--fore-primary-color);
       font-size: 10px;
     }
 
