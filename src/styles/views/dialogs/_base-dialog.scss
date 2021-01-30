@@ -1,0 +1,49 @@
+@use '../../mixins/button';
+
+.BaseDialog {
+  display: grid;
+  grid-template-rows: auto 16px 1fr;
+
+  border-radius: 8px;
+  border: var(--default-border);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
+  background-color: var(--surface-color);
+  padding: 12px;
+  min-width: 200px;
+  min-height: 300px;
+
+  .BaseDialog__titleBar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    justify-items: center;
+
+    .BaseDialog__title {
+      color: var(--fore-primary-color);
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .BaseDialog__btnClose {
+      grid-column: 3 / 4;
+
+      @include button.non-style-button();
+      width: 16px;
+      height: 16px;
+
+      .BaseDialog__iconClose {
+        fill: var(--fore-primary-color);
+        width: 16px;
+        height: 16px;
+
+        &:hover {
+          fill: var(--fore-secondary-color);
+        }
+      }
+    }
+  }
+
+  .BaseDialog__content {
+    grid-row: 3 / 4;
+    display: grid;
+  }
+}

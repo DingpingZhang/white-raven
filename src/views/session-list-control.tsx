@@ -2,6 +2,7 @@ import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import SessionItem from './session-item';
 import SearchBox from './search-box';
 import { Session } from 'api';
+import { useState } from 'react';
 
 type ContactListControlProps = {
   selectedItem: Session | null;
@@ -14,9 +15,11 @@ export default function SessionListControl({
   setSelectedItem,
   items,
 }: ContactListControlProps) {
+  const [searchText, setSearchText] = useState('');
+
   return (
     <div className="SessionListControl">
-      <SearchBox />
+      <SearchBox text={searchText} setText={setSearchText} />
       <VirtualizingListBox
         sizeProvider={{ itemSize: 108, itemCount: items.length }}
         renderItems={(startIndex, endIndex) =>

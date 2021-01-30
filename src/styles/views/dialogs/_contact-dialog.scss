@@ -1,0 +1,10 @@
+.ContactDialog {
+  display: grid;
+  grid-template-rows: auto 16px 1fr;
+  width: 300px;
+  height: 500px;
+
+  > .VirtualizingListBox {
+    grid-row: 3 / 4;
+  }
+}

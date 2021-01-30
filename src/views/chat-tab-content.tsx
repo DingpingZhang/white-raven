@@ -1,18 +1,24 @@
-import { useEffect } from 'react';
-import { useRecoilValue, useRecoilState } from 'recoil';
-import { IdType, Session } from 'api';
+import { useEffect, useState } from 'react';
+import { getSessions, IdType, Session } from 'api';
 import { Switch } from 'components/switch';
 import { useNavigator } from 'components/switch-host';
-import { sessionListState, selectedSessionState } from 'models/basic-models';
 import { SWITCH_NAME } from './constants';
 import GroupChatView from './group-chat-view';
 import PrivateChatView from './private-chat-view';
 import SessionListControl from './session-list-control';
 import React from 'react';
+import { useHttpApi } from 'hooks/use-async-value';
 
 export default function ChatTabContent() {
-  const sessionList = useRecoilValue(sessionListState);
-  const [selectedSession, setSelectedSession] = useRecoilState(selectedSessionState);
+  const sessionList = useHttpApi(getSessions, []);
+  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    if (sessionList.length) {
+      setSelectedSession(sessionList[0]);
+    }
+  }, [sessionList]);
+
   const chatAreaNavigator = useNavigator(SWITCH_NAME.CHAT_AREA);
   useEffect(() => {
     if (selectedSession) {
@@ -22,34 +28,32 @@ export default function ChatTabContent() {
 
   return (
     <div className="ChatTabContent">
-      <React.Suspense fallback={<div>Loading...</div>}>
-        <div className="ChatTabContent__sessionListArea">
-          <SessionListControl
-            selectedItem={selectedSession}
-            setSelectedItem={setSelectedSession}
-            items={sessionList}
-          />
-        </div>
-        <div className="ChatTabContent__chatArea">
-          <Switch<IdType>
-            name={SWITCH_NAME.CHAT_AREA}
-            contentProvider={{
-              isValidLabel: (id) => sessionList.some((item) => item.contact.id === id),
-              getRenderer: () => (props) => {
-                const session = props as Session;
-                switch (session.type) {
-                  case 'friend':
-                  case 'stranger':
-                    return <PrivateChatView selectedItem={session} />;
-                  case 'group':
-                    return <GroupChatView selectedItem={session} />;
-                }
-              },
-            }}
-            // animation={{ className: 'float-in-out-rtl', timeout: 200 }}
-          />
-        </div>
-      </React.Suspense>
+      <div className="ChatTabContent__sessionListArea">
+        <SessionListControl
+          selectedItem={selectedSession}
+          setSelectedItem={setSelectedSession}
+          items={sessionList}
+        />
+      </div>
+      <div className="ChatTabContent__chatArea">
+        <Switch<IdType>
+          name={SWITCH_NAME.CHAT_AREA}
+          contentProvider={{
+            isValidLabel: (id) => sessionList.some((item) => item.contact.id === id),
+            getRenderer: () => (props) => {
+              const session = props as Session;
+              switch (session.type) {
+                case 'friend':
+                case 'stranger':
+                  return <PrivateChatView selectedItem={session} />;
+                case 'group':
+                  return <GroupChatView selectedItem={session} />;
+              }
+            },
+          }}
+          // animation={{ className: 'float-in-out-rtl', timeout: 200 }}
+        />
+      </div>
     </div>
   );
 }

@@ -1,0 +1,23 @@
+.ContactItem {
+  display: grid;
+  grid-template-columns: auto 16px 1fr;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  align-items: center;
+
+  background-color: var(--surface-color);
+
+  &:hover {
+    background-color: var(--background-color);
+  }
+
+  .ContactItem__name {
+    grid-column: 3 / 4;
+
+    color: var(--fore-secondary-color);
+    font-size: 12px;
+    cursor: pointer;
+  }
+}

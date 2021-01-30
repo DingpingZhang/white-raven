@@ -12,6 +12,8 @@
     grid-row-start: 1;
     grid-row-end: 2;
 
+    display: grid;
+
     &.blur {
       filter: blur(2px);
     }

@@ -3,4 +3,9 @@
   grid-template-rows: auto 1fr;
 
   height: 100%;
+
+  > .SearchBox {
+    margin-right: 12px;
+    margin-bottom: 32px;
+  }
 }

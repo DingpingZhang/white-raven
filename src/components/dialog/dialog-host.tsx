@@ -1,6 +1,6 @@
 import React, { ReactNode, createContext, useState, useContext, useRef, useMemo } from 'react';
 import classNames from 'classnames';
-import { uuidv4 } from 'helpers';
+import { uuidv4 } from '../../helpers';
 import DialogManager from './dialog-manager';
 
 interface DialogHostProps {
