@@ -1,25 +1,35 @@
 import classNames from 'classnames';
 import { toDisplayTimestamp } from 'helpers';
-import { Message, MessageSegment } from 'api';
-import { getAvatarById } from './common';
+import { MessageContent, MessageSegment } from 'api';
 import { DialogBuilder, useDialogBuilder } from 'components/dialog';
 import ImageExplorerDialog from 'views/dialogs/image-explorer-dialog';
+import { useAsyncValue } from 'hooks/use-async-value';
 
-export type BasicMessageProps = Message & {
+export type BasicMessageProps = {
+  avatar: string;
+  content: MessageContent;
+  timestamp: number;
+  getSenderName: () => Promise<string>;
   highlight?: boolean;
 };
 
 export default function BasicMessage({
-  senderId,
+  avatar,
   content,
   timestamp,
+  getSenderName,
   highlight,
 }: BasicMessageProps) {
   const dialogBuilder = useDialogBuilder();
   const messageBoxClass = classNames('BasicMessage__messageArea', { highlight });
+  const senderName = useAsyncValue(getSenderName, '');
+
   return (
     <div className="BasicMessage">
-      <img className="BasicMessage__avatar" src={getAvatarById(senderId)} alt="avatar" />
+      {senderName ? (
+        <span className="BasicMessage__senderName text tip-secondary">{senderName}</span>
+      ) : null}
+      <img className="BasicMessage__avatar" src={avatar} alt="avatar" />
       <div className={messageBoxClass}>
         <div className="BasicMessage__messageContent">
           {content.map((message, index) => convertToHtmlElement(message, index, dialogBuilder))}
@@ -30,7 +40,11 @@ export default function BasicMessage({
   );
 }
 
-function convertToHtmlElement(message: MessageSegment, index: number) {
+function convertToHtmlElement(
+  message: MessageSegment,
+  index: number,
+  dialogBuilder: DialogBuilder
+) {
   switch (message.type) {
     case 'text':
       return (

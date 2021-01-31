@@ -4,12 +4,14 @@ import BasicMessage from './messages/basic-message';
 import MessageSendBox from './messages/message-send-box';
 import { IdType, Message } from 'api';
 import { GlobalContext } from 'models/global-context';
+import { getAvatarById } from './messages/common';
 
 type Props = {
   fetchAsync: (startId?: IdType) => Promise<ReadonlyArray<Message>>;
+  getSenderNameById?: (id: IdType) => Promise<string>;
 };
 
-export default function ChatControl({ fetchAsync }: Props) {
+export default function ChatControl({ fetchAsync, getSenderNameById }: Props) {
   const earliestMessageIdRef = useRef<IdType | undefined>(undefined);
   const { id: currentUserId } = useContext(GlobalContext);
   const renderMessage = useCallback(
@@ -23,15 +25,15 @@ export default function ChatControl({ fetchAsync }: Props) {
       return messages.map(({ id, senderId, content, timestamp }) => (
         <BasicMessage
           key={id}
-          id={id}
-          senderId={senderId}
+          avatar={getAvatarById(id)}
           content={content}
           timestamp={timestamp}
           highlight={senderId === currentUserId}
+          getSenderName={async () => (getSenderNameById ? await getSenderNameById(senderId) : '')}
         />
       ));
     },
-    [currentUserId, fetchAsync]
+    [currentUserId, fetchAsync, getSenderNameById]
   );
 
   return (

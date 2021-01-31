@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { getGroupMembers, getGroupMessages, GroupSession, IdType } from 'api';
+import { getGroupMember, getGroupMembers, getGroupMessages, GroupSession, IdType } from 'api';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import { toDisplayTimestamp } from 'helpers';
 import ChatControl from './chat-control';
@@ -24,6 +24,13 @@ export default function GroupChatView({ selectedItem }: GroupChatViewProps) {
     },
     [selectedItem.contact.id]
   );
+  const getGroupMemberNameById = useCallback(
+    async (memberId: IdType) => {
+      const response = await getGroupMember(selectedItem.contact.id, memberId);
+      return response.code === 200 ? response.content.name : '';
+    },
+    [selectedItem.contact.id]
+  );
   const { $t } = useI18n();
 
   return (
@@ -40,7 +47,7 @@ export default function GroupChatView({ selectedItem }: GroupChatViewProps) {
             {toDisplayTimestamp(lastMessage.timestamp)}
           </span>
         </div>
-        <ChatControl fetchAsync={fetchMessages} />
+        <ChatControl fetchAsync={fetchMessages} getSenderNameById={getGroupMemberNameById} />
       </div>
       <div className="GroupChatView__infoArea">
         <div className="GroupChatView__infoCard">

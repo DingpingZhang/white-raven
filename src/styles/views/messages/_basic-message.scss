@@ -3,20 +3,26 @@
 .BasicMessage {
   display: grid;
   grid-template-columns: auto 12px auto 1fr;
-  grid-template-rows: auto 4px auto;
+  grid-template-rows: auto auto 4px auto;
   margin: 0 28px;
   padding: 10px 0;
   box-sizing: border-box;
 
+  .BasicMessage__senderName {
+    grid-area: 1 / 3 / 2 / 4;
+
+    margin-bottom: 4px;
+  }
+
   .BasicMessage__avatar {
-    grid-area: 1 / 1 / 2 / 2;
+    grid-area: 1 / 1 / 5 / 2;
 
     @include common.circle(24px);
     align-self: start;
   }
 
   .BasicMessage__messageArea {
-    grid-area: 1 / 3 / 2 / 4;
+    grid-area: 2 / 3 / 3 / 4;
 
     border-radius: 4px 16px 16px 16px;
     border: var(--default-border);
@@ -66,7 +72,7 @@
   }
 
   .BasicMessage__timestamp {
-    grid-area: 3 / 3 / 4 / 4;
+    grid-area: 4 / 3 / 5 / 4;
 
     font-size: 10px;
     color: var(--fore-secondary-color);

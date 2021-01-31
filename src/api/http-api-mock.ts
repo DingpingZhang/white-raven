@@ -1,5 +1,10 @@
 import axios from 'axios';
-import { getMockFriends, getMockGroupMembers, getMockGroups } from 'mocks/contact';
+import {
+  getMockFriends,
+  getMockGroupMembers,
+  getMockGroups,
+  getMockStrangers,
+} from 'mocks/contact';
 import { getMockMessages } from 'mocks/message';
 import { getMockSessions } from 'mocks/session';
 import {
@@ -75,7 +80,7 @@ export async function getFriendMessages(id: IdType, startId?: IdType) {
 }
 
 export async function getStrangerInfo(id: IdType) {
-  return getMockResult(getMockMessages(20));
+  return getMockResult(getMockStrangers(1)[0]);
 }
 
 export async function getStrangerMessage(id: IdType, messageId: IdType) {
@@ -107,7 +112,7 @@ export async function getGroupInfos() {
 }
 
 export async function getGroupMember(id: IdType, memberId: IdType) {
-  return get<GroupMemberInfo>(`group/${id}/member/${memberId}`);
+  return getMockResult(getMockGroupMembers(1)[0]);
 }
 
 export async function getGroupMembers(id: IdType) {
