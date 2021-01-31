@@ -2,16 +2,17 @@ import React, { useCallback, useContext, useRef } from 'react';
 import InfiniteScrollingListBox, { FetchItemsType } from 'components/infinite-scrolling-list-box';
 import BasicMessage from './messages/basic-message';
 import MessageSendBox from './messages/message-send-box';
-import { IdType, Message } from 'api';
+import { IdType, Message, MessageContent } from 'api';
 import { GlobalContext } from 'models/global-context';
 import { getAvatarById } from './messages/common';
 
 type Props = {
   fetchAsync: (startId?: IdType) => Promise<ReadonlyArray<Message>>;
+  sendMessage: (message: MessageContent) => Promise<Message | null>;
   getSenderNameById?: (id: IdType) => Promise<string>;
 };
 
-export default function ChatControl({ fetchAsync, getSenderNameById }: Props) {
+export default function ChatControl({ fetchAsync, sendMessage, getSenderNameById }: Props) {
   const earliestMessageIdRef = useRef<IdType | undefined>(undefined);
   const { id: currentUserId } = useContext(GlobalContext);
   const renderMessage = useCallback(
@@ -42,7 +43,17 @@ export default function ChatControl({ fetchAsync, getSenderNameById }: Props) {
         <InfiniteScrollingListBox renderItems={renderMessage} />
       </div>
       <div className="ChatControl__inputBox">
-        <MessageSendBox />
+        <MessageSendBox
+          sendMessage={async (content) => {
+            const message = await sendMessage(content);
+            if (message) {
+              // TODO: Add message to message list.
+              return true;
+            } else {
+              return false;
+            }
+          }}
+        />
       </div>
     </div>
   );

@@ -4,8 +4,16 @@ import { ReactComponent as AttachmentIcon } from 'images/attachment.svg';
 import { ReactComponent as FaceIcon } from 'images/face.svg';
 import CircleButton from 'components/circle-button';
 import { useI18n } from 'i18n';
+import { MessageContent } from 'api';
+import { useRef, useState } from 'react';
 
-export default function MessageSendBox() {
+type Props = {
+  sendMessage: (message: MessageContent) => Promise<boolean>;
+};
+
+export default function MessageSendBox({ sendMessage }: Props) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [canSend, setCanSend] = useState(false);
   const { $t } = useI18n();
 
   return (
@@ -17,6 +25,8 @@ export default function MessageSendBox() {
       />
       <div className="MessageSendBox__editArea">
         <input
+          ref={inputRef}
+          onChange={(e) => setCanSend(!!e.target.value)}
           type="text"
           className="MessageSendBox__input"
           placeholder={$t('input.placeholder.writeAMessage')}
@@ -33,7 +43,19 @@ export default function MessageSendBox() {
         />
       </div>
       <div className="MessageSendBox__splitLine vertical"></div>
-      <CircleButton buttonType="primary" className="MessageSendBox__btnSend" icon={<SendIcon />} />
+      <CircleButton
+        buttonType="primary"
+        className="MessageSendBox__btnSend"
+        icon={<SendIcon />}
+        disabled={!canSend}
+        onClick={async () => {
+          if (inputRef.current && inputRef.current.value) {
+            await sendMessage([{ type: 'text', text: inputRef.current.value }]);
+          } else {
+            // TODO: Tip: Don't send empty message.
+          }
+        }}
+      />
     </div>
   );
 }

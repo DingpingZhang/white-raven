@@ -45,9 +45,9 @@ export default function ChatTabContent() {
               switch (session.type) {
                 case 'friend':
                 case 'stranger':
-                  return <PrivateChatView selectedItem={session} />;
+                  return <PrivateChatView session={session} />;
                 case 'group':
-                  return <GroupChatView selectedItem={session} />;
+                  return <GroupChatView session={session} />;
               }
             },
           }}

@@ -20,7 +20,7 @@
     align-self: center;
   }
 
-  &:hover {
+  &:not([disabled]):hover {
     filter: brightness(120%);
   }
 
@@ -32,6 +32,14 @@
     }
 
     background-color: var(--primary-color);
+
+    &[disabled] {
+      background-color: var(--border-color);
+
+      .CircleButton__icon {
+        fill: var(--fore-subtle-color);
+      }
+    }
   }
 
   &.secondary {
