@@ -34,6 +34,7 @@
     background-color: var(--primary-color);
 
     &[disabled] {
+      cursor: default;
       background-color: var(--border-color);
 
       .CircleButton__icon {
