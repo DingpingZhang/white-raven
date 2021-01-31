@@ -3,36 +3,35 @@ import classNames from 'classnames';
 import { Size, useResizeObserver } from 'hooks';
 import ScrollViewer from './scroll-viewer';
 
-/**
- * Gets the size of items with the specified start index and item count.
- * @param count The number of items starting at index 0. The `undefined` indicates the total items.
- * @returns The size of seleced items.
- */
-type GetItemsSize = (count?: number) => number;
-/**
- * Gets the count of items contained in the specified size.
- * @param size The specified size.
- * @param startIndex: An offset of items. `undefined == 0`.
- * @returns The count of fully visible elements in the region.
- */
-type GetItemsCount = (size: number, startIndex?: number) => number;
 type UnfixedSizeProvider = {
-  getItemsSize: GetItemsSize;
-  getItemsCount: GetItemsCount;
+  /**
+   * Gets the size of items with the specified start index and item count.
+   * @param count The number of items starting at index 0. The `-1` indicates the total items.
+   * @returns The size of seleced items.
+   */
+  getItemsSize: (count: number) => number;
+
+  /**
+   * Gets the count of items contained in the specified size.
+   * @param startIndex: An offset of items.
+   * @param size The specified size.
+   * @returns The count of fully visible elements in the region.
+   */
+  getItemsCount: (startIndex: number, size: number) => number;
 };
 type FixedSizeProvider = {
   itemSize: number;
   itemCount: number;
 };
 
-interface VirtualizingListBoxProps {
+type Props = {
   sizeProvider: UnfixedSizeProvider | FixedSizeProvider;
   renderItems: (startIndex: number, endIndex: number) => ReadonlyArray<ReactNode>;
 
   selectedIndex?: number;
   selectable?: boolean;
   setSelectedIndex?: (value: number) => void;
-}
+};
 
 export function VirtualizingListBox({
   sizeProvider,
@@ -40,7 +39,7 @@ export function VirtualizingListBox({
   selectedIndex,
   selectable,
   setSelectedIndex,
-}: VirtualizingListBoxProps) {
+}: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [viewSize, setViewSize] = useState(0);
   const [startIndex, setStartIndex] = useState(0);
@@ -111,7 +110,7 @@ export function VirtualizingListBox({
           <div
             style={{
               position: 'absolute',
-              top: `${getItemsSize(sizeProvider)}px`,
+              top: `${getItemsSize(sizeProvider, -1)}px`,
               height: '1px',
               width: '1px',
             }}
@@ -123,7 +122,7 @@ export function VirtualizingListBox({
   );
 }
 
-function getItemsSize(sizeProvider: UnfixedSizeProvider | FixedSizeProvider, index?: number) {
+function getItemsSize(sizeProvider: UnfixedSizeProvider | FixedSizeProvider, index: number) {
   if (isFixedSizeProvider(sizeProvider)) {
     return (index ?? sizeProvider.itemCount) * sizeProvider.itemSize;
   } else {
@@ -154,8 +153,8 @@ function getItemsRangeForUnfixedItemSize(
   scrollTop: number,
   viewSize: number
 ) {
-  const viewStartIndex = sizeProvider.getItemsCount(scrollTop);
-  const viewCount = sizeProvider.getItemsCount(viewSize, viewStartIndex) + 1;
+  const viewStartIndex = sizeProvider.getItemsCount(0, scrollTop);
+  const viewCount = sizeProvider.getItemsCount(viewStartIndex, viewSize) + 1;
   const extraItemCount = viewCount;
   // Correct the data: add extra items
   const viewEndIndex = viewStartIndex + viewCount;
