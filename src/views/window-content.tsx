@@ -30,7 +30,19 @@ export default function WindowContent() {
               }}
             />,
           ]}
-          bottomHeaders={[<CircleIcon icon={avatar} diameter={36} />]}
+          bottomHeaders={[
+            <CircleIcon
+              icon={avatar}
+              diameter={36}
+              onClick={() => {
+                if (document.body.classList.contains('theme-dark')) {
+                  document.body.classList.remove('theme-dark');
+                } else {
+                  document.body.classList.add('theme-dark');
+                }
+              }}
+            />,
+          ]}
         />
       </div>
       <div className="WindowContent__tabContent">

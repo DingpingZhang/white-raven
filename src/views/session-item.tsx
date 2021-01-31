@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { getDisplayTimestamp } from 'helpers';
+import { toDisplayTimestamp } from 'helpers';
 import { Message, MessageSegment } from 'api';
 
 export type ContactItemProps = {
@@ -31,7 +31,7 @@ export default function SessionItem({
       <span className="SessionItem__redDot"></span>
       <img className="SessionItem__avatar" src={avatar} alt="avatar" />
       <span className="SessionItem__title">{name}</span>
-      <span className="SessionItem__subtitle">{getDisplayTimestamp(lastMessage.timestamp)}</span>
+      <span className="SessionItem__subtitle">{toDisplayTimestamp(lastMessage.timestamp)}</span>
       <span className="SessionItem__message text ellipsis" title={messageSummary.join('')}>
         {messageSummary}
       </span>

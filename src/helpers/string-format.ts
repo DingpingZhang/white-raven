@@ -8,7 +8,7 @@ export function stringFormat(format: string, ...args: Array<Object>) {
 
 const bytesUnits = ['', 'K', 'M', 'G', 'T', 'P', 'E'];
 
-export function getDisplayBytes(bytesLength: number, fractionDigits = 2) {
+export function toDisplayBytes(bytesLength: number, fractionDigits = 2) {
   let unitIndex = 0;
   while (bytesLength > 1024 || Math.abs(bytesLength - 1024) < 1e-6) {
     bytesLength /= 1024;
@@ -18,6 +18,6 @@ export function getDisplayBytes(bytesLength: number, fractionDigits = 2) {
   return `${bytesLength.toFixed(fractionDigits)} ${bytesUnits[unitIndex]}B`;
 }
 
-export function getDisplayTimestamp(timestamp: number) {
+export function toDisplayTimestamp(timestamp: number) {
   return new Date(timestamp).toLocaleString();
 }

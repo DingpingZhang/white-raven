@@ -5,7 +5,7 @@ import {
   IdType,
   StrangerSession,
 } from 'api';
-import { getDisplayTimestamp } from 'helpers';
+import { toDisplayTimestamp } from 'helpers';
 import { useCallback } from 'react';
 import ChatControl from './chat-control';
 
@@ -33,7 +33,7 @@ export default function PrivateChatView({ selectedItem }: PrivateChatViewProps) 
         <img className="PrivateChatView__avatar" src={selectedItem.contact.avatar} alt="avatar" />
         <span className="PrivateChatView__title">{selectedItem.contact.name}</span>
         <span className="PrivateChatView__subtitle">
-          {getDisplayTimestamp(lastMessage.timestamp)}
+          {toDisplayTimestamp(lastMessage.timestamp)}
         </span>
       </div>
       <ChatControl fetchAsync={fetchMessages} />

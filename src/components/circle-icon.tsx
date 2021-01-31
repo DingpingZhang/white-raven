@@ -12,6 +12,7 @@ export default function CircleIcon({ diameter, icon, onClick }: Props) {
     width: `${diameter}px`,
     height: `${diameter}px`,
     borderRadius: `${diameter / 2}px`,
+    cursor: onClick ? 'pointer' : 'default',
   };
 
   return typeof icon === 'string' || icon === undefined ? (

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { getDisplayTimestamp } from 'helpers';
+import { toDisplayTimestamp } from 'helpers';
 import { Message, MessageSegment } from 'api';
 import { getAvatarById } from './common';
 
@@ -20,7 +20,7 @@ export default function BasicMessage({
       <div className={messageBoxClass}>
         <div className="BasicMessage__messageContent">{content.map(convertToHtmlElement)}</div>
       </div>
-      <span className="BasicMessage__timestamp">{getDisplayTimestamp(timestamp)}</span>
+      <span className="BasicMessage__timestamp">{toDisplayTimestamp(timestamp)}</span>
     </div>
   );
 }

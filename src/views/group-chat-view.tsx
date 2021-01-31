@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { getGroupMembers, getGroupMessages, GroupSession, IdType } from 'api';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
-import { getDisplayTimestamp } from 'helpers';
+import { toDisplayTimestamp } from 'helpers';
 import ChatControl from './chat-control';
 import GroupMemberItem from './group-member-item';
 import { useHttpApi } from 'hooks/use-async-value';
@@ -35,7 +35,7 @@ export default function GroupChatView({ selectedItem }: GroupChatViewProps) {
           />
           <span className="GroupChatView__chatTitle">{selectedItem.contact.name}</span>
           <span className="GroupChatView__chatSubtitle">
-            {getDisplayTimestamp(lastMessage.timestamp)}
+            {toDisplayTimestamp(lastMessage.timestamp)}
           </span>
         </div>
         <ChatControl fetchAsync={fetchMessages} />
