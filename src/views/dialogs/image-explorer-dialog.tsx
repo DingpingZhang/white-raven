@@ -1,3 +1,4 @@
+import { useI18n } from 'i18n';
 import BaseDialog from './base-dialog';
 
 type Props = {
@@ -10,8 +11,10 @@ export function buildImageExplorerDialog({ ...props }: Props) {
 }
 
 export default function ImageExplorerDialog({ close, imageUrl }: Props) {
+  const { $t } = useI18n();
+
   return (
-    <BaseDialog title="Image" close={close}>
+    <BaseDialog title={$t('dialog.title.image')} close={close}>
       <div className="ImageExplorerDialog">
         <img src={imageUrl} alt="preview" />
       </div>
