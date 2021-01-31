@@ -21,9 +21,21 @@ export type MessageNotification =
 
 export function onMessage(callback: (message: MessageNotification) => void) {
   const socket = new WebSocket('ws://localhost:9500/api/v1/messages');
-  socket.onmessage = (event) => {
+  socket.onopen = (event) => {
+    console.log('onopen');
     console.log(event);
-    console.log(event.data);
+  };
+  socket.onmessage = (event) => {
+    console.log('onmessage');
+    console.log(event);
     // callback(event.data);
+  };
+  socket.onerror = (event) => {
+    console.log('onerror');
+    console.log(event);
+  };
+  socket.onclose = (event) => {
+    console.log('onclose');
+    console.log(event);
   };
 }
