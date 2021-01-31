@@ -3,7 +3,7 @@ span.text {
   cursor: default;
 
   &.title {
-    color: var(--text-primary-color);
+    color: var(--fore-primary-color);
     font-size: 20px;
     line-height: 20px;
     font-weight: 400;
@@ -11,21 +11,21 @@ span.text {
   }
 
   &.subtitle {
-    color: var(--text-primary-color);
+    color: var(--fore-primary-color);
     font-size: 14px;
     line-height: 20px;
     font-weight: 400;
   }
 
   &.tip {
-    color: var(--text-primary-color);
+    color: var(--fore-primary-color);
     font-size: 12px;
     font-weight: 400;
     line-height: 14px;
   }
 
   &.tip-secondary {
-    color: var(--text-secondary-color);
+    color: var(--fore-secondary-color);
     font-size: 12px;
   }
 

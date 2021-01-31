@@ -9,21 +9,28 @@ import { buildContactDialog } from './dialogs/contact-dialog';
 import { FriendInfo, GroupInfo } from 'api';
 import { GlobalContext } from 'models/global-context';
 import CircleIcon from 'components/circle-icon';
+import { useI18n } from 'i18n';
 
 export default function WindowContent() {
   const contactDialogToken = useDialog<FriendInfo | GroupInfo | null>(buildContactDialog);
   const { avatar } = useContext(GlobalContext);
+  const { $t } = useI18n();
 
   return (
     <div className="WindowContent">
       <div className="WindowContent__tabHeaderPanel">
         <MainTabHeaderPanel
           topHeaders={[
-            <MainTabHeader key="Chat" icon={<ChatIcon />} title="Chat" selected />,
+            <MainTabHeader
+              key="Chat"
+              icon={<ChatIcon />}
+              title={$t('window.tabHeader.chat')}
+              selected
+            />,
             <MainTabHeader
               key="Contact"
               icon={<ContactIcon />}
-              title="Contact"
+              title={$t('window.tabHeader.contact')}
               onClick={async () => {
                 const result = await contactDialogToken.show();
                 console.log(result);

@@ -5,6 +5,7 @@ import { toDisplayTimestamp } from 'helpers';
 import ChatControl from './chat-control';
 import GroupMemberItem from './group-member-item';
 import { useHttpApi } from 'hooks/use-async-value';
+import { useI18n } from 'i18n';
 
 type GroupChatViewProps = {
   selectedItem: GroupSession;
@@ -23,6 +24,7 @@ export default function GroupChatView({ selectedItem }: GroupChatViewProps) {
     },
     [selectedItem.contact.id]
   );
+  const { $t } = useI18n();
 
   return (
     <div className="GroupChatView">
@@ -42,11 +44,18 @@ export default function GroupChatView({ selectedItem }: GroupChatViewProps) {
       </div>
       <div className="GroupChatView__infoArea">
         <div className="GroupChatView__infoCard">
-          <div className="GroupChatView__infoTitle">Group Info</div>
-          <div className="GroupChatView__infoContent"></div>
+          <div className="GroupChatView__infoTitle">
+            <span className="text subtitle">{$t('groupSession.groupInfo')}</span>
+          </div>
+          <div className="GroupChatView__infoContent">
+            <span className="text tip">{selectedItem.contact.description}</span>
+          </div>
         </div>
         <div className="GroupChatView__member">
-          <div className="GroupChatView__memberTitle">Group Members</div>
+          <div className="GroupChatView__memberTitle">
+            <span className="text subtitle">{$t('groupSession.groupInfo')}</span>
+            <span className="text tip-secondary">{`(${groupMembers.length} / ${selectedItem.contact.memberCapacity})`}</span>
+          </div>
           <div className="GroupChatView__memberList">
             <VirtualizingListBox
               sizeProvider={{ itemSize: 32, itemCount: groupMembers.length }}

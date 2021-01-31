@@ -1,6 +1,7 @@
 import { FriendInfo, getFriendInfos, getGroupInfos, GroupInfo } from 'api';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import { useHttpApi } from 'hooks/use-async-value';
+import { useI18n } from 'i18n';
 import { useMemo, useState } from 'react';
 import SearchBox from 'views/search-box';
 import BaseDialog from './base-dialog';
@@ -29,9 +30,10 @@ export default function ContactDialog({ close }: Props) {
       contactInfos.filter((item) => (queriesText ? item.name.includes(queriesText) : contactInfos)),
     [contactInfos, queriesText]
   );
+  const { $t } = useI18n();
 
   return (
-    <BaseDialog title="Contact" close={() => close(null)}>
+    <BaseDialog title={$t('dialog.title.contact')} close={() => close(null)}>
       <div className="ContactDialog">
         <SearchBox text={queriesText} setText={setQueriesText} />
         <VirtualizingListBox

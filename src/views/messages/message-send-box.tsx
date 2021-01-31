@@ -3,8 +3,11 @@ import { ReactComponent as MoreVerticalIcon } from 'images/more-vertical.svg';
 import { ReactComponent as AttachmentIcon } from 'images/attachment.svg';
 import { ReactComponent as FaceIcon } from 'images/face.svg';
 import CircleButton from 'components/circle-button';
+import { useI18n } from 'i18n';
 
 export default function MessageSendBox() {
+  const { $t } = useI18n();
+
   return (
     <div className="MessageSendBox">
       <CircleButton
@@ -13,7 +16,11 @@ export default function MessageSendBox() {
         icon={<AttachmentIcon />}
       />
       <div className="MessageSendBox__editArea">
-        <input type="text" className="MessageSendBox__input" placeholder="Write a message..." />
+        <input
+          type="text"
+          className="MessageSendBox__input"
+          placeholder={$t('input.placeholder.writeAMessage')}
+        />
         <CircleButton
           buttonType="default"
           className="MessageSendBox__btnFace"

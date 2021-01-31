@@ -81,6 +81,9 @@
       .GroupChatView__infoContent {
         height: 200px;
         border-bottom: var(--default-border);
+
+        padding: 20px;
+        box-sizing: border-box;
       }
     }
 
@@ -90,6 +93,18 @@
 
       .GroupChatView__memberTitle {
         @include title-bar-style(48px);
+
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+
+        > span.text:first-child {
+          grid-column: 1 / 2;
+        }
+
+        > span.text:last-child {
+          grid-column: 3 / 4;
+        }
       }
 
       .GroupChatView__memberList {

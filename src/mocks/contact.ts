@@ -88,6 +88,8 @@ export const GROUP_LIST: ReadonlyArray<GroupInfo> = [
     ownerId: '123123412',
     memberCount: 200,
     memberCapacity: 500,
+    description:
+      '的身份缓解缓解夫人维护，返回未婚夫i我会热防护五欸。嘿嘿人法规二位好i共和五日工会；额给红日u额外忽然贵和五日u给会额，外然后贵哦二万户日。',
   },
   {
     id: '8654561561',
