@@ -2,7 +2,7 @@ import { GlobalContextRoot } from 'models/global-context';
 import { useEffect } from 'react';
 import { DialogHost } from './components/dialog';
 import { SwitchHost } from './components/switch-host';
-import WindowContent from './views/window-content';
+import WindowView from './views/window-view';
 
 function App() {
   useEffect(() => {
@@ -13,7 +13,7 @@ function App() {
     <GlobalContextRoot>
       <DialogHost>
         <SwitchHost>
-          <WindowContent />
+          <WindowView />
         </SwitchHost>
       </DialogHost>
     </GlobalContextRoot>

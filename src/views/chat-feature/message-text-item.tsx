@@ -5,7 +5,7 @@ import { DialogBuilder, useDialogBuilder } from 'components/dialog';
 import ImageExplorerDialog from 'views/dialogs/image-explorer-dialog';
 import { useAsyncValue } from 'hooks/use-api';
 
-export type BasicMessageProps = {
+type Props = {
   avatar: string;
   content: MessageContent;
   timestamp: number;
@@ -13,29 +13,29 @@ export type BasicMessageProps = {
   highlight?: boolean;
 };
 
-export default function BasicMessage({
+export default function MessageTextItem({
   avatar,
   content,
   timestamp,
   getSenderName,
   highlight,
-}: BasicMessageProps) {
+}: Props) {
   const dialogBuilder = useDialogBuilder();
-  const messageBoxClass = classNames('BasicMessage__messageArea', { highlight });
+  const messageBoxClass = classNames('MessageTextItem__messageArea', { highlight });
   const senderName = useAsyncValue(getSenderName, '');
 
   return (
-    <div className="BasicMessage">
+    <div className="MessageTextItem">
       {senderName ? (
-        <span className="BasicMessage__senderName text tip-secondary">{senderName}</span>
+        <span className="MessageTextItem__senderName text tip-secondary">{senderName}</span>
       ) : null}
-      <img className="BasicMessage__avatar" src={avatar} alt="avatar" />
+      <img className="MessageTextItem__avatar" src={avatar} alt="avatar" />
       <div className={messageBoxClass}>
-        <div className="BasicMessage__messageContent">
+        <div className="MessageTextItem__messageContent">
           {content.map((message, index) => convertToHtmlElement(message, index, dialogBuilder))}
         </div>
       </div>
-      <span className="BasicMessage__timestamp">{toDisplayTimestamp(timestamp)}</span>
+      <span className="MessageTextItem__timestamp">{toDisplayTimestamp(timestamp)}</span>
     </div>
   );
 }
@@ -48,13 +48,13 @@ function convertToHtmlElement(
   switch (message.type) {
     case 'text':
       return (
-        <span key={`${index}-${message.text}`} className="BasicMessage__msgSegment msgText">
+        <span key={`${index}-${message.text}`} className="MessageTextItem__msgSegment msgText">
           {message.text}
         </span>
       );
     case 'at':
       return (
-        <span key={`${index}-${message.targetId}`} className="BasicMessage__msgSegment msgAt">
+        <span key={`${index}-${message.targetId}`} className="MessageTextItem__msgSegment msgAt">
           @{message.targetId}{' '}
         </span>
       );
@@ -63,7 +63,7 @@ function convertToHtmlElement(
       return (
         <img
           key={`${index}-${message.faceId}`}
-          className="BasicMessage__msgSegment msgFace"
+          className="MessageTextItem__msgSegment msgFace"
           src={imageSource.default}
           alt={`[CQ:face,id=${message.faceId}]`}
         />
@@ -73,7 +73,7 @@ function convertToHtmlElement(
         // eslint-disable-next-line jsx-a11y/img-redundant-alt
         <img
           key={`${index}-${message.url}`}
-          className="BasicMessage__msgSegment msgImage"
+          className="MessageTextItem__msgSegment msgImage"
           src={message.url}
           alt={`[CQ:image,file=${message.url}]`}
           onClick={async () =>

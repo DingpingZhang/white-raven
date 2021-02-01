@@ -1,23 +1,23 @@
 @use '../../mixins/input';
 @use '../../mixins/common';
 
-.MessageSendBox {
+.SenderWidget {
   display: grid;
   grid-template-columns: auto 16px 1fr 16px auto;
   align-items: center;
 
-  .MessageSendBox__btnUpload {
+  .SenderWidget__btnUpload {
     grid-column: 1 / 2;
   }
 
-  .MessageSendBox__editArea {
+  .SenderWidget__editArea {
     grid-column: 3 / 4;
 
     display: grid;
     grid-template-columns: 1fr 8px auto 8px auto 16px;
     align-items: center;
 
-    .MessageSendBox__input {
+    .SenderWidget__input {
       @include input.non-style-input();
 
       grid-column: 1 / 2;
@@ -31,23 +31,23 @@
       background-color: transparent;
     }
 
-    .MessageSendBox__btnFace {
+    .SenderWidget__btnFace {
       grid-column: 3 / 4;
     }
 
-    .MessageSendBox__btnMore {
+    .SenderWidget__btnMore {
       grid-column: 5 / 6;
     }
   }
 
-  .MessageSendBox__splitLine.vertical {
+  .SenderWidget__splitLine.vertical {
     width: 1px;
     height: 30px;
     box-sizing: border-box;
     background-color: var(--border-color);
   }
 
-  .MessageSendBox__btnSend {
+  .SenderWidget__btnSend {
     grid-column: 5 / 6;
   }
 }

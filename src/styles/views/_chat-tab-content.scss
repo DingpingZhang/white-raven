@@ -1,13 +1,13 @@
-.ChatTabContent {
+.ChatView {
   display: grid;
   grid-template-columns: 256px 8px 1fr;
   height: 100%;
 
-  .ChatTabContent__sessionListArea {
+  .ChatView__sessionListArea {
     grid-column: 1 / 2;
   }
 
-  .ChatTabContent__chatArea {
+  .ChatView__chatArea {
     grid-column: 3 / 4;
   }
 }

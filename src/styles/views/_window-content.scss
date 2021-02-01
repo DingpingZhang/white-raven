@@ -1,13 +1,13 @@
-.WindowContent {
+.WindowView {
   display: grid;
   grid-template-columns: auto 28px 1fr;
   margin: 16px;
 
-  .WindowContent__tabHeaderPanel {
+  .WindowView__tabHeaderPanel {
     grid-column: 1 / 2;
   }
 
-  .WindowContent__tabContent {
+  .WindowView__tabContent {
     grid-column: 3 / 4;
   }
 }

@@ -9,7 +9,7 @@ import {
 } from 'api';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import { toDisplayTimestamp } from 'helpers';
-import ChatControl from './chat-control';
+import ChatWidget from './chat-widget';
 import GroupMemberItem from './group-member-item';
 import { useHttpApi } from 'hooks/use-api';
 import { useI18n } from 'i18n';
@@ -52,7 +52,7 @@ export default function GroupChatView({ session }: GroupChatViewProps) {
             {toDisplayTimestamp(lastMessage.timestamp)}
           </span>
         </div>
-        <ChatControl
+        <ChatWidget
           fetchAsync={fetchMessages}
           sendMessage={async (message) => {
             const response = await sendMessageToGroup(session.contact.id, { content: message });

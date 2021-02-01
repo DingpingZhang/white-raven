@@ -1,10 +1,10 @@
-.SessionListControl {
+.SessionListWidget {
   display: grid;
   grid-template-rows: auto 1fr;
 
   height: 100%;
 
-  > .SearchBox {
+  > .SearchWidget {
     margin-right: 12px;
     margin-bottom: 32px;
   }

@@ -1,7 +1,7 @@
 import React, { ReactElement, useCallback, useContext, useEffect, useRef } from 'react';
 import InfiniteScrollingListBox, { FetchItemsType } from 'components/infinite-scrolling-list-box';
-import BasicMessage from './basic-message';
-import MessageSendBox from './message-send-box';
+import MessageTextItem from './message-text-item';
+import SenderWidget from './sender-widget';
 import { IdType, Message, MessageContent } from 'api';
 import { GlobalContext } from 'models/global-context';
 import { getAvatarById } from './common';
@@ -15,7 +15,7 @@ type Props = {
   getSenderNameById?: (id: IdType) => Promise<string>;
 };
 
-export default function ChatControl({ fetchAsync, sendMessage, getSenderNameById }: Props) {
+export default function ChatWidget({ fetchAsync, sendMessage, getSenderNameById }: Props) {
   const earliestMessageIdRef = useRef<IdType | undefined>(undefined);
   const { id: currentUserId } = useContext(GlobalContext);
   const renderMessage = useCallback(
@@ -27,7 +27,7 @@ export default function ChatControl({ fetchAsync, sendMessage, getSenderNameById
 
       earliestMessageIdRef.current = messages[0].id;
       return messages.map(({ id, senderId, content, timestamp }) => (
-        <BasicMessage
+        <MessageTextItem
           key={id}
           avatar={getAvatarById(id)}
           content={content}
@@ -41,13 +41,13 @@ export default function ChatControl({ fetchAsync, sendMessage, getSenderNameById
   );
 
   return (
-    <div className="ChatControl">
-      <div className="ChatControl__messageList">
+    <div className="ChatWidget">
+      <div className="ChatWidget__messageList">
         <InfiniteScrollingListBox renderItems={renderMessage} />
         {/* <MessageList fetchAsync={fetchAsync} getSenderNameById={getSenderNameById} /> */}
       </div>
-      <div className="ChatControl__inputBox">
-        <MessageSendBox
+      <div className="ChatWidget__inputBox">
+        <SenderWidget
           sendMessage={async (content) => {
             const message = await sendMessage(content);
             if (message) {
@@ -145,7 +145,7 @@ function MessageList({ fetchAsync, getSenderNameById }: MessageListProps) {
                   forceUpdate();
                 }}
               >
-                <BasicMessage
+                <MessageTextItem
                   key={id}
                   avatar={getAvatarById(id)}
                   content={content}

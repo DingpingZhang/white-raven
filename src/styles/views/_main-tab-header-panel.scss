@@ -1,6 +1,6 @@
 @use '../mixins/common';
 
-.MainTabHeaderPanel {
+.TabHeaderListWidget {
   display: grid;
   grid-template-rows: auto 1fr auto;
 
@@ -10,7 +10,7 @@
   border: var(--default-border);
   background-color: var(--surface-color);
 
-  .MainTabHeaderPanel__tabHeaderContainer {
+  .TabHeaderListWidget__tabHeaderContainer {
     &.top {
       grid-row: 1 / 2;
     }
@@ -25,19 +25,19 @@
     @include common.gap(40px, 0);
   }
 
-  .MainTabHeaderPanel__tabHeaderContainer.bottom {
+  .TabHeaderListWidget__tabHeaderContainer.bottom {
     justify-items: center;
     align-items: center;
   }
 
-  .MainTabHeader {
+  .TabHeaderItem {
     display: grid;
     grid-template-columns: 4px 1fr;
     grid-template-rows: auto 8px auto;
     justify-items: center;
     cursor: pointer;
 
-    .MainTabHeader__decorativeElement {
+    .TabHeaderItem__decorativeElement {
       grid-area: 1 / 1 / 4 / 2;
 
       display: none;
@@ -46,7 +46,7 @@
       width: 4px;
     }
 
-    .MainTabHeader__icon {
+    .TabHeaderItem__icon {
       grid-area: 1 / 1 / 2 / 3;
 
       color: var(--fore-primary-color);
@@ -55,7 +55,7 @@
       height: 24px;
     }
 
-    .MainTabHeader__title {
+    .TabHeaderItem__title {
       grid-area: 3 / 1 / 4 / 3;
 
       color: var(--fore-primary-color);
@@ -64,16 +64,16 @@
 
     &.selected,
     &:hover {
-      .MainTabHeader__decorativeElement {
+      .TabHeaderItem__decorativeElement {
         display: inline-block;
       }
 
-      .MainTabHeader__icon {
+      .TabHeaderItem__icon {
         color: var(--primary-color);
         fill: var(--primary-color);
       }
 
-      .MainTabHeader__title {
+      .TabHeaderItem__title {
         color: var(--primary-color);
       }
     }

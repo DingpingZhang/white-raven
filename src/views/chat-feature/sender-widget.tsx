@@ -11,41 +11,41 @@ type Props = {
   sendMessage: (message: MessageContent) => Promise<boolean>;
 };
 
-export default function MessageSendBox({ sendMessage }: Props) {
+export default function SenderWidget({ sendMessage }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [canSend, setCanSend] = useState(false);
   const { $t } = useI18n();
 
   return (
-    <div className="MessageSendBox">
+    <div className="SenderWidget">
       <CircleButton
         buttonType="secondary"
-        className="MessageSendBox__btnUpload"
+        className="SenderWidget__btnUpload"
         icon={<AttachmentIcon />}
       />
-      <div className="MessageSendBox__editArea">
+      <div className="SenderWidget__editArea">
         <input
           ref={inputRef}
           onChange={(e) => setCanSend(!!e.target.value)}
           type="text"
-          className="MessageSendBox__input"
+          className="SenderWidget__input"
           placeholder={$t('input.placeholder.writeAMessage')}
         />
         <CircleButton
           buttonType="default"
-          className="MessageSendBox__btnFace"
+          className="SenderWidget__btnFace"
           icon={<FaceIcon />}
         />
         <CircleButton
           buttonType="default"
-          className="MessageSendBox__btnMore"
+          className="SenderWidget__btnMore"
           icon={<MoreVerticalIcon />}
         />
       </div>
-      <div className="MessageSendBox__splitLine vertical"></div>
+      <div className="SenderWidget__splitLine vertical"></div>
       <CircleButton
         buttonType="primary"
-        className="MessageSendBox__btnSend"
+        className="SenderWidget__btnSend"
         icon={<SendIcon />}
         disabled={!canSend}
         onClick={async () => {

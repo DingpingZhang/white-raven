@@ -10,7 +10,7 @@ import {
 import { toDisplayTimestamp } from 'helpers';
 import { GlobalContext } from 'models/global-context';
 import { useCallback, useContext } from 'react';
-import ChatControl from './chat-control';
+import ChatWidget from './chat-widget';
 
 type PrivateChatViewProps = {
   session: FriendSession | StrangerSession;
@@ -40,7 +40,7 @@ export default function PrivateChatView({ session }: PrivateChatViewProps) {
           {toDisplayTimestamp(lastMessage.timestamp)}
         </span>
       </div>
-      <ChatControl
+      <ChatWidget
         fetchAsync={fetchMessages}
         sendMessage={async (content) => {
           const send = session.type === 'friend' ? sendMessageToFriend : sendMessageToStranger;

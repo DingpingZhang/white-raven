@@ -1,7 +1,7 @@
 import { useContext } from 'react';
-import MainTabHeaderPanel from './main-tab-header-panel';
-import ChatTabContent from './chat-feature/chat-tab-content';
-import MainTabHeader from './main-tab-header';
+import TabHeaderListWidget from './tab-header-list-widget';
+import ChatView from './chat-feature/chat-view';
+import TabHeaderItem from './tab-header-item';
 import { ReactComponent as ChatIcon } from 'images/chat.svg';
 import { ReactComponent as ContactIcon } from 'images/contact.svg';
 import { useDialog } from 'components/dialog';
@@ -11,23 +11,23 @@ import { GlobalContext } from 'models/global-context';
 import CircleIcon from 'components/circle-icon';
 import { useI18n } from 'i18n';
 
-export default function WindowContent() {
+export default function WindowView() {
   const contactDialogToken = useDialog<FriendInfo | GroupInfo | null>(buildContactDialog);
   const { avatar } = useContext(GlobalContext);
   const { $t } = useI18n();
 
   return (
-    <div className="WindowContent">
-      <div className="WindowContent__tabHeaderPanel">
-        <MainTabHeaderPanel
+    <div className="WindowView">
+      <div className="WindowView__tabHeaderPanel">
+        <TabHeaderListWidget
           topHeaders={[
-            <MainTabHeader
+            <TabHeaderItem
               key="chat"
               icon={<ChatIcon />}
               title={$t('window.tabHeader.chat')}
               selected
             />,
-            <MainTabHeader
+            <TabHeaderItem
               key="contact"
               icon={<ContactIcon />}
               title={$t('window.tabHeader.contact')}
@@ -53,8 +53,8 @@ export default function WindowContent() {
           ]}
         />
       </div>
-      <div className="WindowContent__tabContent">
-        <ChatTabContent />
+      <div className="WindowView__tabContent">
+        <ChatView />
       </div>
     </div>
   );

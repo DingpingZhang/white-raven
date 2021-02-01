@@ -3,7 +3,7 @@ import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import { useHttpApi } from 'hooks/use-api';
 import { useI18n } from 'i18n';
 import { useMemo, useState } from 'react';
-import SearchBox from 'views/search-box';
+import SearchWidget from 'views/search-widget';
 import BaseDialog from './base-dialog';
 import ContactItem from './contact-item';
 
@@ -35,7 +35,7 @@ export default function ContactDialog({ close }: Props) {
   return (
     <BaseDialog title={$t('dialog.title.contact')} close={() => close(null)}>
       <div className="ContactDialog">
-        <SearchBox text={queriesText} setText={setQueriesText} />
+        <SearchWidget text={queriesText} setText={setQueriesText} />
         <VirtualizingListBox
           sizeProvider={{ itemSize: 40, itemCount: filteredcontactInfos.length }}
           renderItems={(startIndex, endIndex) =>

@@ -1,6 +1,6 @@
 @use '../mixins/input';
 
-.SearchBox {
+.SearchWidget {
   display: grid;
   grid-template-columns: auto 1fr;
 
@@ -8,7 +8,7 @@
   border: var(--default-border);
   background-color: var(--surface-color);
 
-  .SearchBox__icon {
+  .SearchWidget__icon {
     justify-self: center;
     align-self: center;
     margin-left: 12px;
@@ -17,7 +17,7 @@
     fill: var(--fore-primary-color);
   }
 
-  .SearchBox__input {
+  .SearchWidget__input {
     @include input.non-style-input();
   }
 }
