@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import MainTabHeaderPanel from './main-tab-header-panel';
 import ChatTabContent from './chat-tab-content';
 import MainTabHeader from './main-tab-header';
@@ -10,16 +10,11 @@ import { FriendInfo, GroupInfo } from 'api';
 import { GlobalContext } from 'models/global-context';
 import CircleIcon from 'components/circle-icon';
 import { useI18n } from 'i18n';
-import { onMessage } from 'api/websocket-api';
 
 export default function WindowContent() {
   const contactDialogToken = useDialog<FriendInfo | GroupInfo | null>(buildContactDialog);
   const { avatar } = useContext(GlobalContext);
   const { $t } = useI18n();
-  useEffect(() => {
-    onMessage(() => {});
-    console.log('subscribe websocket onmessage...');
-  }, []);
 
   return (
     <div className="WindowContent">
