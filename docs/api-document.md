@@ -23,10 +23,12 @@
 | `GET`  | `strangers/:id/messages/:id`           | `Message`         |
 | `GET`  | `strangers/:id/messages[?startId=:id]` | `Message[20]`     |
 
-| Method | Api                      | Body          | Response          |
-| ------ | ------------------------ | ------------- | ----------------- |
-| `POST` | `friends/:id/messages`   | `MessageBody` | `MessageResponse` |
-| `POST` | `strangers/:id/messages` | `MessageBody` | `MessageResponse` |
+| Method | Api                               | Body                  | Response          |
+| ------ | --------------------------------- | --------------------- | ----------------- |
+| `POST` | `friends/:id/messages`            | `MessageBody`         | `MessageResponse` |
+| `POST` | `strangers/:id/messages`          | `MessageBody`         | `MessageResponse` |
+| `POST` | `strangers/:id/messages/readedId` | `ReadedMessageIdBody` | `<Empty>: 200`    |
+| `POST` | `strangers/:id/messages/readedId` | `ReadedMessageIdBody` | `<Empty>: 200`    |
 
 ## 2. Group Api
 
@@ -39,6 +41,7 @@
 | `GET`  | `groups/:id/messages/:id`           | `Message`              |
 | `GET`  | `groups/:id/messages[?startId=:id]` | `Message[20]`          |
 
-| Method | Api                   | Body          | Response          |
-| ------ | --------------------- | ------------- | ----------------- |
-| `POST` | `groups/:id/messages` | `MessageBody` | `MessageResponse` |
+| Method | Api                            | Body                  | Response          |
+| ------ | ------------------------------ | --------------------- | ----------------- |
+| `POST` | `groups/:id/messages`          | `MessageBody`         | `MessageResponse` |
+| `POST` | `groups/:id/messages/readedId` | `ReadedMessageIdBody` | `<Empty>: 200`    |

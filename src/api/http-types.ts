@@ -8,6 +8,10 @@ export type MessageBody = {
   content: MessageContent;
 };
 
+export type ReadedMessageIdBody = {
+  readedId: IdType;
+};
+
 // ***************************************************
 // Response
 // ***************************************************
