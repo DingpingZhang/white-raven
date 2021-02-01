@@ -11,12 +11,12 @@
   padding: 0 24px;
 }
 
-.GroupChatView {
+.GroupSessionView {
   display: grid;
   grid-template-columns: 1fr 8px 256px;
   height: 100%;
 
-  .GroupChatView__chatArea {
+  .GroupSessionView__chatArea {
     grid-column: 1 / 2;
 
     display: grid;
@@ -26,7 +26,7 @@
     border: var(--default-border);
     border-radius: 10px;
 
-    .GroupChatView__titleBar {
+    .GroupSessionView__titleBar {
       display: grid;
       grid-template-columns: auto 16px 1fr;
       grid-template-rows: auto 8px auto;
@@ -35,14 +35,14 @@
       border-bottom: var(--default-border);
       padding: 0 24px;
 
-      .GroupChatView__chatAvatar {
+      .GroupSessionView__chatAvatar {
         grid-area: 1 / 1 / 4 / 2;
 
         @include common.circle(32px);
         align-self: center;
       }
 
-      .GroupChatView__chatTitle {
+      .GroupSessionView__chatTitle {
         grid-area: 1 / 3 / 2 / 4;
 
         color: var(--fore-title-color);
@@ -50,7 +50,7 @@
         align-self: flex-end;
       }
 
-      .GroupChatView__chatSubtitle {
+      .GroupSessionView__chatSubtitle {
         grid-area: 3 / 3 / 4 / 4;
 
         color: var(--fore-secondary-color);
@@ -60,7 +60,7 @@
     }
   }
 
-  .GroupChatView__infoArea {
+  .GroupSessionView__infoArea {
     grid-column: 3 / 4;
 
     display: grid;
@@ -70,15 +70,15 @@
     border: var(--default-border);
     border-radius: 10px;
 
-    .GroupChatView__infoCard {
+    .GroupSessionView__infoCard {
       display: flex;
       flex-direction: column;
 
-      .GroupChatView__infoTitle {
+      .GroupSessionView__infoTitle {
         @include title-bar-style(72px);
       }
 
-      .GroupChatView__infoContent {
+      .GroupSessionView__infoContent {
         height: 200px;
         border-bottom: var(--default-border);
 
@@ -87,11 +87,11 @@
       }
     }
 
-    .GroupChatView__member {
+    .GroupSessionView__member {
       display: flex;
       flex-direction: column;
 
-      .GroupChatView__memberTitle {
+      .GroupSessionView__memberTitle {
         @include title-bar-style(48px);
 
         display: grid;
@@ -107,7 +107,7 @@
         }
       }
 
-      .GroupChatView__memberList {
+      .GroupSessionView__memberList {
         flex: 1;
 
         margin: 10px 0;

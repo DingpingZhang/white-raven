@@ -4,17 +4,13 @@ import SearchWidget from 'views/search-widget';
 import { SessionInfo } from 'api';
 import { useState } from 'react';
 
-type ContactListControlProps = {
+type Props = {
   selectedItem: SessionInfo | null;
   setSelectedItem: (value: SessionInfo) => void;
   items: ReadonlyArray<SessionInfo>;
 };
 
-export default function SessionListWidget({
-  selectedItem,
-  setSelectedItem,
-  items,
-}: ContactListControlProps) {
+export default function SessionListWidget({ selectedItem, setSelectedItem, items }: Props) {
   const [searchText, setSearchText] = useState('');
 
   return (

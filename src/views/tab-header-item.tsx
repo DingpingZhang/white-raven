@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 import { ReactElement } from 'react';
 
-type TabHeaderItemProps = {
+type Props = {
   icon: ReactElement | string;
   title: string;
   selected?: boolean;
@@ -16,7 +16,7 @@ export default function TabHeaderItem({
   selected,
   messageCount,
   onClick,
-}: TabHeaderItemProps) {
+}: Props) {
   const TabHeaderItemClass = classNames('TabHeaderItem', {
     selected,
     hasMessage: messageCount,

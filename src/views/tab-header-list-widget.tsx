@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-type TabHeaderListWidgetProps = {
+type Props = {
   topHeaders: ReadonlyArray<ReactNode>;
   bottomHeaders?: ReadonlyArray<ReactNode>;
 };
@@ -8,7 +8,7 @@ type TabHeaderListWidgetProps = {
 export default function TabHeaderListWidget({
   topHeaders,
   bottomHeaders,
-}: TabHeaderListWidgetProps) {
+}: Props) {
   return (
     <div className="TabHeaderListWidget">
       <div className="TabHeaderListWidget__tabHeaderContainer top">{topHeaders}</div>

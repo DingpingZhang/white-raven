@@ -15,11 +15,11 @@ import { useHttpApi } from 'hooks/use-api';
 import { useI18n } from 'i18n';
 import { GlobalContext } from 'models/global-context';
 
-type GroupChatViewProps = {
+type Props = {
   session: GroupSession;
 };
 
-export default function GroupChatView({ session }: GroupChatViewProps) {
+export default function GroupSessionView({ session }: Props) {
   const lastMessage = session.lastMessages[session.lastMessages.length - 1];
   const fetchGroupMembers = useCallback(() => getGroupMembers(session.contact.id), [
     session.contact.id,
@@ -43,12 +43,12 @@ export default function GroupChatView({ session }: GroupChatViewProps) {
   const { $t } = useI18n();
 
   return (
-    <div className="GroupChatView">
-      <div className="GroupChatView__chatArea">
-        <div className="GroupChatView__titleBar">
-          <img className="GroupChatView__chatAvatar" src={session.contact.avatar} alt="avatar" />
-          <span className="GroupChatView__chatTitle">{session.contact.name}</span>
-          <span className="GroupChatView__chatSubtitle">
+    <div className="GroupSessionView">
+      <div className="GroupSessionView__chatArea">
+        <div className="GroupSessionView__titleBar">
+          <img className="GroupSessionView__chatAvatar" src={session.contact.avatar} alt="avatar" />
+          <span className="GroupSessionView__chatTitle">{session.contact.name}</span>
+          <span className="GroupSessionView__chatSubtitle">
             {toDisplayTimestamp(lastMessage.timestamp)}
           </span>
         </div>
@@ -66,21 +66,21 @@ export default function GroupChatView({ session }: GroupChatViewProps) {
           getSenderNameById={getGroupMemberNameById}
         />
       </div>
-      <div className="GroupChatView__infoArea">
-        <div className="GroupChatView__infoCard">
-          <div className="GroupChatView__infoTitle">
+      <div className="GroupSessionView__infoArea">
+        <div className="GroupSessionView__infoCard">
+          <div className="GroupSessionView__infoTitle">
             <span className="text subtitle">{$t('groupSession.groupInfo')}</span>
           </div>
-          <div className="GroupChatView__infoContent">
+          <div className="GroupSessionView__infoContent">
             <span className="text tip">{session.contact.description}</span>
           </div>
         </div>
-        <div className="GroupChatView__member">
-          <div className="GroupChatView__memberTitle">
+        <div className="GroupSessionView__member">
+          <div className="GroupSessionView__memberTitle">
             <span className="text subtitle">{$t('groupSession.groupInfo')}</span>
             <span className="text tip-secondary">{`(${groupMembers.length} / ${session.contact.memberCapacity})`}</span>
           </div>
-          <div className="GroupChatView__memberList">
+          <div className="GroupSessionView__memberList">
             <VirtualizingListBox
               sizeProvider={{ itemSize: 32, itemCount: groupMembers.length }}
               renderItems={(startIndex, endIndex) =>

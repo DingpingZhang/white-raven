@@ -3,8 +3,8 @@ import { getSessions, IdType, SessionInfo } from 'api';
 import { Switch } from 'components/switch';
 import { useNavigator } from 'components/switch-host';
 import { SWITCH_NAME } from 'views/constants';
-import GroupChatView from './group-chat-view';
-import PrivateChatView from './private-chat-view';
+import GroupSessionView from './group-session-view';
+import PrivateSessionView from './private-session-view';
 import SessionListWidget from './session-list-widget';
 import React from 'react';
 import { useHttpApi } from 'hooks/use-api';
@@ -45,9 +45,9 @@ export default function ChatView() {
               switch (session.type) {
                 case 'friend':
                 case 'stranger':
-                  return <PrivateChatView session={session} />;
+                  return <PrivateSessionView session={session} />;
                 case 'group':
-                  return <GroupChatView session={session} />;
+                  return <GroupSessionView session={session} />;
               }
             },
           }}

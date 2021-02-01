@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { toDisplayTimestamp } from 'helpers';
 import { Message, MessageSegment } from 'api';
 
-export type ContactItemProps = {
+export type Props = {
   avatar: string;
   name: string;
   unreadCount: number;
@@ -18,7 +18,7 @@ export default function SessionItem({
   name,
   lastMessage,
   onSelected,
-}: ContactItemProps) {
+}: Props) {
   const contactItemClass = classNames('SessionItem', {
     hasMessage: unreadCount,
     selected,

@@ -1,9 +1,9 @@
-type GroupMemberItemProps = {
+type Props = {
   avatar: string;
   name: string;
 };
 
-export default function GroupMemberItem({ avatar, name }: GroupMemberItemProps) {
+export default function GroupMemberItem({ avatar, name }: Props) {
   return (
     <div className="GroupMemberItem">
       <img className="GroupMemberItem__avatar" src={avatar} alt="avatar" />

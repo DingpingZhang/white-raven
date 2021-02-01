@@ -12,11 +12,11 @@ import { GlobalContext } from 'models/global-context';
 import { useCallback, useContext } from 'react';
 import ChatWidget from './chat-widget';
 
-type PrivateChatViewProps = {
+type Props = {
   session: FriendSession | StrangerSession;
 };
 
-export default function PrivateChatView({ session }: PrivateChatViewProps) {
+export default function PrivateSessionView({ session }: Props) {
   const lastMessage = session.lastMessages[session.lastMessages.length - 1];
 
   const fetchMessages = useCallback(
@@ -32,11 +32,11 @@ export default function PrivateChatView({ session }: PrivateChatViewProps) {
   const { id } = useContext(GlobalContext);
 
   return (
-    <div className="PrivateChatView">
-      <div className="PrivateChatView__titleBar">
-        <img className="PrivateChatView__avatar" src={session.contact.avatar} alt="avatar" />
-        <span className="PrivateChatView__title">{session.contact.name}</span>
-        <span className="PrivateChatView__subtitle">
+    <div className="PrivateSessionView">
+      <div className="PrivateSessionView__titleBar">
+        <img className="PrivateSessionView__avatar" src={session.contact.avatar} alt="avatar" />
+        <span className="PrivateSessionView__title">{session.contact.name}</span>
+        <span className="PrivateSessionView__subtitle">
           {toDisplayTimestamp(lastMessage.timestamp)}
         </span>
       </div>
