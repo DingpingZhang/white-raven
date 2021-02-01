@@ -1,14 +1,17 @@
+import { uuidv4 } from 'helpers';
+
 type EventHandler = (event: any) => void;
 type EventBase<T extends string = string> = {
   type: T;
 };
 type GetEventType<T> = T extends EventBase<infer R> ? R : never;
+type Disposable = () => void;
 
 const PING_MESSAGE = 'ping';
 const PONG_MESSAGE = 'pong';
 
 export class WebSocketClient {
-  private readonly routes: Map<string, EventHandler> = new Map<string, EventHandler>();
+  private readonly routes: Map<string, Map<string, EventHandler>>;
   private readonly url: string;
   private readonly pingInterval: number;
 
@@ -18,21 +21,24 @@ export class WebSocketClient {
   constructor(url: string, pingInterval = 60_000) {
     this.url = url;
     this.pingInterval = pingInterval;
+    this.routes = new Map<string, Map<string, EventHandler>>();
     this.initialize();
 
-    this.add = this.add.bind(this);
-    this.remove = this.remove.bind(this);
+    this.subscribe = this.subscribe.bind(this);
     this.close = this.close.bind(this);
   }
 
-  add<T extends EventBase>(type: GetEventType<T>, handler: (event: T) => void): WebSocketClient {
-    this.routes.set(type, handler);
+  subscribe<T extends EventBase>(type: GetEventType<T>, handler: (e: T) => void): Disposable {
+    if (!this.routes.has(type)) {
+      this.routes.set(type, new Map<string, EventHandler>());
+    }
 
-    return this;
-  }
+    const token = uuidv4();
+    this.routes.get(type)!.set(token, handler);
 
-  remove(type: string): boolean {
-    return this.routes.delete(type);
+    return () => {
+      this.routes.get(type)!.delete(token);
+    };
   }
 
   close() {
@@ -61,10 +67,10 @@ export class WebSocketClient {
     const event = JSON.parse(jsonString) as EventBase;
     if (!event) return;
 
-    const handler = this.routes.get(event.type);
-    if (!handler) return;
+    const handlers = this.routes.get(event.type);
+    if (!handlers) return;
 
-    handler(event);
+    handlers.forEach((handler) => handler(event));
   }
 
   private handleError(e: Event) {
@@ -79,3 +85,5 @@ export class WebSocketClient {
     this.initialize();
   }
 }
+
+export const websocket = new WebSocketClient('ws://localhost:9500/api/v1/events');

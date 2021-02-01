@@ -7,7 +7,7 @@ import GroupChatView from './group-chat-view';
 import PrivateChatView from './private-chat-view';
 import SessionListControl from './session-list-control';
 import React from 'react';
-import { useHttpApi } from 'hooks/use-async-value';
+import { useHttpApi } from 'hooks/use-api';
 
 export default function ChatTabContent() {
   const sessionList = useHttpApi(getSessions, []);

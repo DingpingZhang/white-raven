@@ -1,6 +1,6 @@
 import { FriendInfo, getFriendInfos, getGroupInfos, GroupInfo } from 'api';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
-import { useHttpApi } from 'hooks/use-async-value';
+import { useHttpApi } from 'hooks/use-api';
 import { useI18n } from 'i18n';
 import { useMemo, useState } from 'react';
 import SearchBox from 'views/search-box';

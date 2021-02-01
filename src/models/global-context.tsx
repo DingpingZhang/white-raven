@@ -1,5 +1,5 @@
 import { getUserInfo, PersonInfo } from 'api';
-import { useHttpApi } from 'hooks/use-async-value';
+import { useHttpApi } from 'hooks/use-api';
 import { createContext, ReactNode } from 'react';
 
 export type GlobalContextType = PersonInfo;

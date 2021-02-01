@@ -11,7 +11,7 @@ import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import { toDisplayTimestamp } from 'helpers';
 import ChatControl from './chat-control';
 import GroupMemberItem from './group-member-item';
-import { useHttpApi } from 'hooks/use-async-value';
+import { useHttpApi } from 'hooks/use-api';
 import { useI18n } from 'i18n';
 import { GlobalContext } from 'models/global-context';
 

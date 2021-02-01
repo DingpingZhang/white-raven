@@ -3,7 +3,7 @@ import { toDisplayTimestamp } from 'helpers';
 import { MessageContent, MessageSegment } from 'api';
 import { DialogBuilder, useDialogBuilder } from 'components/dialog';
 import ImageExplorerDialog from 'views/dialogs/image-explorer-dialog';
-import { useAsyncValue } from 'hooks/use-async-value';
+import { useAsyncValue } from 'hooks/use-api';
 
 export type BasicMessageProps = {
   avatar: string;
