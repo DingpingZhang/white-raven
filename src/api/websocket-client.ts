@@ -1,3 +1,4 @@
+import { Disposable } from './basic-types';
 import { uuidv4 } from 'helpers';
 
 type EventHandler = (event: any) => void;
@@ -5,7 +6,6 @@ type EventBase<T extends string = string> = {
   type: T;
 };
 type GetEventType<T> = T extends EventBase<infer R> ? R : never;
-type Disposable = () => void;
 
 const PING_MESSAGE = 'ping';
 const PONG_MESSAGE = 'pong';

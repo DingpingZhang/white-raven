@@ -7,17 +7,8 @@ import {
 } from 'mocks/contact';
 import { getMockMessages } from 'mocks/message';
 import { getMockSessions } from 'mocks/session';
-import {
-  Err,
-  FriendInfo,
-  GroupInfo,
-  GroupMemberInfo,
-  IdType,
-  MessageBody,
-  MessageResponse,
-  Ok,
-  PersonInfo,
-} from './basic-types';
+import { FriendInfo, GroupInfo, IdType, PersonInfo } from './basic-types';
+import { Ok, Err, MessageBody, MessageResponse } from './http-types';
 
 type CommonErr = 'connection-timeout';
 

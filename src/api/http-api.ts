@@ -1,18 +1,15 @@
 import axios from 'axios';
 import {
-  Err,
   FriendInfo,
   GroupInfo,
   GroupMemberInfo,
   IdType,
   Message,
-  MessageBody,
-  MessageResponse,
-  Ok,
   PersonInfo,
   SessionInfo,
   StrangerInfo,
 } from './basic-types';
+import { Ok, Err, MessageBody, MessageResponse } from './http-types';
 
 type CommonErr = 'connection-timeout';
 

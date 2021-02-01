@@ -1,4 +1,5 @@
 export type IdType = string;
+export type Disposable = () => void;
 
 // ***************************************************
 // Message
@@ -101,30 +102,3 @@ export type GroupSession = SessionBase & {
 };
 
 export type SessionInfo = FriendSession | StrangerSession | GroupSession;
-
-// ***************************************************
-// Request
-// ***************************************************
-
-export type MessageBody = {
-  content: MessageContent;
-};
-
-// ***************************************************
-// Response
-// ***************************************************
-
-export type Ok<T> = {
-  code: 200;
-  content: T;
-};
-
-export type Err<T> = {
-  code: 500;
-  reason: T;
-};
-
-export type MessageResponse = {
-  id: IdType;
-  timestamp: number;
-};
