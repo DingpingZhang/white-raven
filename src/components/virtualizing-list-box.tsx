@@ -124,7 +124,7 @@ export function VirtualizingListBox({
 
 function getItemsSize(sizeProvider: UnfixedSizeProvider | FixedSizeProvider, index: number) {
   if (isFixedSizeProvider(sizeProvider)) {
-    return (index ?? sizeProvider.itemCount) * sizeProvider.itemSize;
+    return (index < 0 ? sizeProvider.itemCount : index) * sizeProvider.itemSize;
   } else {
     return sizeProvider.getItemsSize(index);
   }
