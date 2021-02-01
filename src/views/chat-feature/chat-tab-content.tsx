@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { getSessions, IdType, SessionInfo } from 'api';
 import { Switch } from 'components/switch';
 import { useNavigator } from 'components/switch-host';
-import { SWITCH_NAME } from './constants';
+import { SWITCH_NAME } from 'views/constants';
 import GroupChatView from './group-chat-view';
 import PrivateChatView from './private-chat-view';
 import SessionListControl from './session-list-control';

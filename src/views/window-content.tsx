@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import MainTabHeaderPanel from './main-tab-header-panel';
-import ChatTabContent from './chat-tab-content';
+import ChatTabContent from './chat-feature/chat-tab-content';
 import MainTabHeader from './main-tab-header';
 import { ReactComponent as ChatIcon } from 'images/chat.svg';
 import { ReactComponent as ContactIcon } from 'images/contact.svg';

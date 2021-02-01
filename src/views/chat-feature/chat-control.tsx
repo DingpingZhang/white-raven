@@ -1,10 +1,10 @@
-import React, { ReactElement, ReactNode, useCallback, useContext, useEffect, useRef } from 'react';
+import React, { ReactElement, useCallback, useContext, useEffect, useRef } from 'react';
 import InfiniteScrollingListBox, { FetchItemsType } from 'components/infinite-scrolling-list-box';
-import BasicMessage from './messages/basic-message';
-import MessageSendBox from './messages/message-send-box';
+import BasicMessage from './basic-message';
+import MessageSendBox from './message-send-box';
 import { IdType, Message, MessageContent } from 'api';
 import { GlobalContext } from 'models/global-context';
-import { getAvatarById } from './messages/common';
+import { getAvatarById } from './common';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import { Size, useForceUpdate, useLazyRef, useResizeObserver } from 'hooks';
 import SortedSet from 'models/sorted-set';

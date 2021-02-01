@@ -1,6 +1,6 @@
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import SessionItem from './session-item';
-import SearchBox from './search-box';
+import SearchBox from 'views/search-box';
 import { SessionInfo } from 'api';
 import { useState } from 'react';
 
