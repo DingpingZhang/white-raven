@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { toDisplayTimestamp } from 'helpers';
 import { Message, MessageSegment } from 'api';
+import { ReactComponent as CloseIcon } from 'images/close.svg';
 
 export type Props = {
   avatar: string;
@@ -9,6 +10,7 @@ export type Props = {
   lastMessage?: Message;
   selected?: boolean;
   onSelected?: () => void;
+  onRemoved?: () => void;
 };
 
 export default function SessionItem({
@@ -18,6 +20,7 @@ export default function SessionItem({
   name,
   lastMessage,
   onSelected,
+  onRemoved,
 }: Props) {
   const contactItemClass = classNames('SessionItem', {
     hasMessage: unreadCount,
@@ -31,6 +34,15 @@ export default function SessionItem({
       <span className="SessionItem__redDot"></span>
       <img className="SessionItem__avatar" src={avatar} alt="avatar" />
       <span className="SessionItem__title">{name}</span>
+      <button
+        className="SessionItem__btnClose"
+        onClick={(e) => {
+          e.stopPropagation();
+          onRemoved && onRemoved();
+        }}
+      >
+        <CloseIcon className="SessionItem__iconClose" />
+      </button>
       {lastMessage ? (
         <span className="SessionItem__subtitle">{toDisplayTimestamp(lastMessage.timestamp)}</span>
       ) : null}

@@ -19,18 +19,19 @@ export default function SessionListWidget({ selectedItem, setSelectedItem, items
       <VirtualizingListBox
         sizeProvider={{ itemSize: 108, itemCount: items.length }}
         renderItems={(startIndex, endIndex) =>
-          items
-            .slice(startIndex, endIndex)
-            .map((item) => (
-              <SessionItem
-                avatar={item.contact.avatar}
-                name={item.contact.name}
-                lastMessage={item.lastMessages[item.lastMessages.length - 1]}
-                unreadCount={item.unreadCount}
-                selected={selectedItem === item}
-                onSelected={() => setSelectedItem(item)}
-              />
-            ))
+          items.slice(startIndex, endIndex).map((item) => (
+            <SessionItem
+              avatar={item.contact.avatar}
+              name={item.contact.name}
+              lastMessage={item.lastMessages[item.lastMessages.length - 1]}
+              unreadCount={item.unreadCount}
+              selected={selectedItem === item}
+              onSelected={() => setSelectedItem(item)}
+              onRemoved={() => {
+                /* TODO: Remove itself */
+              }}
+            />
+          ))
         }
       />
     </div>

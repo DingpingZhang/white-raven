@@ -1,4 +1,5 @@
 @use '../mixins/common';
+@use '../mixins/button';
 
 .SessionItem {
   display: grid;
@@ -55,6 +56,33 @@
     color: var(--fore-primary-color);
     font-size: 12px;
     align-self: center;
+  }
+
+  .SessionItem__btnClose {
+    $btnSize: 12px;
+
+    grid-area: 1 / 5 / 2 / 6;
+
+    @include button.non-style-button();
+    width: $btnSize;
+    height: $btnSize;
+    align-self: center;
+    justify-self: end;
+    display: none;
+
+    .SessionItem__iconClose {
+      fill: var(--fore-primary-color);
+      width: $btnSize;
+      height: $btnSize;
+
+      &:hover {
+        fill: var(--fore-secondary-color);
+      }
+    }
+  }
+
+  &:hover .SessionItem__btnClose {
+    display: flex;
   }
 
   .SessionItem__subtitle {

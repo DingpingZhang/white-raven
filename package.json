@@ -16,6 +16,7 @@
     "axios": "^0.21.1",
     "classnames": "^2.2.6",
     "cross-env": "^7.0.3",
+    "immer": "^8.0.1",
     "inversify": "^5.0.5",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
