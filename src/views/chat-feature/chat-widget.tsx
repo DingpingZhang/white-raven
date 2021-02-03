@@ -2,13 +2,22 @@ import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
 import InfiniteScrollingListBox, { FetchItemsType } from 'components/infinite-scrolling-list-box';
 import MessageTextItem from './message-text-item';
 import SenderWidget from './sender-widget';
-import { IdType, Message, MessageContent } from 'api';
+import {
+  FriendMessageEvent,
+  GroupMessageEvent,
+  IdType,
+  Message,
+  MessageContent,
+  StrangerMessageEvent,
+} from 'api';
 import { getAvatarById } from './common';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import { Size, useForceUpdate, useLazyRef, useResizeObserver } from 'hooks';
 import SortedSet from 'models/sorted-set';
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil';
+import { useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil';
 import { SessionKey, messageListState, userInfoState } from 'models/store';
+import { webSocketClient } from 'api/websocket-client';
+import { produce } from 'immer';
 
 type Props = {
   chatKey: SessionKey;
@@ -20,6 +29,7 @@ export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: 
   const earliestMessageIdRef = useRef<IdType | undefined>(undefined);
   const { id: currentUserId } = useRecoilValue(userInfoState);
   const messageListLoadable = useRecoilValueLoadable(messageListState(chatKey));
+  const setMessageList = useSetRecoilState(messageListState(chatKey));
 
   const renderMessage = useCallback(
     async (type: FetchItemsType) => {
@@ -42,6 +52,39 @@ export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: 
     },
     [currentUserId, getSenderNameById, messageListLoadable.contents, messageListLoadable.state]
   );
+
+  useEffect(() => {
+    const friendToken = webSocketClient.subscribe<FriendMessageEvent>('friend/message', (e) => {
+      if (e.senderId !== chatKey.contactId) return;
+      setMessageList((prev) => [
+        ...prev,
+        { id: e.id, senderId: e.senderId, content: [...e.content], timestamp: e.timestamp },
+      ]);
+    });
+    const strangerToken = webSocketClient.subscribe<StrangerMessageEvent>(
+      'stranger/message',
+      (e) => {
+        if (e.senderId !== chatKey.contactId) return;
+        setMessageList((prev) => [
+          ...prev,
+          { id: e.id, senderId: e.senderId, content: [...e.content], timestamp: e.timestamp },
+        ]);
+      }
+    );
+    const groupToken = webSocketClient.subscribe<GroupMessageEvent>('group/message', (e) => {
+      if (e.senderId !== chatKey.contactId) return;
+      setMessageList((prev) => [
+        ...prev,
+        { id: e.id, senderId: e.senderId, content: [...e.content], timestamp: e.timestamp },
+      ]);
+    });
+
+    return () => {
+      friendToken();
+      strangerToken();
+      groupToken();
+    };
+  }, [chatKey.contactId, setMessageList]);
 
   return (
     <div className="ChatWidget">

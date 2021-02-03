@@ -16,7 +16,7 @@ import {
   StrangerInfo,
 } from 'api';
 import { CommonErr } from 'api/http-api';
-import { atom, atomFamily, selector, selectorFamily } from 'recoil';
+import { atom, atomFamily, selectorFamily } from 'recoil';
 
 export async function fallbackHttpApi<TOk, TErr = CommonErr>(
   api: () => Promise<Ok<TOk> | Err<TErr>>,

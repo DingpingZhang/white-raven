@@ -77,6 +77,10 @@ export type GroupMemberInfo = PersonInfo & {
   remark?: string;
 };
 
+export function isGroupInfo(info: FriendInfo | GroupInfo): info is GroupInfo {
+  return (info as GroupInfo).memberCapacity !== undefined;
+}
+
 // ***************************************************
 // Session
 // ***************************************************

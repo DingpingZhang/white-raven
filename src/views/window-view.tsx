@@ -5,11 +5,22 @@ import { ReactComponent as ChatIcon } from 'images/chat.svg';
 import { ReactComponent as ContactIcon } from 'images/contact.svg';
 import { useDialog } from 'components/dialog';
 import { buildContactDialog } from './dialogs/contact-dialog';
-import { FriendInfo, getSessions, getUserInfo, GroupInfo } from 'api';
+import {
+  FriendInfo,
+  FriendMessageEvent,
+  getSessions,
+  getStrangerInfo,
+  getUserInfo,
+  GroupInfo,
+  GroupMessageEvent,
+  isGroupInfo,
+  StrangerMessageEvent,
+} from 'api';
 import CircleIcon from 'components/circle-icon';
 import { useI18n } from 'i18n';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil';
 import {
+  contactListState,
   DEFAULT_USER_INFO,
   fallbackHttpApi,
   makeMutList,
@@ -17,6 +28,9 @@ import {
   userInfoState,
 } from 'models/store';
 import { useEffect } from 'react';
+import { webSocketClient } from 'api/websocket-client';
+import { produce } from 'immer';
+import { removeAll } from 'helpers/list-helpers';
 
 export default function WindowView() {
   const contactDialogToken = useDialog<FriendInfo | GroupInfo | null>(buildContactDialog);
@@ -24,7 +38,9 @@ export default function WindowView() {
   const { $t } = useI18n();
 
   const setUserInfo = useSetRecoilState(userInfoState);
-  const setSessionList = useSetRecoilState(sessionListState);
+  const [, setSessionList] = useRecoilState(sessionListState);
+  const contactListLoadable = useRecoilValueLoadable(contactListState);
+
   // Initiailze
   useEffect(() => {
     const initiailze = async () => {
@@ -34,6 +50,70 @@ export default function WindowView() {
 
     initiailze();
   }, [setSessionList, setUserInfo]);
+
+  useEffect(() => {
+    if (contactListLoadable.state !== 'hasValue') return;
+    const contactList = contactListLoadable.contents;
+
+    // Subscribe Events
+    webSocketClient.subscribe<FriendMessageEvent>('friend/message', (e) => {
+      setSessionList((prev) => {
+        const session = prev.find((item) => item.contact.id === e.senderId);
+        if (session) {
+          return produce(prev, (draft) => {
+            removeAll(draft, session, (x, y) => x.contact.id === y.contact.id);
+            draft.unshift({ ...session, unreadCount: session.unreadCount + 1 });
+          });
+        } else {
+          const contact = contactList.find((item) => item.id === e.senderId)!;
+          return produce(prev, (draft) => {
+            draft.unshift({ type: 'friend', contact: contact, unreadCount: 1 });
+          });
+        }
+      });
+    });
+    webSocketClient.subscribe<StrangerMessageEvent>('stranger/message', async (e) => {
+      const stranger = await fallbackHttpApi(() => getStrangerInfo(e.senderId), null);
+      if (!stranger) return;
+
+      setSessionList((prev) => {
+        const session = prev.find((item) => item.contact.id === e.senderId);
+        if (session) {
+          return produce(prev, (draft) => {
+            removeAll(draft, session, (x, y) => x.contact.id === y.contact.id);
+            draft.unshift({ ...session, unreadCount: session.unreadCount + 1 });
+          });
+        } else {
+          return produce(prev, (draft) => {
+            draft.unshift({
+              type: 'stranger',
+              contact: stranger,
+              unreadCount: 1,
+            });
+          });
+        }
+      });
+    });
+    webSocketClient.subscribe<GroupMessageEvent>('group/message', (e) => {
+      setSessionList((prev) => {
+        const session = prev.find((item) => item.contact.id === e.senderId);
+        if (session) {
+          return produce(prev, (draft) => {
+            removeAll(draft, session, (x, y) => x.contact.id === y.contact.id);
+            draft.unshift(session);
+          });
+        } else {
+          const contact = contactList.find((item) => item.id === e.senderId)!;
+          if (!isGroupInfo(contact))
+            throw new Error('The type of "group/message" argument must be GroupInfo.');
+
+          return produce(prev, (draft) => {
+            draft.unshift({ type: 'group', contact: contact, unreadCount: 1 });
+          });
+        }
+      });
+    });
+  }, [contactListLoadable.contents, contactListLoadable.state, setSessionList]);
 
   return (
     <div className="WindowView">

@@ -16,16 +16,21 @@ export class WebSocketClient {
   private readonly pingInterval: number;
 
   private websocket?: WebSocket;
-  private heartbeatToken: number | undefined;
+  private heartbeatToken: ReturnType<typeof setInterval> | undefined;
 
   constructor(url: string, pingInterval = 60_000) {
     this.url = url;
     this.pingInterval = pingInterval;
     this.routes = new Map<string, Map<string, EventHandler>>();
-    this.initialize();
 
     this.subscribe = this.subscribe.bind(this);
     this.close = this.close.bind(this);
+
+    this.handleMessage = this.handleMessage.bind(this);
+    this.handleError = this.handleError.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+
+    this.initialize();
   }
 
   subscribe<T extends EventBase>(type: GetEventType<T>, handler: (e: T) => void): Disposable {
@@ -42,8 +47,9 @@ export class WebSocketClient {
   }
 
   close() {
-    clearInterval(this.heartbeatToken);
+    clearInterval(this.heartbeatToken as any);
     this.websocket?.close();
+    this.routes.clear();
   }
 
   private initialize() {
@@ -51,7 +57,7 @@ export class WebSocketClient {
     this.websocket.addEventListener('message', this.handleMessage);
     this.websocket.addEventListener('error', this.handleError);
     this.websocket.addEventListener('close', this.handleClose);
-    setInterval(() => this.websocket?.send(PING_MESSAGE), this.pingInterval);
+    this.heartbeatToken = setInterval(() => this.websocket?.send(PING_MESSAGE), this.pingInterval);
   }
 
   private handleMessage(e: MessageEvent<any>) {
@@ -86,4 +92,4 @@ export class WebSocketClient {
   }
 }
 
-export const websocket = new WebSocketClient('ws://localhost:9500/api/v1/events');
+export const webSocketClient = new WebSocketClient('ws://localhost:9500/api/v1/events');
