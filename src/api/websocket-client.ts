@@ -42,7 +42,7 @@ export class WebSocketClient {
     this.routes.get(type)!.set(token, handler);
 
     return () => {
-      this.routes.get(type)!.delete(token);
+      this.routes.get(type)?.delete(token);
     };
   }
 

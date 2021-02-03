@@ -31,7 +31,6 @@ export default function SessionListWidget() {
                 onRemoved={() => {
                   setSessionList((prev) =>
                     produce(prev, (draft) => {
-                      console.log(item);
                       removeAll(draft, item, (x, y) => x.contact.id === y.contact.id);
                     })
                   );
