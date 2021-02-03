@@ -72,15 +72,9 @@ export const sessionListState = atom<SessionItem[]>({
   default: [],
 });
 
-export const selectedSessionState = atom<SessionItem | null>({
-  key: 'selectedSessionState',
-  default: selector({
-    key: 'selectedSessionState/default',
-    get: async ({ get }) => {
-      const list = get(sessionListState);
-      return list.length > 0 ? list[0] : null;
-    },
-  }),
+export const selectedSessionIndexState = atom({
+  key: 'selectedSessionIndexState',
+  default: 0,
 });
 
 export const lastSessionMessageState = selectorFamily<Message | null, SessionKey>({

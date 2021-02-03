@@ -7,20 +7,20 @@ import GroupSessionView from './group-session-view';
 import PrivateSessionView from './private-session-view';
 import SessionListWidget from './session-list-widget';
 import React from 'react';
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil';
-import { selectedSessionState, sessionListState } from 'models/store';
+import { useRecoilValue } from 'recoil';
+import { selectedSessionIndexState, sessionListState } from 'models/store';
 
 export default function ChatView() {
   const sessionList = useRecoilValue(sessionListState);
-  const selectedSessionLoadable = useRecoilValueLoadable(selectedSessionState);
+  const selectedIndex = useRecoilValue(selectedSessionIndexState);
 
   const chatAreaNavigator = useNavigator(SWITCH_NAME.CHAT_AREA);
   useEffect(() => {
-    if (selectedSessionLoadable.state === 'hasValue' && selectedSessionLoadable.contents) {
-      const selectedSession = selectedSessionLoadable.contents;
+    if (sessionList.length > 0) {
+      const selectedSession = sessionList[selectedIndex];
       chatAreaNavigator(selectedSession.contact.id, selectedSession);
     }
-  }, [chatAreaNavigator, selectedSessionLoadable.contents, selectedSessionLoadable.state]);
+  }, [chatAreaNavigator, selectedIndex, sessionList]);
 
   return (
     <div className="ChatView">

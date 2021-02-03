@@ -39,7 +39,7 @@ export default function SessionItem({
     <div className={contactItemClass} onClick={onSelected}>
       <span className="SessionItem__redDot"></span>
       <img className="SessionItem__avatar" src={avatar} alt="avatar" />
-      <span className="SessionItem__title">{name}</span>
+      <span className="SessionItem__title text ellipsis">{name}</span>
       <button
         className="SessionItem__btnClose"
         onClick={(e) => {

@@ -29,7 +29,7 @@ export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: 
 
       const messages = messageListLoadable.contents;
       earliestMessageIdRef.current = messages[0].id;
-      return messages.map(({ id, senderId, content, timestamp }) => (
+      return messages.map(({ id, senderId, content, timestamp }, index) => (
         <MessageTextItem
           key={id}
           avatar={getAvatarById(id)}
