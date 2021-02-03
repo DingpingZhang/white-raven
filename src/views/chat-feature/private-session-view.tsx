@@ -1,15 +1,7 @@
-import {
-  FriendSession,
-  getFriendMessages,
-  getStrangerMessages,
-  IdType,
-  sendMessageToFriend,
-  sendMessageToStranger,
-  StrangerSession,
-} from 'api';
+import { FriendSession, sendMessageToFriend, sendMessageToStranger, StrangerSession } from 'api';
 import { toDisplayTimestamp } from 'helpers';
-import { GlobalContext } from 'models/global-context';
-import { useCallback, useContext } from 'react';
+import { userInfoState } from 'models/store';
+import { useRecoilValue } from 'recoil';
 import ChatWidget from './chat-widget';
 
 type Props = {
@@ -19,17 +11,7 @@ type Props = {
 export default function PrivateSessionView({ session }: Props) {
   const lastMessage = session.lastMessages[session.lastMessages.length - 1];
 
-  const fetchMessages = useCallback(
-    async (startId?: IdType) => {
-      const response =
-        session.type === 'friend'
-          ? await getFriendMessages(session.contact.id, startId)
-          : await getStrangerMessages(session.contact.id, startId);
-      return response.code === 200 ? response.content : [];
-    },
-    [session.contact.id, session.type]
-  );
-  const { id } = useContext(GlobalContext);
+  const { id } = useRecoilValue(userInfoState);
 
   return (
     <div className="PrivateSessionView">
@@ -41,7 +23,7 @@ export default function PrivateSessionView({ session }: Props) {
         </span>
       </div>
       <ChatWidget
-        fetchAsync={fetchMessages}
+        chatKey={{ type: session.type, contactId: session.contact.id }}
         sendMessage={async (content) => {
           const send = session.type === 'friend' ? sendMessageToFriend : sendMessageToStranger;
 

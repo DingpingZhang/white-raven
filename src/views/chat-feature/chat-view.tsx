@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { getSessions, IdType, SessionInfo } from 'api';
+import { useEffect } from 'react';
+import { IdType, SessionInfo } from 'api';
 import { Switch } from 'components/switch';
 import { useNavigator } from 'components/switch-host';
 import { SWITCH_NAME } from 'views/constants';
@@ -7,33 +7,25 @@ import GroupSessionView from './group-session-view';
 import PrivateSessionView from './private-session-view';
 import SessionListWidget from './session-list-widget';
 import React from 'react';
-import { useHttpApi } from 'hooks/use-api';
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil';
+import { selectedSessionState, sessionListState } from 'models/store';
 
 export default function ChatView() {
-  const sessionList = useHttpApi(getSessions, []);
-  const [selectedSession, setSelectedSession] = useState<SessionInfo | null>(null);
-
-  useEffect(() => {
-    if (sessionList.length) {
-      setSelectedSession(sessionList[0]);
-    }
-  }, [sessionList]);
+  const sessionList = useRecoilValue(sessionListState);
+  const selectedSessionLoadable = useRecoilValueLoadable(selectedSessionState);
 
   const chatAreaNavigator = useNavigator(SWITCH_NAME.CHAT_AREA);
   useEffect(() => {
-    if (selectedSession) {
+    if (selectedSessionLoadable.state === 'hasValue' && selectedSessionLoadable.contents) {
+      const selectedSession = selectedSessionLoadable.contents;
       chatAreaNavigator(selectedSession.contact.id, selectedSession);
     }
-  }, [chatAreaNavigator, selectedSession]);
+  }, [chatAreaNavigator, selectedSessionLoadable.contents, selectedSessionLoadable.state]);
 
   return (
     <div className="ChatView">
       <div className="ChatView__sessionListArea">
-        <SessionListWidget
-          selectedItem={selectedSession}
-          setSelectedItem={setSelectedSession}
-          items={sessionList}
-        />
+        <SessionListWidget />
       </div>
       <div className="ChatView__chatArea">
         <Switch<IdType>

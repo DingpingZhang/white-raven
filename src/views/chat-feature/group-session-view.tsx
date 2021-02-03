@@ -1,19 +1,12 @@
-import { useCallback, useContext } from 'react';
-import {
-  getGroupMember,
-  getGroupMembers,
-  getGroupMessages,
-  GroupSession,
-  IdType,
-  sendMessageToGroup,
-} from 'api';
+import { useCallback } from 'react';
+import { getGroupMember, GroupSession, IdType, sendMessageToGroup } from 'api';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import { toDisplayTimestamp } from 'helpers';
 import ChatWidget from './chat-widget';
 import GroupMemberItem from './group-member-item';
-import { useHttpApi } from 'hooks/use-api';
 import { useI18n } from 'i18n';
-import { GlobalContext } from 'models/global-context';
+import { groupMemberListState, userInfoState } from 'models/store';
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil';
 
 type Props = {
   session: GroupSession;
@@ -21,17 +14,7 @@ type Props = {
 
 export default function GroupSessionView({ session }: Props) {
   const lastMessage = session.lastMessages[session.lastMessages.length - 1];
-  const fetchGroupMembers = useCallback(() => getGroupMembers(session.contact.id), [
-    session.contact.id,
-  ]);
-  const groupMembers = useHttpApi(fetchGroupMembers, []);
-  const fetchMessages = useCallback(
-    async (startId?: IdType) => {
-      const response = await getGroupMessages(session.contact.id, startId);
-      return response.code === 200 ? response.content : [];
-    },
-    [session.contact.id]
-  );
+  const groupMemberListLoadable = useRecoilValueLoadable(groupMemberListState(session.contact.id));
   const getGroupMemberNameById = useCallback(
     async (memberId: IdType) => {
       const response = await getGroupMember(session.contact.id, memberId);
@@ -39,7 +22,7 @@ export default function GroupSessionView({ session }: Props) {
     },
     [session.contact.id]
   );
-  const { id } = useContext(GlobalContext);
+  const { id } = useRecoilValue(userInfoState);
   const { $t } = useI18n();
 
   return (
@@ -53,7 +36,7 @@ export default function GroupSessionView({ session }: Props) {
           </span>
         </div>
         <ChatWidget
-          fetchAsync={fetchMessages}
+          chatKey={{ type: 'group', contactId: session.contact.id }}
           sendMessage={async (message) => {
             const response = await sendMessageToGroup(session.contact.id, { content: message });
             if (response.code === 200) {
@@ -78,17 +61,23 @@ export default function GroupSessionView({ session }: Props) {
         <div className="GroupSessionView__member">
           <div className="GroupSessionView__memberTitle">
             <span className="text subtitle">{$t('groupSession.groupInfo')}</span>
-            <span className="text tip-secondary">{`(${groupMembers.length} / ${session.contact.memberCapacity})`}</span>
+            <span className="text tip-secondary">{`(${
+              groupMemberListLoadable.state === 'hasValue'
+                ? groupMemberListLoadable.contents.length
+                : 0
+            } / ${session.contact.memberCapacity})`}</span>
           </div>
           <div className="GroupSessionView__memberList">
-            <VirtualizingListBox
-              sizeProvider={{ itemSize: 32, itemCount: groupMembers.length }}
-              renderItems={(startIndex, endIndex) =>
-                groupMembers
-                  .slice(startIndex, endIndex)
-                  .map((item) => <GroupMemberItem avatar={item.avatar} name={item.name} />)
-              }
-            />
+            {groupMemberListLoadable.state === 'hasValue' ? (
+              <VirtualizingListBox
+                sizeProvider={{ itemSize: 32, itemCount: groupMemberListLoadable.contents.length }}
+                renderItems={(startIndex, endIndex) =>
+                  groupMemberListLoadable.contents
+                    .slice(startIndex, endIndex)
+                    .map((item) => <GroupMemberItem avatar={item.avatar} name={item.name} />)
+                }
+              />
+            ) : null}
           </div>
         </div>
       </div>

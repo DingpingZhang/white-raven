@@ -1,5 +1,5 @@
-import { GlobalContextRoot } from 'models/global-context';
 import { useEffect } from 'react';
+import { RecoilRoot } from 'recoil';
 import { DialogHost } from './components/dialog';
 import { SwitchHost } from './components/switch-host';
 import WindowView from './views/window-view';
@@ -10,13 +10,13 @@ function App() {
   }, []);
 
   return (
-    <GlobalContextRoot>
+    <RecoilRoot>
       <DialogHost>
         <SwitchHost>
           <WindowView />
         </SwitchHost>
       </DialogHost>
-    </GlobalContextRoot>
+    </RecoilRoot>
   );
 }
 

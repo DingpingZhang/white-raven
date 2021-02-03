@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import TabHeaderListWidget from './tab-header-list-widget';
 import ChatView from './chat-feature/chat-view';
 import TabHeaderItem from './tab-header-item';
@@ -6,15 +5,35 @@ import { ReactComponent as ChatIcon } from 'images/chat.svg';
 import { ReactComponent as ContactIcon } from 'images/contact.svg';
 import { useDialog } from 'components/dialog';
 import { buildContactDialog } from './dialogs/contact-dialog';
-import { FriendInfo, GroupInfo } from 'api';
-import { GlobalContext } from 'models/global-context';
+import { FriendInfo, getSessions, getUserInfo, GroupInfo } from 'api';
 import CircleIcon from 'components/circle-icon';
 import { useI18n } from 'i18n';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  DEFAULT_USER_INFO,
+  fallbackHttpApi,
+  makeMutList,
+  sessionListState,
+  userInfoState,
+} from 'models/store';
+import { useEffect } from 'react';
 
 export default function WindowView() {
   const contactDialogToken = useDialog<FriendInfo | GroupInfo | null>(buildContactDialog);
-  const { avatar } = useContext(GlobalContext);
+  const { avatar } = useRecoilValue(userInfoState);
   const { $t } = useI18n();
+
+  const setUserInfo = useSetRecoilState(userInfoState);
+  const setSessionList = useSetRecoilState(sessionListState);
+  // Initiailze
+  useEffect(() => {
+    const initiailze = async () => {
+      setUserInfo(await fallbackHttpApi(getUserInfo, DEFAULT_USER_INFO));
+      setSessionList(await makeMutList(fallbackHttpApi(getSessions, [])));
+    };
+
+    initiailze();
+  }, [setSessionList, setUserInfo]);
 
   return (
     <div className="WindowView">

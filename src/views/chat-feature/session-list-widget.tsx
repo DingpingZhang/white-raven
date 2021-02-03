@@ -1,34 +1,41 @@
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import SessionItem from './session-item';
 import SearchWidget from 'views/search-widget';
-import { SessionInfo } from 'api';
 import { useState } from 'react';
+import { sessionListState, selectedSessionState } from 'models/store';
+import { useRecoilState, useRecoilValueLoadable, useSetRecoilState } from 'recoil';
+import { produce } from 'immer';
+import { removeAll } from 'helpers/list-helpers';
 
-type Props = {
-  selectedItem: SessionInfo | null;
-  setSelectedItem: (value: SessionInfo) => void;
-  items: ReadonlyArray<SessionInfo>;
-};
-
-export default function SessionListWidget({ selectedItem, setSelectedItem, items }: Props) {
+export default function SessionListWidget() {
   const [searchText, setSearchText] = useState('');
+  const [sessionList, setSessionList] = useRecoilState(sessionListState);
+  const selectedSessionLoadable = useRecoilValueLoadable(selectedSessionState);
+  const setSelectedSession = useSetRecoilState(selectedSessionState);
 
   return (
     <div className="SessionListWidget">
       <SearchWidget text={searchText} setText={setSearchText} />
       <VirtualizingListBox
-        sizeProvider={{ itemSize: 108, itemCount: items.length }}
+        sizeProvider={{ itemSize: 108, itemCount: sessionList.length }}
         renderItems={(startIndex, endIndex) =>
-          items.slice(startIndex, endIndex).map((item) => (
+          sessionList.slice(startIndex, endIndex).map((item) => (
             <SessionItem
+              sessionKey={{ type: item.type, contactId: item.contact.id }}
               avatar={item.contact.avatar}
               name={item.contact.name}
-              lastMessage={item.lastMessages[item.lastMessages.length - 1]}
               unreadCount={item.unreadCount}
-              selected={selectedItem === item}
-              onSelected={() => setSelectedItem(item)}
+              selected={
+                selectedSessionLoadable.state === 'hasValue' &&
+                selectedSessionLoadable.contents === item
+              }
+              onSelected={() => setSelectedSession(item)}
               onRemoved={() => {
-                /* TODO: Remove itself */
+                setSessionList((prev) =>
+                  produce(prev, (draft) => {
+                    removeAll(draft, item);
+                  })
+                );
               }}
             />
           ))

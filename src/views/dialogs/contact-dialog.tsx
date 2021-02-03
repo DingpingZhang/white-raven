@@ -1,8 +1,9 @@
-import { FriendInfo, getFriendInfos, getGroupInfos, GroupInfo } from 'api';
+import { FriendInfo, GroupInfo } from 'api';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
-import { useHttpApi } from 'hooks/use-api';
 import { useI18n } from 'i18n';
+import { contactListState } from 'models/store';
 import { useMemo, useState } from 'react';
+import { useRecoilValueLoadable } from 'recoil';
 import SearchWidget from 'views/search-widget';
 import BaseDialog from './base-dialog';
 import ContactItem from './contact-item';
@@ -19,16 +20,16 @@ export function buildContactDialog(close: OnClose) {
 }
 
 export default function ContactDialog({ close }: Props) {
-  const friendInfos = useHttpApi(getFriendInfos, []);
-  const groupInfos = useHttpApi(getGroupInfos, []);
-
   const [queriesText, setQueriesText] = useState('');
-  const contactInfos = useMemo(() => [...friendInfos, ...groupInfos], [friendInfos, groupInfos]);
-
+  const contactListLoadable = useRecoilValueLoadable(contactListState);
   const filteredcontactInfos = useMemo(
     () =>
-      contactInfos.filter((item) => (queriesText ? item.name.includes(queriesText) : contactInfos)),
-    [contactInfos, queriesText]
+      contactListLoadable.state === 'hasValue'
+        ? queriesText
+          ? contactListLoadable.contents.filter((item) => item.name.includes(queriesText))
+          : contactListLoadable.contents
+        : [],
+    [contactListLoadable.contents, contactListLoadable.state, queriesText]
   );
   const { $t } = useI18n();
 

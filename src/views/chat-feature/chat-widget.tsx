@@ -1,30 +1,33 @@
-import React, { ReactElement, useCallback, useContext, useEffect, useRef } from 'react';
+import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
 import InfiniteScrollingListBox, { FetchItemsType } from 'components/infinite-scrolling-list-box';
 import MessageTextItem from './message-text-item';
 import SenderWidget from './sender-widget';
 import { IdType, Message, MessageContent } from 'api';
-import { GlobalContext } from 'models/global-context';
 import { getAvatarById } from './common';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import { Size, useForceUpdate, useLazyRef, useResizeObserver } from 'hooks';
 import SortedSet from 'models/sorted-set';
+import { useRecoilValue, useRecoilValueLoadable } from 'recoil';
+import { SessionKey, messageListState, userInfoState } from 'models/store';
 
 type Props = {
-  fetchAsync: (startId?: IdType) => Promise<ReadonlyArray<Message>>;
+  chatKey: SessionKey;
   sendMessage: (message: MessageContent) => Promise<Message | null>;
   getSenderNameById?: (id: IdType) => Promise<string>;
 };
 
-export default function ChatWidget({ fetchAsync, sendMessage, getSenderNameById }: Props) {
+export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: Props) {
   const earliestMessageIdRef = useRef<IdType | undefined>(undefined);
-  const { id: currentUserId } = useContext(GlobalContext);
+  const { id: currentUserId } = useRecoilValue(userInfoState);
+  const messageListLoadable = useRecoilValueLoadable(messageListState(chatKey));
+
   const renderMessage = useCallback(
     async (type: FetchItemsType) => {
       if (type === 'next') return [];
 
-      const messages = await fetchAsync(earliestMessageIdRef.current);
-      if (!messages.length) return [];
+      if (messageListLoadable.state !== 'hasValue') return [];
 
+      const messages = messageListLoadable.contents;
       earliestMessageIdRef.current = messages[0].id;
       return messages.map(({ id, senderId, content, timestamp }) => (
         <MessageTextItem
@@ -37,7 +40,7 @@ export default function ChatWidget({ fetchAsync, sendMessage, getSenderNameById 
         />
       ));
     },
-    [currentUserId, fetchAsync, getSenderNameById]
+    [currentUserId, getSenderNameById, messageListLoadable.contents, messageListLoadable.state]
   );
 
   return (
@@ -126,7 +129,7 @@ function MessageList({ fetchAsync, getSenderNameById }: MessageListProps) {
 
     fetch();
   }, [fetchAsync, forceUpdate, messageList]);
-  const { id: currentUserId } = useContext(GlobalContext);
+  const { id: currentUserId } = useRecoilValue(userInfoState);
 
   return (
     <div className="MessageList" style={{ height: '100%' }}>

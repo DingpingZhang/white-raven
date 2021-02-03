@@ -11,7 +11,7 @@ import {
 } from './basic-types';
 import { Ok, Err, MessageBody, MessageResponse } from './http-types';
 
-type CommonErr = 'connection-timeout';
+export type CommonErr = 'connection-timeout';
 
 const client = axios.create({
   baseURL: 'http://localhost:9000/api/v1',
