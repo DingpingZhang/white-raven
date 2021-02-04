@@ -97,12 +97,7 @@ export default function WindowView() {
     webSocketClient.subscribe<GroupMessageEvent>('group/message', (e) => {
       setSessionList((prev) => {
         const session = prev.find((item) => item.contact.id === e.groupId);
-        if (session) {
-          return produce(prev, (draft) => {
-            removeAll(draft, session, (x, y) => x.contact.id === y.contact.id);
-            draft.unshift(session);
-          });
-        } else {
+        if (!session) {
           const contact = contactList.find((item) => item.id === e.groupId)!;
           if (!isGroupInfo(contact))
             throw new Error('The type of "group/message" argument must be GroupInfo.');
@@ -111,6 +106,8 @@ export default function WindowView() {
             draft.unshift({ type: 'group', contact: contact, unreadCount: 1 });
           });
         }
+
+        return prev;
       });
     });
   }, [contactListLoadable.contents, contactListLoadable.state, setSessionList]);
