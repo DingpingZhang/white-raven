@@ -14,8 +14,9 @@ import { Ok, Err, MessageBody, MessageResponse } from './http-types';
 export type CommonErr = 'connection-timeout';
 
 const client = axios.create({
-  baseURL: 'http://localhost:9000/api/v1',
+  baseURL: 'http://localhost:6900/api/v1',
   timeout: 100_000,
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 });
 
 async function get<TOk, TErr = CommonErr>(url: string) {

@@ -1,6 +1,7 @@
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { equalNumber } from 'helpers';
 import ScrollViewer from './scroll-viewer';
+import { useForceUpdate } from 'hooks';
 
 export type FetchItemsType = 'initial' | 'previous' | 'next';
 
@@ -40,6 +41,7 @@ export default function InfiniteScrollingListBox({ renderItems }: InfiniteScroll
             return;
           }
 
+          console.log(entities);
           const initialItems = await renderItems('initial');
           if (initialItems && initialItems.length > 0) {
             const initialLIs = initialItems.map(
@@ -81,8 +83,16 @@ export default function InfiniteScrollingListBox({ renderItems }: InfiniteScroll
     observer.observe(topElementRef.current);
     observer.observe(bottomElementRef.current);
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+    };
   }, [anchorElementRef, renderItems]);
+
+  // TODO: Replace the shit code!!!
+  const forceUpdate = useForceUpdate();
+  useEffect(() => {
+    forceUpdate();
+  }, [forceUpdate, renderItems]);
 
   return (
     <div className="InfiniteScrollingListBox">

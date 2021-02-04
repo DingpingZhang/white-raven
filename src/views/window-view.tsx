@@ -96,14 +96,14 @@ export default function WindowView() {
     });
     webSocketClient.subscribe<GroupMessageEvent>('group/message', (e) => {
       setSessionList((prev) => {
-        const session = prev.find((item) => item.contact.id === e.senderId);
+        const session = prev.find((item) => item.contact.id === e.groupId);
         if (session) {
           return produce(prev, (draft) => {
             removeAll(draft, session, (x, y) => x.contact.id === y.contact.id);
             draft.unshift(session);
           });
         } else {
-          const contact = contactList.find((item) => item.id === e.senderId)!;
+          const contact = contactList.find((item) => item.id === e.groupId)!;
           if (!isGroupInfo(contact))
             throw new Error('The type of "group/message" argument must be GroupInfo.');
 
@@ -132,7 +132,22 @@ export default function WindowView() {
               title={$t('window.tabHeader.contact')}
               onClick={async () => {
                 const result = await contactDialogToken.show();
-                console.log(result);
+                if (result) {
+                  setSessionList((prev) => [
+                    isGroupInfo(result)
+                      ? {
+                          type: 'group',
+                          unreadCount: 0,
+                          contact: result,
+                        }
+                      : {
+                          type: 'friend',
+                          unreadCount: 0,
+                          contact: result,
+                        },
+                    ...prev,
+                  ]);
+                }
               }}
             />,
           ]}

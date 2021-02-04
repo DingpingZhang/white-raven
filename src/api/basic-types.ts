@@ -87,7 +87,6 @@ export function isGroupInfo(info: FriendInfo | GroupInfo): info is GroupInfo {
 
 type SessionBase = {
   unreadCount: number;
-  lastMessages: ReadonlyArray<Message>;
 };
 
 export type FriendSession = SessionBase & {

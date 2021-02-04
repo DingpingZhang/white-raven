@@ -13,6 +13,7 @@ import {
   Message,
   Ok,
   PersonInfo,
+  SessionInfo,
   StrangerInfo,
 } from 'api';
 import { CommonErr } from 'api/http-api';
@@ -23,7 +24,7 @@ export async function fallbackHttpApi<TOk, TErr = CommonErr>(
   fallbackValue: TOk
 ): Promise<TOk> {
   const response = await api();
-  if (response.code === 200) {
+  if (response.code === 200 && response.content) {
     return response.content;
   }
 
@@ -65,9 +66,7 @@ export type GroupSessionItem = {
   unreadCount: number;
 };
 
-export type SessionItem = FriendSessionItem | StrangerSessionItem | GroupSessionItem;
-
-export const sessionListState = atom<SessionItem[]>({
+export const sessionListState = atom<SessionInfo[]>({
   key: 'sessionListState',
   default: [],
 });

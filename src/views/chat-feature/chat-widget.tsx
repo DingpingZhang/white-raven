@@ -1,5 +1,4 @@
-import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
-import InfiniteScrollingListBox, { FetchItemsType } from 'components/infinite-scrolling-list-box';
+import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import MessageTextItem from './message-text-item';
 import SenderWidget from './sender-widget';
 import {
@@ -15,9 +14,9 @@ import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import { Size, useForceUpdate, useLazyRef, useResizeObserver } from 'hooks';
 import SortedSet from 'models/sorted-set';
 import { useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil';
-import { SessionKey, messageListState, userInfoState } from 'models/store';
+import { SessionKey, messageListState, userInfoState, groupMemberListState } from 'models/store';
 import { webSocketClient } from 'api/websocket-client';
-import { produce } from 'immer';
+import ScrollViewer from 'components/scroll-viewer';
 
 type Props = {
   chatKey: SessionKey;
@@ -26,32 +25,16 @@ type Props = {
 };
 
 export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: Props) {
-  const earliestMessageIdRef = useRef<IdType | undefined>(undefined);
+  // const earliestMessageIdRef = useRef<IdType | undefined>(undefined);
+  const [anchorElement, setAnchorElement] = useState<HTMLElement | null>(null);
+  const anchorElementRef = useCallback(
+    (element: HTMLElement | null) => setAnchorElement(element),
+    []
+  );
   const { id: currentUserId } = useRecoilValue(userInfoState);
   const messageListLoadable = useRecoilValueLoadable(messageListState(chatKey));
   const setMessageList = useSetRecoilState(messageListState(chatKey));
-
-  const renderMessage = useCallback(
-    async (type: FetchItemsType) => {
-      if (type === 'next') return [];
-
-      if (messageListLoadable.state !== 'hasValue') return [];
-
-      const messages = messageListLoadable.contents;
-      earliestMessageIdRef.current = messages[0].id;
-      return messages.map(({ id, senderId, content, timestamp }, index) => (
-        <MessageTextItem
-          key={id}
-          avatar={getAvatarById(id)}
-          content={content}
-          timestamp={timestamp}
-          highlight={senderId === currentUserId}
-          getSenderName={async () => (getSenderNameById ? await getSenderNameById(senderId) : '')}
-        />
-      ));
-    },
-    [currentUserId, getSenderNameById, messageListLoadable.contents, messageListLoadable.state]
-  );
+  const groupMemberListLoadable = useRecoilValueLoadable(groupMemberListState(chatKey.contactId));
 
   useEffect(() => {
     const friendToken = webSocketClient.subscribe<FriendMessageEvent>('friend/message', (e) => {
@@ -72,11 +55,13 @@ export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: 
       }
     );
     const groupToken = webSocketClient.subscribe<GroupMessageEvent>('group/message', (e) => {
-      if (e.senderId !== chatKey.contactId) return;
-      setMessageList((prev) => [
-        ...prev,
-        { id: e.id, senderId: e.senderId, content: [...e.content], timestamp: e.timestamp },
-      ]);
+      if (e.groupId !== chatKey.contactId) return;
+      setMessageList((prev) => {
+        return [
+          ...prev,
+          { id: e.id, senderId: e.senderId, content: [...e.content], timestamp: e.timestamp },
+        ];
+      });
     });
 
     return () => {
@@ -85,11 +70,37 @@ export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: 
       groupToken();
     };
   }, [chatKey.contactId, setMessageList]);
+  useEffect(() => {
+    if (anchorElement) {
+      anchorElement.scrollTo(0, anchorElement.scrollHeight);
+    }
+  }, [messageListLoadable.contents]);
 
   return (
     <div className="ChatWidget">
       <div className="ChatWidget__messageList">
-        <InfiniteScrollingListBox renderItems={renderMessage} />
+        <ScrollViewer ref={anchorElementRef} enableVerticalScrollBar>
+          {messageListLoadable.state === 'hasValue'
+            ? messageListLoadable.contents.map(({ id, senderId, content, timestamp }, index) => (
+                <MessageTextItem
+                  key={id}
+                  avatar={
+                    groupMemberListLoadable.state === 'hasValue'
+                      ? groupMemberListLoadable.contents.find((item) => item.id === senderId)!
+                          .avatar
+                      : ''
+                  }
+                  content={content}
+                  timestamp={timestamp}
+                  highlight={senderId === currentUserId}
+                  getSenderName={async () =>
+                    getSenderNameById ? await getSenderNameById(senderId) : ''
+                  }
+                />
+              ))
+            : null}
+        </ScrollViewer>
+        {/* <InfiniteScrollingListBox renderItems={renderMessage} /> */}
         {/* <MessageList fetchAsync={fetchAsync} getSenderNameById={getSenderNameById} /> */}
       </div>
       <div className="ChatWidget__inputBox">

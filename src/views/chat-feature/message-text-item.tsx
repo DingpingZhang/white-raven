@@ -11,9 +11,11 @@ type Props = {
   timestamp: number;
   getSenderName: () => Promise<string>;
   highlight?: boolean;
+  ref?: (element: HTMLElement | null) => void;
 };
 
 export default function MessageTextItem({
+  ref,
   avatar,
   content,
   timestamp,
@@ -25,7 +27,7 @@ export default function MessageTextItem({
   const senderName = useAsyncValue(getSenderName, '');
 
   return (
-    <div className="MessageTextItem">
+    <div ref={ref} className="MessageTextItem">
       {senderName ? (
         <span className="MessageTextItem__senderName text tip-secondary">{senderName}</span>
       ) : null}
