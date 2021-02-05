@@ -56,7 +56,7 @@ export default function WindowView() {
     const contactList = contactListLoadable.contents;
 
     // Subscribe Events
-    webSocketClient.subscribe<FriendMessageEvent>('friend/message', (e) => {
+    webSocketClient.filter<FriendMessageEvent>('friend/message').subscribe((e) => {
       setSessionList((prev) => {
         const session = prev.find((item) => item.contact.id === e.senderId);
         if (session) {
@@ -72,7 +72,7 @@ export default function WindowView() {
         }
       });
     });
-    webSocketClient.subscribe<StrangerMessageEvent>('stranger/message', async (e) => {
+    webSocketClient.filter<StrangerMessageEvent>('stranger/message').subscribe(async (e) => {
       const stranger = await fallbackHttpApi(() => getStrangerInfo(e.senderId), null);
       if (!stranger) return;
 
@@ -94,7 +94,7 @@ export default function WindowView() {
         }
       });
     });
-    webSocketClient.subscribe<GroupMessageEvent>('group/message', (e) => {
+    webSocketClient.filter<GroupMessageEvent>('group/message').subscribe((e) => {
       setSessionList((prev) => {
         const session = prev.find((item) => item.contact.id === e.groupId);
         if (!session) {

@@ -17,6 +17,7 @@ import { useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoi
 import { SessionKey, messageListState, userInfoState, groupMemberListState } from 'models/store';
 import { webSocketClient } from 'api/websocket-client';
 import ScrollViewer from 'components/scroll-viewer';
+import { publish, refCount, tap, map, filter } from 'rxjs/operators';
 
 type Props = {
   chatKey: SessionKey;
@@ -37,43 +38,47 @@ export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: 
   const groupMemberListLoadable = useRecoilValueLoadable(groupMemberListState(chatKey.contactId));
 
   useEffect(() => {
-    const friendToken = webSocketClient.subscribe<FriendMessageEvent>('friend/message', (e) => {
-      if (e.senderId !== chatKey.contactId) return;
-      setMessageList((prev) => [
-        ...prev,
-        { id: e.id, senderId: e.senderId, content: [...e.content], timestamp: e.timestamp },
-      ]);
-    });
-    const strangerToken = webSocketClient.subscribe<StrangerMessageEvent>(
-      'stranger/message',
-      (e) => {
-        if (e.senderId !== chatKey.contactId) return;
+    const friendToken = webSocketClient
+      .filter<FriendMessageEvent>('friend/message')
+      .pipe(filter((e) => e.senderId === chatKey.contactId))
+      .subscribe((e) => {
         setMessageList((prev) => [
           ...prev,
           { id: e.id, senderId: e.senderId, content: [...e.content], timestamp: e.timestamp },
         ]);
-      }
-    );
-    const groupToken = webSocketClient.subscribe<GroupMessageEvent>('group/message', (e) => {
-      if (e.groupId !== chatKey.contactId) return;
-      setMessageList((prev) => {
-        return [
+      });
+    const strangerToken = webSocketClient
+      .filter<StrangerMessageEvent>('stranger/message')
+      .pipe(filter((e) => e.senderId === chatKey.contactId))
+      .subscribe((e) => {
+        setMessageList((prev) => [
           ...prev,
           { id: e.id, senderId: e.senderId, content: [...e.content], timestamp: e.timestamp },
-        ];
+        ]);
       });
-    });
+    const groupToken = webSocketClient
+      .filter<GroupMessageEvent>('group/message')
+      .pipe(filter((e) => e.groupId === chatKey.contactId))
+      .subscribe((e) => {
+        setMessageList((prev) => {
+          return [
+            ...prev,
+            { id: e.id, senderId: e.senderId, content: [...e.content], timestamp: e.timestamp },
+          ];
+        });
+      });
 
     return () => {
-      friendToken();
-      strangerToken();
-      groupToken();
+      friendToken.unsubscribe();
+      strangerToken.unsubscribe();
+      groupToken.unsubscribe();
     };
   }, [chatKey.contactId, setMessageList]);
   useEffect(() => {
     if (anchorElement) {
+      anchorElement.scrollTo({ behavior: 'auto', top: anchorElement.scrollHeight });
       setTimeout(() => {
-        anchorElement.scrollTo(0, anchorElement.scrollHeight);
+        anchorElement.scrollTo({ behavior: 'smooth', top: anchorElement.scrollHeight });
       }, 200);
     }
   }, [anchorElement, messageListLoadable.contents]);
@@ -83,7 +88,7 @@ export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: 
       <div className="ChatWidget__messageList">
         <ScrollViewer ref={anchorElementRef} enableVerticalScrollBar>
           {messageListLoadable.state === 'hasValue'
-            ? messageListLoadable.contents.map(({ id, senderId, content, timestamp }, index) => (
+            ? messageListLoadable.contents.map(({ id, senderId, content, timestamp }) => (
                 <MessageTextItem
                   key={id}
                   avatar={

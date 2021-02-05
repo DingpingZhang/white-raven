@@ -1,7 +1,6 @@
-import { Disposable } from './basic-types';
-import { uuidv4 } from 'helpers';
+import { fromEvent, Observable } from 'rxjs';
+import { publish, refCount, tap, map, filter } from 'rxjs/operators';
 
-type EventHandler = (event: any) => void;
 type EventBase<T extends string = string> = {
   type: T;
 };
@@ -11,72 +10,57 @@ const PING_MESSAGE = 'ping';
 const PONG_MESSAGE = 'pong';
 
 export class WebSocketClient {
-  private readonly routes: Map<string, Map<string, EventHandler>>;
   private readonly url: string;
   private readonly pingInterval: number;
 
+  private observable?: Observable<EventBase>;
   private websocket?: WebSocket;
   private heartbeatToken: ReturnType<typeof setInterval> | undefined;
 
   constructor(url: string, pingInterval = 60_000) {
     this.url = url;
     this.pingInterval = pingInterval;
-    this.routes = new Map<string, Map<string, EventHandler>>();
 
-    this.subscribe = this.subscribe.bind(this);
+    this.filter = this.filter.bind(this);
     this.close = this.close.bind(this);
 
-    this.handleMessage = this.handleMessage.bind(this);
     this.handleError = this.handleError.bind(this);
     this.handleClose = this.handleClose.bind(this);
 
     this.initialize();
   }
 
-  subscribe<T extends EventBase>(type: GetEventType<T>, handler: (e: T) => void): Disposable {
-    if (!this.routes.has(type)) {
-      this.routes.set(type, new Map<string, EventHandler>());
-    }
-
-    const token = uuidv4();
-    this.routes.get(type)!.set(token, handler);
-
-    return () => {
-      this.routes.get(type)?.delete(token);
-    };
+  filter<T extends EventBase>(type: GetEventType<T>): Observable<T> {
+    return this.observable!.pipe(
+      filter((item) => item.type === type),
+      map((item) => item as T)
+    );
   }
 
   close() {
     clearInterval(this.heartbeatToken as any);
     this.websocket?.close();
-    this.routes.clear();
   }
 
   private initialize() {
     this.websocket = new WebSocket(this.url);
-    this.websocket.addEventListener('message', this.handleMessage);
+    this.observable = fromEvent<MessageEvent<any>>(this.websocket, 'message').pipe(
+      publish(),
+      refCount(),
+      filter((item) => !!item.data && item.data !== PONG_MESSAGE),
+      tap((item) => {
+        if (item.data === PING_MESSAGE) {
+          this.websocket?.send(PONG_MESSAGE);
+        }
+      }),
+      filter((item) => item.data !== PING_MESSAGE),
+      map((item) => JSON.parse(item.data) as EventBase),
+      filter((item) => !!item),
+      tap((item) => console.log(item))
+    );
     this.websocket.addEventListener('error', this.handleError);
     this.websocket.addEventListener('close', this.handleClose);
     this.heartbeatToken = setInterval(() => this.websocket?.send(PING_MESSAGE), this.pingInterval);
-  }
-
-  private handleMessage(e: MessageEvent<any>) {
-    if (!this.websocket || !e.data) return;
-
-    const jsonString = e.data as string;
-    if (jsonString === PONG_MESSAGE) return;
-    if (jsonString === PING_MESSAGE) {
-      this.websocket.send('pong');
-      return;
-    }
-
-    const event = JSON.parse(jsonString) as EventBase;
-    if (!event) return;
-
-    const handlers = this.routes.get(event.type);
-    if (!handlers) return;
-
-    handlers.forEach((handler) => handler(event));
   }
 
   private handleError(e: Event) {
