@@ -72,9 +72,11 @@ export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: 
   }, [chatKey.contactId, setMessageList]);
   useEffect(() => {
     if (anchorElement) {
-      anchorElement.scrollTo(0, anchorElement.scrollHeight);
+      setTimeout(() => {
+        anchorElement.scrollTo(0, anchorElement.scrollHeight);
+      }, 200);
     }
-  }, [messageListLoadable.contents]);
+  }, [anchorElement, messageListLoadable.contents]);
 
   return (
     <div className="ChatWidget">
