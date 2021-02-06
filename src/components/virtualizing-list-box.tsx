@@ -1,7 +1,8 @@
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
-import { Size, useResizeObserver } from 'hooks';
+import { useResize } from 'hooks';
 import ScrollViewer from './scroll-viewer';
+import { equalNumber } from 'helpers';
 
 type UnfixedSizeProvider = {
   /**
@@ -40,36 +41,29 @@ export function VirtualizingListBox({
   selectable,
   setSelectedIndex,
 }: Props) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [wrapperRef, , wrapperHeight, wrapper] = useResize<HTMLDivElement>();
   const [viewSize, setViewSize] = useState(0);
   const [startIndex, setStartIndex] = useState(0);
   const [endIndex, setEndIndex] = useState(0);
-  const updateSize = useCallback((size: Size) => {
-    const newViewSize = size.height;
-    setViewSize((oldValue) => {
-      if (Math.abs(newViewSize - oldValue) > 1e-6) {
-        return newViewSize;
-      }
-      return oldValue;
-    });
-  }, []);
-  useResizeObserver(wrapperRef, updateSize);
+  useEffect(() => {
+    setViewSize((prev) => (equalNumber(prev, wrapperHeight) ? prev : wrapperHeight));
+  }, [wrapperHeight]);
 
   const handleScroll = useCallback(() => {
-    if (wrapperRef.current) {
+    if (wrapper) {
       const {
         startIndex: newStartIndex,
         endIndex: newEndIndex,
         viewStartIndex,
         viewEndIndex,
-      } = getItemsRange(sizeProvider, wrapperRef.current.scrollTop, viewSize);
+      } = getItemsRange(sizeProvider, wrapper.scrollTop, viewSize);
 
       if (viewStartIndex < startIndex || viewEndIndex > endIndex) {
         setStartIndex(newStartIndex);
         setEndIndex(newEndIndex);
       }
     }
-  }, [startIndex, endIndex, sizeProvider, viewSize]);
+  }, [wrapper, sizeProvider, viewSize, startIndex, endIndex]);
 
   // Trigger the handleScroll to update start/endIndex immediatly when the handleScroll was changed.
   useEffect(() => handleScroll(), [handleScroll]);
