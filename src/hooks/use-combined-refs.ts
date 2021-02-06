@@ -2,7 +2,7 @@
 
 import React, { Ref, useRef } from 'react';
 
-export function useCombinedRefs<T extends HTMLElement>(...refs: Ref<T>[]) {
+export function useCombinedRefs<T extends Element>(...refs: Ref<T>[]) {
   const targetRef = useRef<T>(null);
 
   React.useEffect(() => {

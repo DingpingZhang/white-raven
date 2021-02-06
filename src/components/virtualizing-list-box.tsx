@@ -49,7 +49,7 @@ export function VirtualizingListBox({
     setViewSize((prev) => (equalNumber(prev, wrapperHeight) ? prev : wrapperHeight));
   }, [wrapperHeight]);
 
-  const handleScroll = useCallback(() => {
+  const recalculate = useCallback(() => {
     if (wrapper) {
       const {
         startIndex: newStartIndex,
@@ -65,8 +65,8 @@ export function VirtualizingListBox({
     }
   }, [wrapper, sizeProvider, viewSize, startIndex, endIndex]);
 
-  // Trigger the handleScroll to update start/endIndex immediatly when the handleScroll was changed.
-  useEffect(() => handleScroll(), [handleScroll]);
+  // Trigger the recalculate() to update start/endIndex immediatly when the handleScroll was changed.
+  useEffect(() => recalculate(), [recalculate]);
 
   const itemElements = useMemo(
     () =>
@@ -95,7 +95,7 @@ export function VirtualizingListBox({
 
   return (
     <div className="VirtualizingListBox">
-      <ScrollViewer ref={wrapperRef} onScroll={handleScroll} enableVerticalScrollBar>
+      <ScrollViewer ref={wrapperRef} onScroll={recalculate} enableVerticalScrollBar>
         <ul className="VirtualizingListBox__list">
           {/* HACK: Hold the height of the scroll area, and place it on top of item elements to
            * make sure it is in the lower layer of item elements, otherwise, its hit test
