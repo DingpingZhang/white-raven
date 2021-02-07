@@ -60,17 +60,18 @@ function convertToHtmlElement(
           @{message.targetId}{' '}
         </span>
       );
-    case 'face':
-      const imageSource = require(`images/face/${message.faceId}.gif`);
+    case 'face': {
+      const imageUrl = `http://localhost:6900/api/v1/assets/images/${message.faceId}`;
       return (
         <img
           key={`${index}-${message.faceId}`}
           className="MessageTextItem__msgSegment msgFace"
-          src={imageSource.default}
+          src={imageUrl}
           alt={`[face,faceId=${message.faceId}]`}
         />
       );
-    case 'image':
+    }
+    case 'image': {
       const imageUrl = `http://localhost:6900/api/v1/assets/images/${message.imageId}`;
       return (
         // eslint-disable-next-line jsx-a11y/img-redundant-alt
@@ -86,6 +87,7 @@ function convertToHtmlElement(
           }
         />
       );
+    }
     default:
       return null;
   }
