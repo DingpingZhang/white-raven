@@ -16,7 +16,7 @@ export default function ImageExplorerDialog({ close, imageUrl }: Props) {
   return (
     <BaseDialog title={$t('dialog.title.image')} close={close}>
       <div className="ImageExplorerDialog">
-        <img src={imageUrl} alt="preview" />
+        <img src={imageUrl} alt="preview" style={{ maxWidth: '1000px', maxHeight: '720px' }} />
       </div>
     </BaseDialog>
   );

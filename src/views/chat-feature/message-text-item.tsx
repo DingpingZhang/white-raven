@@ -67,20 +67,21 @@ function convertToHtmlElement(
           key={`${index}-${message.faceId}`}
           className="MessageTextItem__msgSegment msgFace"
           src={imageSource.default}
-          alt={`[CQ:face,id=${message.faceId}]`}
+          alt={`[face,faceId=${message.faceId}]`}
         />
       );
     case 'image':
+      const imageUrl = `http://localhost:6900/api/v1/assets/images/${message.imageId}`;
       return (
         // eslint-disable-next-line jsx-a11y/img-redundant-alt
         <img
-          key={`${index}-${message.url}`}
+          key={`${index}-${message.imageId}`}
           className="MessageTextItem__msgSegment msgImage"
-          src={message.url}
-          alt={`[CQ:image,file=${message.url}]`}
+          src={imageUrl}
+          alt={`[image,imageId=${message.imageId}]`}
           onClick={async () =>
             await dialogBuilder
-              .build<void>((close) => <ImageExplorerDialog close={close} imageUrl={message.url} />)
+              .build<void>((close) => <ImageExplorerDialog close={close} imageUrl={imageUrl} />)
               .show()
           }
         />

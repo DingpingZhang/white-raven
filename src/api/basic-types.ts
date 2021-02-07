@@ -12,7 +12,7 @@ export type TextMessageSegment = {
 
 export type ImageMessageSegment = {
   type: 'image';
-  url: string;
+  imageId: string;
 };
 
 export type FaceMessageSegment = {
