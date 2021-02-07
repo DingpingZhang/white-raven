@@ -48,24 +48,6 @@ export type SessionKey = {
   contactId: IdType;
 };
 
-export type FriendSessionItem = {
-  type: 'friend';
-  contact: FriendInfo;
-  unreadCount: number;
-};
-
-export type StrangerSessionItem = {
-  type: 'stranger';
-  contact: StrangerInfo;
-  unreadCount: number;
-};
-
-export type GroupSessionItem = {
-  type: 'group';
-  contact: GroupInfo;
-  unreadCount: number;
-};
-
 export const sessionListState = atom<SessionInfo[]>({
   key: 'sessionListState',
   default: [],
