@@ -55,8 +55,7 @@ export class WebSocketClient {
       }),
       filter((item) => item.data !== PING_MESSAGE),
       map((item) => JSON.parse(item.data) as EventBase),
-      filter((item) => !!item),
-      tap((item) => console.log(item))
+      filter((item) => !!item)
     );
     this.websocket.addEventListener('error', this.handleError);
     this.websocket.addEventListener('close', this.handleClose);
