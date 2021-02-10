@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import MessageTextItem from './message-text-item';
 import SenderWidget from './sender-widget';
 import {
@@ -12,8 +12,8 @@ import {
 import { useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil';
 import { SessionKey, messageListState, userInfoState, groupMemberListState } from 'models/store';
 import { webSocketClient } from 'api/websocket-client';
-import ScrollViewer from 'components/scroll-viewer';
 import { filter } from 'rxjs/operators';
+import LazyLoadingListBox from 'components/lay-loading-list-box';
 
 type Props = {
   chatKey: SessionKey;
@@ -23,11 +23,6 @@ type Props = {
 
 export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: Props) {
   // const earliestMessageIdRef = useRef<IdType | undefined>(undefined);
-  const [anchorElement, setAnchorElement] = useState<HTMLElement | null>(null);
-  const anchorElementRef = useCallback(
-    (element: HTMLElement | null) => setAnchorElement(element),
-    []
-  );
   const { id: currentUserId } = useRecoilValue(userInfoState);
   const messageListLoadable = useRecoilValueLoadable(messageListState(chatKey));
   const setMessageList = useSetRecoilState(messageListState(chatKey));
@@ -70,41 +65,35 @@ export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: 
       groupToken.unsubscribe();
     };
   }, [chatKey.contactId, setMessageList]);
-  useEffect(() => {
-    if (anchorElement) {
-      anchorElement.scrollTo({ behavior: 'auto', top: anchorElement.scrollHeight });
-      setTimeout(() => {
-        anchorElement.scrollTo({ behavior: 'smooth', top: anchorElement.scrollHeight });
-      }, 200);
-    }
-  }, [anchorElement, messageListLoadable.contents]);
 
   return (
     <div className="ChatWidget">
       <div className="ChatWidget__messageList">
-        <ScrollViewer ref={anchorElementRef} enableVerticalScrollBar>
-          {messageListLoadable.state === 'hasValue'
-            ? messageListLoadable.contents.map(({ id, senderId, content, timestamp }) => (
-                <MessageTextItem
-                  key={id}
-                  avatar={
-                    groupMemberListLoadable.state === 'hasValue'
-                      ? groupMemberListLoadable.contents.find((item) => item.id === senderId)!
-                          .avatar
-                      : ''
-                  }
-                  content={content}
-                  timestamp={timestamp}
-                  highlight={senderId === currentUserId}
-                  getSenderName={async () =>
-                    getSenderNameById ? await getSenderNameById(senderId) : ''
-                  }
-                />
-              ))
-            : null}
-        </ScrollViewer>
-        {/* <InfiniteScrollingListBox renderItems={renderMessage} /> */}
-        {/* <MessageList fetchAsync={fetchAsync} getSenderNameById={getSenderNameById} /> */}
+        <LazyLoadingListBox<Message>
+          capacity={200}
+          getPreviousItems={() =>
+            Promise.resolve(
+              messageListLoadable.state === 'hasValue' ? messageListLoadable.contents : []
+            )
+          }
+          getNextItems={() => Promise.resolve([])}
+          renderItem={({ id, senderId, content, timestamp }) => (
+            <MessageTextItem
+              key={id}
+              avatar={
+                groupMemberListLoadable.state === 'hasValue'
+                  ? groupMemberListLoadable.contents.find((item) => item.id === senderId)!.avatar
+                  : ''
+              }
+              content={content}
+              timestamp={timestamp}
+              highlight={senderId === currentUserId}
+              getSenderName={async () =>
+                getSenderNameById ? await getSenderNameById(senderId) : ''
+              }
+            />
+          )}
+        />
       </div>
       <div className="ChatWidget__inputBox">
         <SenderWidget

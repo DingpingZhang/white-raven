@@ -1,8 +1,8 @@
 @use '../mixins/list';
 
-.InfiniteScrollingListBox {
+.LazyLoadingListBox {
   height: 100%;
-  .InfiniteScrollingListBox__anchor {
+  .LazyLoadingListBox__anchor {
     width: 100%;
 
     &.top {
@@ -14,7 +14,7 @@
     }
   }
 
-  .InfiniteScrollingListBox__list {
+  .LazyLoadingListBox__list {
     @include list.non-style-list();
   }
 }
