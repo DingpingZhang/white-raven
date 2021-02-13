@@ -87,7 +87,9 @@ export default function GroupSessionView({
                 renderItems={(startIndex, endIndex) =>
                   groupMemberListLoadable.contents
                     .slice(startIndex, endIndex)
-                    .map((item) => <GroupMemberItem avatar={item.avatar} name={item.name} />)
+                    .map((item) => (
+                      <GroupMemberItem avatar={item.avatar} name={item.remark || item.name} />
+                    ))
                 }
               />
             ) : null}
