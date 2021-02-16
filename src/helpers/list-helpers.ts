@@ -15,3 +15,19 @@ export function removeAll<T>(list: T[], item: T, equals?: (x: T, y: T) => boolea
 
   return removedCount;
 }
+
+export function firstItem<T>(list: ReadonlyArray<T>) {
+  if (list.length <= 0) {
+    throw new Error('Index out of range.');
+  }
+
+  return list[0];
+}
+
+export function lastItem<T>(list: ReadonlyArray<T>) {
+  if (list.length <= 0) {
+    throw new Error('Index out of range.');
+  }
+
+  return list[list.length - 1];
+}

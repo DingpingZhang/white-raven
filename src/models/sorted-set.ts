@@ -15,21 +15,24 @@ export default class SortedSet<T> {
     this.compare = compare;
   }
 
-  addRange(items: ReadonlyArray<T>) {
-    for (let item of items) {
-      const itemId = this.getId(item);
-      if (this.ids.has(itemId)) continue;
+  add(item: T): boolean {
+    const itemId = this.getId(item);
+    if (this.ids.has(itemId)) return false;
 
-      const insertIndex = this.storage.findIndex((existItem) => this.compare(existItem, item) < 0);
-      if (insertIndex < 0 || insertIndex >= this.storage.length) {
-        this.storage.push(item);
-      } else if (insertIndex === 0) {
-        this.storage.unshift(item);
-      } else {
-        this.storage.splice(insertIndex, 0, item);
-      }
-
-      this.ids.add(itemId);
+    const insertIndex = this.storage.findIndex((existItem) => this.compare(existItem, item) < 0);
+    if (insertIndex < 0 || insertIndex >= this.storage.length) {
+      this.storage.push(item);
+    } else if (insertIndex === 0) {
+      this.storage.unshift(item);
+    } else {
+      this.storage.splice(insertIndex, 0, item);
     }
+
+    this.ids.add(itemId);
+    return true;
+  }
+
+  addRange(items: ReadonlyArray<T>): number {
+    return items.map((item) => this.add(item)).filter((item) => item).length;
   }
 }

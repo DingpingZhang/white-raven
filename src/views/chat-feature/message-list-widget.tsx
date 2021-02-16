@@ -1,85 +1,100 @@
-import { VirtualizingListBox } from 'components/virtualizing-list-box';
-import { Size, useResize, useCombinedRefs } from 'hooks';
-import MessageAndSizeList from 'models/message-and-size-list';
-import { userInfoState } from 'models/store';
-import React, { ReactElement, Ref, useEffect } from 'react';
+import { Message } from 'api';
+import ScrollViewer from 'components/scroll-viewer';
+import MessageList from 'models/message-list';
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useRecoilValue } from 'recoil';
-import MessageTextItem from './message-text-item';
 
 type Props = {
-  messages: MessageAndSizeList;
+  messageList: MessageList;
+  renderItem: (item: Message) => ReactElement;
 };
 
-export default function MessageListWidget({ messages }: Props) {
-  const [anchorTopRef] = useInView();
-  const [anchorBottomRef, inViewAnchorBottom, bottomEntity] = useInView();
+export default function MessageListWidget({ messageList, renderItem }: Props) {
+  const scrollViewerRef = useRef<HTMLDivElement>(null);
+  const [prevMoreRef, inViewPrevMore] = useInView();
+  const [nextMoreRef, inViewNextMore] = useInView();
 
-  const bottomElement = bottomEntity?.target;
   useEffect(() => {
-    if (inViewAnchorBottom && bottomElement) {
-      bottomElement.scrollIntoView();
+    if (inViewPrevMore) {
+      messageList.prevItems();
     }
-  }, [bottomElement, inViewAnchorBottom]);
+  }, [inViewPrevMore, messageList]);
 
-  const { id: currentUserId } = useRecoilValue(userInfoState);
+  useEffect(() => {
+    if (inViewNextMore) {
+      messageList.nextItems();
+    }
+  }, [inViewNextMore, messageList]);
 
   return (
     <div className="MessageListWidget">
-      <VirtualizingListBox
-        sizeProvider={{
-          getItemsCount: messages.getItemsCount,
-          getItemsSize: messages.getItemsSize,
-        }}
-        renderItems={(startIndex, endIndex) => {
-          return messages
-            .slice(startIndex, endIndex)
-            .map(({ id, content, timestamp, sender }, index) => {
-              const actualIndex = startIndex + index;
-              return (
-                <MessageItem
-                  ref={
-                    startIndex === 0
-                      ? anchorTopRef
-                      : actualIndex === messages.length - 1
-                      ? anchorBottomRef
-                      : null
-                  }
-                  index={actualIndex}
-                  onSizeChanged={messages.setSize}
-                >
-                  <MessageTextItem
-                    key={id}
-                    avatar={sender.avatar}
-                    content={content}
-                    timestamp={timestamp}
-                    highlight={sender.id === currentUserId}
-                    getSenderName={() => Promise.resolve(sender.name)}
-                  />
-                </MessageItem>
-              );
-            });
-        }}
-      />
+      <ScrollViewer ref={scrollViewerRef} enableVerticalScrollBar>
+        <div ref={prevMoreRef} className="MessageListWidget__prevMore"></div>
+        {messageList.items.map((item, index) => (
+          <MessageListItem key={item.id} index={index} setReaded={() => {}} setVisible={() => {}}>
+            {renderItem(item)}
+          </MessageListItem>
+        ))}
+        <div ref={nextMoreRef} className="MessageListWidget__nextMore"></div>
+      </ScrollViewer>
+      <GotoButton classSuffix="top" icon="TODO: up-arrow" onClick={() => {}} />
+      <GotoButton classSuffix="bottom" icon="TODO: down-arrow" onClick={() => {}} />
     </div>
   );
 }
 
-type MessageItemProps = {
-  ref: Ref<HTMLDivElement>;
-  index: number;
+type MessageListItemProps = {
   children: ReactElement;
-  onSizeChanged: (index: number, size: Size) => void;
+  index: number;
+  setReaded: (index: number) => void;
+  setVisible: (index: number, visible: boolean) => void;
 };
 
-function MessageItem({ ref, index, children, onSizeChanged }: MessageItemProps) {
-  const [itemRef, width, height] = useResize();
-  const combinedRef = useCombinedRefs<HTMLDivElement>(itemRef, ref);
-  useEffect(() => onSizeChanged(index, { width, height }), [height, index, onSizeChanged, width]);
+function MessageListItem({ children, index, setReaded, setVisible }: MessageListItemProps) {
+  return <div className="MessageListItem">{children}</div>;
+}
 
+type GotoButtonProps = {
+  classSuffix: string;
+  icon: string;
+  onClick: () => void;
+  text?: string;
+};
+
+function GotoButton({ classSuffix, icon, onClick, text }: GotoButtonProps) {
   return (
-    <div ref={combinedRef} className="MessageItem">
-      {children}
-    </div>
+    <button className={`GotoButton__${classSuffix}`} onClick={onClick}>
+      {text ? <span>{text}</span> : null}
+      <img src={icon} alt="icon" />
+    </button>
   );
+}
+
+function useIntersectionObserver(
+  root: Element | null
+): [(element: Element | null) => void, boolean] {
+  const [visible, setVisible] = useState(false);
+  const [element, setElement] = useState<Element | null>(null);
+  const ref = useCallback((element: Element | null) => setElement(element), []);
+
+  useEffect(() => {
+    if (!element || !root) return;
+
+    const observer = new IntersectionObserver(
+      (entities) => {
+        if (entities.length !== 1) return;
+        const entity = entities[0];
+        if (entity.target === element) {
+          setVisible(entity.isIntersecting);
+          console.log(entity);
+        }
+      },
+      { root: root }
+    );
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, [element, root]);
+
+  return [ref, visible];
 }
