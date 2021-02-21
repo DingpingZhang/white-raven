@@ -1,10 +1,10 @@
 import { IdType, Message } from 'api';
-import { firstItem, lastItem } from 'helpers/list-helpers';
+import { firstItemOrDefault, lastItemOrDefault } from 'helpers/list-helpers';
 import { Observable, Subject } from 'rxjs';
 import SortedSet from './sorted-set';
 
 type GetItems = (
-  startId: IdType,
+  startId: IdType | undefined,
   count: number,
   previous: boolean
 ) => Promise<ReadonlyArray<Message>>;
@@ -38,15 +38,15 @@ export default class MessageList {
   constructor(getItems: GetItems) {
     this.storage = new SortedSet<Message>(
       (item) => item.id,
-      (x, y) => x.timestamp - y.timestamp
+      (x, y) => y.timestamp - x.timestamp
     );
     this.getItems = getItems;
   }
 
   async pullPrev(): Promise<void> {
     this.lock(async () => {
-      const start = firstItem(this.storage.items);
-      const prevItems = await this.getItems(start.id, BATCH_COUNT, true);
+      const start = firstItemOrDefault(this.storage.items);
+      const prevItems = await this.getItems(start?.id, BATCH_COUNT, true);
       const count = this.storage.addRange(prevItems);
       if (count > 0) {
         this.startIndex = 0;
@@ -61,8 +61,8 @@ export default class MessageList {
 
   async pullNext(): Promise<void> {
     this.lock(async () => {
-      const end = lastItem(this.storage.items);
-      const nextItems = await this.getItems(end.id, BATCH_COUNT, false);
+      const end = lastItemOrDefault(this.storage.items);
+      const nextItems = await this.getItems(end?.id, BATCH_COUNT, false);
       const count = this.storage.addRange(nextItems);
       if (count > 0) {
         this.startIndex = Math.max(this.storage.items.length - this.capacity, 0);
@@ -93,7 +93,6 @@ export default class MessageList {
   }
 
   private raiseItemsChanged(e: ItemsChangedInfo) {
-    console.log(e);
     this.innerItemsChanged.next(e);
   }
 

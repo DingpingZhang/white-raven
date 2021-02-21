@@ -5,10 +5,10 @@ import { toDisplayTimestamp } from 'helpers';
 import ChatWidget from './chat-widget';
 import GroupMemberItem from './group-member-item';
 import { useI18n } from 'i18n';
-import { groupMemberListState, messageListState, userInfoState } from 'models/store';
+import { groupMemberListState, userInfoState } from 'models/store';
 import { useRecoilValue } from 'recoil';
 import useRecoilValueLoaded from 'hooks/use-recoil-value-loaded';
-import useLastMessage from 'models/use-last-message';
+import { useLastMessage, useMessageList } from 'models/use-message';
 
 type Props = {
   session: GroupSession;
@@ -19,7 +19,7 @@ export default function GroupSessionView({
     contact: { id: contactId, name, avatar, description, memberCapacity },
   },
 }: Props) {
-  const messageList = useRecoilValue(messageListState({ contactId, type: 'group' }));
+  const messageList = useMessageList('group', contactId);
   const lastMessage = useLastMessage(messageList);
   const groupMemberList = useRecoilValueLoaded(groupMemberListState(contactId), []);
   const getGroupMemberNameById = useCallback(

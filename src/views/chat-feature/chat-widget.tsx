@@ -10,11 +10,12 @@ import {
   StrangerMessageEvent,
 } from 'api';
 import { useRecoilValue } from 'recoil';
-import { SessionKey, messageListState, userInfoState, groupMemberListState } from 'models/store';
+import { SessionKey, userInfoState, groupMemberListState } from 'models/store';
 import { webSocketClient } from 'api/websocket-client';
 import { filter } from 'rxjs/operators';
 import useRecoilValueLoaded from 'hooks/use-recoil-value-loaded';
 import MessageListWidget from './message-list-widget';
+import { useMessageList } from 'models/use-message';
 
 type Props = {
   chatKey: SessionKey;
@@ -24,7 +25,7 @@ type Props = {
 
 export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: Props) {
   const { id: currentUserId } = useRecoilValue(userInfoState);
-  const messageList = useRecoilValue(messageListState(chatKey));
+  const messageList = useMessageList(chatKey.type, chatKey.contactId);
   const groupMemberList = useRecoilValueLoaded(groupMemberListState(chatKey.contactId), []);
 
   useEffect(() => {

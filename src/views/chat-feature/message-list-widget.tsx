@@ -40,16 +40,20 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
             scrollViewer.scrollTop + scrollViewer.offsetHeight / scrollViewer.scrollHeight > 0.8;
 
           if (isArrivedBottom) {
+            setScrollPointerIndex(Number.MAX_SAFE_INTEGER);
             setScrollPointerIndex('bottom');
           } else {
+            setScrollPointerIndex(Number.MAX_SAFE_INTEGER);
             setScrollPointerIndex(-1);
           }
         }
         break;
       case 'pull-next':
+        setScrollPointerIndex(Number.MAX_SAFE_INTEGER);
         setScrollPointerIndex(sliceCount - changedCount);
         break;
       case 'pull-prev':
+        setScrollPointerIndex(Number.MAX_SAFE_INTEGER);
         setScrollPointerIndex(changedCount - 1);
         break;
     }
@@ -59,21 +63,23 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
     return () => token.unsubscribe();
   }, [handleItemsChanged, messageList.itemsChanged]);
 
+  const prevMoreElement = prevMoreEntity?.target;
+  const nextMoreElement = nextMoreEntity?.target;
   useEffect(() => {
     if (scrollPointerIndex === 'bottom') {
-      if (nextMoreEntity) {
-        nextMoreEntity.target.scrollIntoView();
+      if (nextMoreElement) {
+        nextMoreElement.scrollIntoView();
       }
     } else if (scrollPointerIndex === 'top') {
-      if (prevMoreEntity) {
-        prevMoreEntity.target.scrollIntoView();
+      if (prevMoreElement) {
+        prevMoreElement.scrollIntoView();
       }
     } else if (scrollPointerIndex >= 0) {
       if (scrollPointerElementRef.current) {
         scrollPointerElementRef.current.scrollIntoView();
       }
     }
-  }, [nextMoreEntity, prevMoreEntity, scrollPointerIndex]);
+  }, [prevMoreElement, nextMoreElement, scrollPointerIndex]);
 
   return (
     <div className="MessageListWidget">
@@ -85,10 +91,14 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
         <div ref={prevMoreRef} className="MessageListWidget__prevMore"></div>
         {messageList.items.map((item, index) => {
           const element = renderItem(item, index);
-
-          return scrollPointerIndex === index
-            ? React.cloneElement(element, { ref: scrollPointerElementRef })
-            : element;
+          return (
+            <div
+              ref={scrollPointerIndex === index ? scrollPointerElementRef : null}
+              key={element.key}
+            >
+              {element}
+            </div>
+          );
         })}
         <div ref={nextMoreRef} className="MessageListWidget__nextMore"></div>
       </ScrollViewer>

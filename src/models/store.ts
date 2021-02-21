@@ -2,11 +2,8 @@ import {
   Err,
   FriendInfo,
   getFriendInfos,
-  getFriendMessages,
   getGroupInfos,
   getGroupMembers,
-  getGroupMessages,
-  getStrangerMessages,
   GroupInfo,
   GroupMemberInfo,
   IdType,
@@ -16,7 +13,6 @@ import {
 } from 'api';
 import { CommonErr } from 'api/http-api';
 import { atom, atomFamily } from 'recoil';
-import MessageList from './message-list';
 
 export async function fallbackHttpApi<TOk, TErr = CommonErr>(
   api: () => Promise<Ok<TOk> | Err<TErr>>,
@@ -56,29 +52,6 @@ export const selectedSessionIndexState = atom({
   key: 'selectedSessionIndexState',
   default: 0,
 });
-
-export const messageListState = atomFamily<MessageList, SessionKey>({
-  key: 'messageListState',
-  default: ({ type, contactId }) => {
-    const getPrevMessages = getGetMessages(type);
-    const result = new MessageList(async (stardId, _, previous) =>
-      previous ? await fallbackHttpApi(() => getPrevMessages(contactId, stardId), []) : []
-    );
-    console.log(result);
-    return result;
-  },
-});
-
-function getGetMessages(type: 'friend' | 'stranger' | 'group') {
-  switch (type) {
-    case 'friend':
-      return getFriendMessages;
-    case 'stranger':
-      return getStrangerMessages;
-    case 'group':
-      return getGroupMessages;
-  }
-}
 
 export const contactListState = atom<Array<FriendInfo | GroupInfo>>({
   key: 'contactListState',

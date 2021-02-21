@@ -2,9 +2,8 @@ import classNames from 'classnames';
 import { toDisplayTimestamp } from 'helpers';
 import { MessageSegment } from 'api';
 import { ReactComponent as CloseIcon } from 'images/close.svg';
-import { messageListState, SessionKey } from 'models/store';
-import { useRecoilValue } from 'recoil';
-import useLastMessage from 'models/use-last-message';
+import { SessionKey } from 'models/store';
+import { useLastMessage, useMessageList } from 'models/use-message';
 
 export type Props = {
   sessionKey: SessionKey;
@@ -25,7 +24,7 @@ export default function SessionItem({
   onSelected,
   onRemoved,
 }: Props) {
-  const messageList = useRecoilValue(messageListState(sessionKey));
+  const messageList = useMessageList(sessionKey.type, sessionKey.contactId);
   const lastMessage = useLastMessage(messageList);
   const contactItemClass = classNames('SessionItem', {
     hasMessage: unreadCount,

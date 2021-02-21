@@ -1,4 +1,12 @@
 .MessageListWidget {
   display: flex;
   flex: 1;
+
+  .MessageListWidget__prevMore,
+  .MessageListWidget__nextMore {
+    height: 16px;
+    width: 100%;
+
+    background-color: red;
+  }
 }
