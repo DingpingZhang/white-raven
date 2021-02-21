@@ -65,7 +65,7 @@ const ScrollViewer = React.forwardRef(
     // Trigger the size update when its children changed.
     useEffect(() => {
       if (scrollContentRef.current) {
-        const mutationObserver = new MutationObserver(() => updateSize());
+        const mutationObserver = new MutationObserver(updateSize);
         mutationObserver.observe(scrollContentRef.current, {
           childList: true,
           subtree: true,

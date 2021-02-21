@@ -2,22 +2,17 @@ import {
   Err,
   FriendInfo,
   getFriendInfos,
-  getFriendMessages,
   getGroupInfos,
   getGroupMembers,
-  getGroupMessages,
-  getStrangerMessages,
   GroupInfo,
   GroupMemberInfo,
   IdType,
-  Message,
   Ok,
   PersonInfo,
   SessionInfo,
-  StrangerInfo,
 } from 'api';
 import { CommonErr } from 'api/http-api';
-import { atom, atomFamily, selectorFamily } from 'recoil';
+import { atom, atomFamily } from 'recoil';
 
 export async function fallbackHttpApi<TOk, TErr = CommonErr>(
   api: () => Promise<Ok<TOk> | Err<TErr>>,
@@ -56,31 +51,6 @@ export const sessionListState = atom<SessionInfo[]>({
 export const selectedSessionIndexState = atom({
   key: 'selectedSessionIndexState',
   default: 0,
-});
-
-export const lastSessionMessageState = selectorFamily<Message | null, SessionKey>({
-  key: 'lastSessionMessageState',
-  get: (key) => ({ get }) => {
-    const messages = get(messageListState(key));
-    return messages.length > 0 ? messages[messages.length - 1] : null;
-  },
-});
-
-export const messageListState = atomFamily<Message[], SessionKey>({
-  key: 'messageListState',
-  default: ({ type, contactId }) =>
-    makeMutList(
-      fallbackHttpApi(() => {
-        switch (type) {
-          case 'friend':
-            return getFriendMessages(contactId);
-          case 'stranger':
-            return getStrangerMessages(contactId);
-          case 'group':
-            return getGroupMessages(contactId);
-        }
-      }, [])
-    ),
 });
 
 export const contactListState = atom<Array<FriendInfo | GroupInfo>>({

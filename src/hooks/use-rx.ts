@@ -28,9 +28,9 @@ export function useSetRxState<T>(observer: any, initialValue?: any): any {
   const prevValue = useRef<T | undefined>(initialValue);
   const setValue = useCallback(
     (action: SetStateAction<T | undefined>) => {
-      const v = isFunction(action) ? action(prevValue.current) : action;
-      observer.next(v);
-      prevValue.current = v;
+      const nextValue = isSetCallback(action) ? action(prevValue.current) : action;
+      observer.next(nextValue);
+      prevValue.current = nextValue;
     },
     [observer]
   );
@@ -49,7 +49,6 @@ export function useRxState(subject: any, initialValue?: any) {
   return [useRxValue(subject), useSetRxState(subject, initialValue)];
 }
 
-function isFunction<T>(action: SetStateAction<T>): action is (prev: T) => T {
-  const tryFunc = action as (prev: T) => T;
-  return tryFunc !== undefined;
+function isSetCallback<T>(action: SetStateAction<T>): action is (prev: T) => T {
+  return (action as (prev: T) => T) !== undefined;
 }

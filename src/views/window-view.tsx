@@ -18,7 +18,7 @@ import {
 } from 'api';
 import CircleIcon from 'components/circle-icon';
 import { useI18n } from 'i18n';
-import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   contactListState,
   DEFAULT_USER_INFO,
@@ -31,6 +31,7 @@ import { useEffect } from 'react';
 import { webSocketClient } from 'api/websocket-client';
 import { produce } from 'immer';
 import { removeAll } from 'helpers/list-helpers';
+import useRecoilValueLoaded from 'hooks/use-recoil-value-loaded';
 
 export default function WindowView() {
   const contactDialogToken = useDialog<FriendInfo | GroupInfo | null>(buildContactDialog);
@@ -39,7 +40,7 @@ export default function WindowView() {
 
   const setUserInfo = useSetRecoilState(userInfoState);
   const [, setSessionList] = useRecoilState(sessionListState);
-  const contactListLoadable = useRecoilValueLoadable(contactListState);
+  const contactList = useRecoilValueLoaded(contactListState, []);
 
   // Initiailze
   useEffect(() => {
@@ -52,9 +53,6 @@ export default function WindowView() {
   }, [setSessionList, setUserInfo]);
 
   useEffect(() => {
-    if (contactListLoadable.state !== 'hasValue') return;
-    const contactList = contactListLoadable.contents;
-
     // Subscribe Events
     webSocketClient.filter<FriendMessageEvent>('friend/message').subscribe((e) => {
       setSessionList((prev) => {
@@ -110,7 +108,7 @@ export default function WindowView() {
         return prev;
       });
     });
-  }, [contactListLoadable.contents, contactListLoadable.state, setSessionList]);
+  }, [contactList, setSessionList]);
 
   return (
     <div className="WindowView">

@@ -1,85 +1,118 @@
-import { VirtualizingListBox } from 'components/virtualizing-list-box';
-import { Size, useResize, useCombinedRefs } from 'hooks';
-import MessageAndSizeList from 'models/message-and-size-list';
-import { userInfoState } from 'models/store';
-import React, { ReactElement, Ref, useEffect } from 'react';
+import { Message } from 'api';
+import ScrollViewer from 'components/scroll-viewer';
+import MessageList, { ItemsChangedInfo } from 'models/message-list';
+import React from 'react';
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useRecoilValue } from 'recoil';
-import MessageTextItem from './message-text-item';
 
 type Props = {
-  messages: MessageAndSizeList;
+  messageList: MessageList;
+  renderItem: (item: Message, index: number) => ReactElement;
 };
 
-export default function MessageListWidget({ messages }: Props) {
-  const [anchorTopRef] = useInView();
-  const [anchorBottomRef, inViewAnchorBottom, bottomEntity] = useInView();
+export default function MessageListWidget({ messageList, renderItem }: Props) {
+  const scrollViewerRef = useRef<HTMLDivElement>(null);
+  const scrollPointerElementRef = useRef<HTMLDivElement>(null);
+  const [scrollPointerIndex, setScrollPointerIndex] = useState<number | 'top' | 'bottom'>('bottom');
 
-  const bottomElement = bottomEntity?.target;
+  const [prevMoreRef, inViewPrevMore, prevMoreEntity] = useInView();
+  const [nextMoreRef, inViewNextMore, nextMoreEntity] = useInView();
+
   useEffect(() => {
-    if (inViewAnchorBottom && bottomElement) {
-      bottomElement.scrollIntoView();
+    if (inViewPrevMore) {
+      messageList.pullPrev();
     }
-  }, [bottomElement, inViewAnchorBottom]);
+  }, [inViewPrevMore, messageList]);
+  useEffect(() => {
+    if (inViewNextMore) {
+      messageList.pullNext();
+    }
+  }, [inViewNextMore, messageList]);
 
-  const { id: currentUserId } = useRecoilValue(userInfoState);
+  const handleItemsChanged = useCallback(({ type, changedCount, sliceCount }: ItemsChangedInfo) => {
+    if (changedCount <= 0 || sliceCount <= 0) return;
+
+    switch (type) {
+      case 'push':
+        {
+          const scrollViewer = scrollViewerRef.current;
+          if (!scrollViewer) return;
+          const isArrivedBottom =
+            (scrollViewer.scrollTop + scrollViewer.offsetHeight) / scrollViewer.scrollHeight > 0.8;
+
+          if (isArrivedBottom) {
+            setScrollPointerIndex(Number.MIN_SAFE_INTEGER);
+            setScrollPointerIndex('bottom');
+          } else {
+            setScrollPointerIndex(Number.MIN_SAFE_INTEGER);
+            setScrollPointerIndex(-1);
+          }
+        }
+        break;
+      case 'pull-next':
+        setScrollPointerIndex(Number.MIN_SAFE_INTEGER);
+        setScrollPointerIndex(sliceCount - changedCount);
+        break;
+      case 'pull-prev':
+        setScrollPointerIndex(Number.MIN_SAFE_INTEGER);
+        setScrollPointerIndex(changedCount - 1);
+        break;
+    }
+  }, []);
+  useEffect(() => {
+    const token = messageList.itemsChanged.subscribe(handleItemsChanged);
+    return () => token.unsubscribe();
+  }, [handleItemsChanged, messageList.itemsChanged]);
+
+  const prevMoreElement = prevMoreEntity?.target;
+  const nextMoreElement = nextMoreEntity?.target;
+  useEffect(() => {
+    if (scrollPointerIndex === 'bottom') {
+      if (
+        nextMoreElement &&
+        messageList.startIndex + messageList.capacity >= messageList.storage.items.length
+      ) {
+        nextMoreElement.scrollIntoView();
+      }
+    } else if (scrollPointerIndex === 'top') {
+      if (prevMoreElement) {
+        prevMoreElement.scrollIntoView();
+      }
+    } else if (scrollPointerIndex >= 0) {
+      if (scrollPointerElementRef.current) {
+        scrollPointerElementRef.current.scrollIntoView();
+      }
+    }
+  }, [
+    prevMoreElement,
+    nextMoreElement,
+    scrollPointerIndex,
+    messageList.startIndex,
+    messageList.capacity,
+    messageList.storage.items.length,
+  ]);
 
   return (
     <div className="MessageListWidget">
-      <VirtualizingListBox
-        sizeProvider={{
-          getItemsCount: messages.getItemsCount,
-          getItemsSize: messages.getItemsSize,
-        }}
-        renderItems={(startIndex, endIndex) => {
-          return messages
-            .slice(startIndex, endIndex)
-            .map(({ id, content, timestamp, sender }, index) => {
-              const actualIndex = startIndex + index;
-              return (
-                <MessageItem
-                  ref={
-                    startIndex === 0
-                      ? anchorTopRef
-                      : actualIndex === messages.length - 1
-                      ? anchorBottomRef
-                      : null
-                  }
-                  index={actualIndex}
-                  onSizeChanged={messages.setSize}
-                >
-                  <MessageTextItem
-                    key={id}
-                    avatar={sender.avatar}
-                    content={content}
-                    timestamp={timestamp}
-                    highlight={sender.id === currentUserId}
-                    getSenderName={() => Promise.resolve(sender.name)}
-                  />
-                </MessageItem>
-              );
-            });
-        }}
-      />
-    </div>
-  );
-}
-
-type MessageItemProps = {
-  ref: Ref<HTMLDivElement>;
-  index: number;
-  children: ReactElement;
-  onSizeChanged: (index: number, size: Size) => void;
-};
-
-function MessageItem({ ref, index, children, onSizeChanged }: MessageItemProps) {
-  const [itemRef, width, height] = useResize();
-  const combinedRef = useCombinedRefs<HTMLDivElement>(itemRef, ref);
-  useEffect(() => onSizeChanged(index, { width, height }), [height, index, onSizeChanged, width]);
-
-  return (
-    <div ref={combinedRef} className="MessageItem">
-      {children}
+      <ScrollViewer
+        ref={scrollViewerRef}
+        className="MessageListWidget__messageList"
+        enableVerticalScrollBar
+      >
+        <div ref={prevMoreRef} className="MessageListWidget__prevMore"></div>
+        {messageList.items.map((item, index) => {
+          const element = renderItem(item, index);
+          return (
+            <div
+              ref={scrollPointerIndex === index ? scrollPointerElementRef : null}
+              key={element.key}
+            >
+              {element}
+            </div>
+          );
+        })}
+        <div ref={nextMoreRef} className="MessageListWidget__nextMore"></div>
+      </ScrollViewer>
     </div>
   );
 }

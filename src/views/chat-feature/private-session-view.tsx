@@ -1,8 +1,8 @@
 import { FriendSession, sendMessageToFriend, sendMessageToStranger, StrangerSession } from 'api';
 import { toDisplayTimestamp } from 'helpers';
-import { messageListState, userInfoState } from 'models/store';
-import { useMemo } from 'react';
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil';
+import { userInfoState } from 'models/store';
+import { useLastMessage, useMessageList } from 'models/use-message';
+import { useRecoilValue } from 'recoil';
 import ChatWidget from './chat-widget';
 
 type Props = {
@@ -10,16 +10,8 @@ type Props = {
 };
 
 export default function PrivateSessionView({ session }: Props) {
-  const messageListLoadable = useRecoilValueLoadable(
-    messageListState({ contactId: session.contact.id, type: 'group' })
-  );
-  const lastMessage = useMemo(() => {
-    if (messageListLoadable.state === 'hasValue' && messageListLoadable.contents.length) {
-      return messageListLoadable.contents[messageListLoadable.contents.length];
-    } else {
-      return null;
-    }
-  }, [messageListLoadable.contents, messageListLoadable.state]);
+  const messageList = useMessageList('group', session.contact.id);
+  const lastMessage = useLastMessage(messageList);
   const { id } = useRecoilValue(userInfoState);
 
   return (

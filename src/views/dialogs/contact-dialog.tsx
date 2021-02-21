@@ -1,9 +1,9 @@
 import { FriendInfo, GroupInfo } from 'api';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
+import useRecoilValueLoaded from 'hooks/use-recoil-value-loaded';
 import { useI18n } from 'i18n';
 import { contactListState } from 'models/store';
 import { useMemo, useState } from 'react';
-import { useRecoilValueLoadable } from 'recoil';
 import SearchWidget from 'views/search-widget';
 import BaseDialog from './base-dialog';
 import ContactItem from './contact-item';
@@ -21,15 +21,11 @@ export function buildContactDialog(close: OnClose) {
 
 export default function ContactDialog({ close }: Props) {
   const [queriesText, setQueriesText] = useState('');
-  const contactListLoadable = useRecoilValueLoadable(contactListState);
-  const filteredcontactInfos = useMemo(
+  const contactList = useRecoilValueLoaded(contactListState, []);
+  const filteredContactInfos = useMemo(
     () =>
-      contactListLoadable.state === 'hasValue'
-        ? queriesText
-          ? contactListLoadable.contents.filter((item) => item.name.includes(queriesText))
-          : contactListLoadable.contents
-        : [],
-    [contactListLoadable.contents, contactListLoadable.state, queriesText]
+      queriesText ? contactList.filter((item) => item.name.includes(queriesText)) : contactList,
+    [contactList, queriesText]
   );
   const { $t } = useI18n();
 
@@ -38,9 +34,9 @@ export default function ContactDialog({ close }: Props) {
       <div className="ContactDialog">
         <SearchWidget text={queriesText} setText={setQueriesText} />
         <VirtualizingListBox
-          sizeProvider={{ itemSize: 40, itemCount: filteredcontactInfos.length }}
+          sizeProvider={{ itemSize: 40, itemCount: filteredContactInfos.length }}
           renderItems={(startIndex, endIndex) =>
-            filteredcontactInfos
+            filteredContactInfos
               .slice(startIndex, endIndex)
               .map((item) => (
                 <ContactItem
