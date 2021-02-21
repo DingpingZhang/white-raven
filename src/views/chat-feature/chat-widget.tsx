@@ -9,12 +9,12 @@ import {
   MessageContent,
   StrangerMessageEvent,
 } from 'api';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { SessionKey, messageListState, userInfoState, groupMemberListState } from 'models/store';
 import { webSocketClient } from 'api/websocket-client';
 import { filter } from 'rxjs/operators';
-import ScrollViewer from 'components/scroll-viewer';
 import useRecoilValueLoaded from 'hooks/use-recoil-value-loaded';
+import MessageListWidget from './message-list-widget';
 
 type Props = {
   chatKey: SessionKey;
@@ -24,8 +24,7 @@ type Props = {
 
 export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: Props) {
   const { id: currentUserId } = useRecoilValue(userInfoState);
-  const messageList = useRecoilValueLoaded(messageListState(chatKey), []);
-  const setMessageList = useSetRecoilState(messageListState(chatKey));
+  const messageList = useRecoilValue(messageListState(chatKey));
   const groupMemberList = useRecoilValueLoaded(groupMemberListState(chatKey.contactId), []);
 
   useEffect(() => {
@@ -33,29 +32,33 @@ export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: 
       .filter<FriendMessageEvent>('friend/message')
       .pipe(filter((e) => e.senderId === chatKey.contactId))
       .subscribe((e) => {
-        setMessageList((prev) => [
-          ...prev,
-          { id: e.id, senderId: e.senderId, content: [...e.content], timestamp: e.timestamp },
-        ]);
+        messageList.pushItem({
+          id: e.id,
+          senderId: e.senderId,
+          content: [...e.content],
+          timestamp: e.timestamp,
+        });
       });
     const strangerToken = webSocketClient
       .filter<StrangerMessageEvent>('stranger/message')
       .pipe(filter((e) => e.senderId === chatKey.contactId))
       .subscribe((e) => {
-        setMessageList((prev) => [
-          ...prev,
-          { id: e.id, senderId: e.senderId, content: [...e.content], timestamp: e.timestamp },
-        ]);
+        messageList.pushItem({
+          id: e.id,
+          senderId: e.senderId,
+          content: [...e.content],
+          timestamp: e.timestamp,
+        });
       });
     const groupToken = webSocketClient
       .filter<GroupMessageEvent>('group/message')
       .pipe(filter((e) => e.groupId === chatKey.contactId))
       .subscribe((e) => {
-        setMessageList((prev) => {
-          return [
-            ...prev,
-            { id: e.id, senderId: e.senderId, content: [...e.content], timestamp: e.timestamp },
-          ];
+        messageList.pushItem({
+          id: e.id,
+          senderId: e.senderId,
+          content: [...e.content],
+          timestamp: e.timestamp,
         });
       });
 
@@ -64,13 +67,14 @@ export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: 
       strangerToken.unsubscribe();
       groupToken.unsubscribe();
     };
-  }, [chatKey.contactId, setMessageList]);
+  }, [chatKey.contactId, messageList]);
 
   return (
     <div className="ChatWidget">
       <div className="ChatWidget__messageList">
-        <ScrollViewer enableVerticalScrollBar>
-          {messageList.map(({ id, senderId, content, timestamp }) => (
+        <MessageListWidget
+          messageList={messageList}
+          renderItem={({ id, senderId, content, timestamp }) => (
             <MessageTextItem
               key={id}
               avatar={groupMemberList.find((item) => item.id === senderId)?.avatar || ''}
@@ -81,8 +85,8 @@ export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: 
                 getSenderNameById ? await getSenderNameById(senderId) : ''
               }
             />
-          ))}
-        </ScrollViewer>
+          )}
+        />
       </div>
       <div className="ChatWidget__inputBox">
         <SenderWidget

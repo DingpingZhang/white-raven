@@ -10,14 +10,13 @@ import {
   GroupInfo,
   GroupMemberInfo,
   IdType,
-  Message,
   Ok,
   PersonInfo,
   SessionInfo,
-  StrangerInfo,
 } from 'api';
 import { CommonErr } from 'api/http-api';
-import { atom, atomFamily, selectorFamily } from 'recoil';
+import { atom, atomFamily } from 'recoil';
+import MessageList from './message-list';
 
 export async function fallbackHttpApi<TOk, TErr = CommonErr>(
   api: () => Promise<Ok<TOk> | Err<TErr>>,
@@ -58,30 +57,28 @@ export const selectedSessionIndexState = atom({
   default: 0,
 });
 
-export const lastSessionMessageState = selectorFamily<Message | null, SessionKey>({
-  key: 'lastSessionMessageState',
-  get: (key) => ({ get }) => {
-    const messages = get(messageListState(key));
-    return messages.length > 0 ? messages[messages.length - 1] : null;
+export const messageListState = atomFamily<MessageList, SessionKey>({
+  key: 'messageListState',
+  default: ({ type, contactId }) => {
+    const getPrevMessages = getGetMessages(type);
+    const result = new MessageList(async (stardId, _, previous) =>
+      previous ? await fallbackHttpApi(() => getPrevMessages(contactId, stardId), []) : []
+    );
+    console.log(result);
+    return result;
   },
 });
 
-export const messageListState = atomFamily<Message[], SessionKey>({
-  key: 'messageListState',
-  default: ({ type, contactId }) =>
-    makeMutList(
-      fallbackHttpApi(() => {
-        switch (type) {
-          case 'friend':
-            return getFriendMessages(contactId);
-          case 'stranger':
-            return getStrangerMessages(contactId);
-          case 'group':
-            return getGroupMessages(contactId);
-        }
-      }, [])
-    ),
-});
+function getGetMessages(type: 'friend' | 'stranger' | 'group') {
+  switch (type) {
+    case 'friend':
+      return getFriendMessages;
+    case 'stranger':
+      return getStrangerMessages;
+    case 'group':
+      return getGroupMessages;
+  }
+}
 
 export const contactListState = atom<Array<FriendInfo | GroupInfo>>({
   key: 'contactListState',

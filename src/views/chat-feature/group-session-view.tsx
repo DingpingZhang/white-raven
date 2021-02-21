@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { getGroupMember, GroupSession, IdType, sendMessageToGroup } from 'api';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import { toDisplayTimestamp } from 'helpers';
@@ -8,7 +8,7 @@ import { useI18n } from 'i18n';
 import { groupMemberListState, messageListState, userInfoState } from 'models/store';
 import { useRecoilValue } from 'recoil';
 import useRecoilValueLoaded from 'hooks/use-recoil-value-loaded';
-import { lastItemOrDefault } from 'helpers/list-helpers';
+import useLastMessage from 'models/use-last-message';
 
 type Props = {
   session: GroupSession;
@@ -19,8 +19,8 @@ export default function GroupSessionView({
     contact: { id: contactId, name, avatar, description, memberCapacity },
   },
 }: Props) {
-  const messageList = useRecoilValueLoaded(messageListState({ contactId, type: 'group' }), []);
-  const lastMessage = useMemo(() => lastItemOrDefault(messageList), [messageList]);
+  const messageList = useRecoilValue(messageListState({ contactId, type: 'group' }));
+  const lastMessage = useLastMessage(messageList);
   const groupMemberList = useRecoilValueLoaded(groupMemberListState(contactId), []);
   const getGroupMemberNameById = useCallback(
     async (memberId: IdType) => {
