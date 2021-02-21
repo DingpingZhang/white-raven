@@ -83,23 +83,6 @@ export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: 
             />
           ))}
         </ScrollViewer>
-        {/* <LazyLoadingListBox<Message>
-          capacity={200}
-          getPreviousItems={() => Promise.resolve(messageList)}
-          getNextItems={() => Promise.resolve([])}
-          renderItem={({ id, senderId, content, timestamp }) => (
-            <MessageTextItem
-              key={id}
-              avatar={groupMemberList.find((item) => item.id === senderId)?.avatar || ''}
-              content={content}
-              timestamp={timestamp}
-              highlight={senderId === currentUserId}
-              getSenderName={async () =>
-                getSenderNameById ? await getSenderNameById(senderId) : ''
-              }
-            />
-          )}
-        /> */}
       </div>
       <div className="ChatWidget__inputBox">
         <SenderWidget

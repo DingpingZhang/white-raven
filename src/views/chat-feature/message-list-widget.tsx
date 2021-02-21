@@ -16,13 +16,13 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
 
   useEffect(() => {
     if (inViewPrevMore) {
-      messageList.prevItems();
+      messageList.previous();
     }
   }, [inViewPrevMore, messageList]);
 
   useEffect(() => {
     if (inViewNextMore) {
-      messageList.nextItems();
+      messageList.next();
     }
   }, [inViewNextMore, messageList]);
 

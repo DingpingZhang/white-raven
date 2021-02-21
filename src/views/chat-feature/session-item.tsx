@@ -2,8 +2,8 @@ import classNames from 'classnames';
 import { toDisplayTimestamp } from 'helpers';
 import { MessageSegment } from 'api';
 import { ReactComponent as CloseIcon } from 'images/close.svg';
-import { useRecoilValueLoadable } from 'recoil';
 import { lastSessionMessageState, SessionKey } from 'models/store';
+import useRecoilValueLoaded from 'hooks/use-recoil-value-loaded';
 
 export type Props = {
   sessionKey: SessionKey;
@@ -24,10 +24,7 @@ export default function SessionItem({
   onSelected,
   onRemoved,
 }: Props) {
-  const lastMessageLoadable = useRecoilValueLoadable(lastSessionMessageState(sessionKey));
-  const lastMessage =
-    lastMessageLoadable.state === 'hasValue' ? lastMessageLoadable.contents : null;
-
+  const lastMessage = useRecoilValueLoaded(lastSessionMessageState(sessionKey), null);
   const contactItemClass = classNames('SessionItem', {
     hasMessage: unreadCount,
     selected,

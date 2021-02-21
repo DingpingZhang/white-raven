@@ -6,7 +6,9 @@ import ChatWidget from './chat-widget';
 import GroupMemberItem from './group-member-item';
 import { useI18n } from 'i18n';
 import { groupMemberListState, messageListState, userInfoState } from 'models/store';
-import { useRecoilValue, useRecoilValueLoadable } from 'recoil';
+import { useRecoilValue } from 'recoil';
+import useRecoilValueLoaded from 'hooks/use-recoil-value-loaded';
+import { lastItemOrDefault } from 'helpers/list-helpers';
 
 type Props = {
   session: GroupSession;
@@ -17,17 +19,9 @@ export default function GroupSessionView({
     contact: { id: contactId, name, avatar, description, memberCapacity },
   },
 }: Props) {
-  const messageListLoadable = useRecoilValueLoadable(
-    messageListState({ contactId, type: 'group' })
-  );
-  const lastMessage = useMemo(() => {
-    if (messageListLoadable.state === 'hasValue' && messageListLoadable.contents.length) {
-      return messageListLoadable.contents[messageListLoadable.contents.length];
-    } else {
-      return null;
-    }
-  }, [messageListLoadable.contents, messageListLoadable.state]);
-  const groupMemberListLoadable = useRecoilValueLoadable(groupMemberListState(contactId));
+  const messageList = useRecoilValueLoaded(messageListState({ contactId, type: 'group' }), []);
+  const lastMessage = useMemo(() => lastItemOrDefault(messageList), [messageList]);
+  const groupMemberList = useRecoilValueLoaded(groupMemberListState(contactId), []);
   const getGroupMemberNameById = useCallback(
     async (memberId: IdType) => {
       const response = await getGroupMember(contactId, memberId);
@@ -74,23 +68,17 @@ export default function GroupSessionView({
         <div className="GroupSessionView__member">
           <div className="GroupSessionView__memberTitle">
             <span className="text subtitle">{$t('groupSession.groupInfo')}</span>
-            <span className="text tip-secondary">{`(${
-              groupMemberListLoadable.state === 'hasValue'
-                ? groupMemberListLoadable.contents.length
-                : 0
-            } / ${memberCapacity})`}</span>
+            <span className="text tip-secondary">{`(${groupMemberList.length} / ${memberCapacity})`}</span>
           </div>
           <div className="GroupSessionView__memberList">
-            {groupMemberListLoadable.state === 'hasValue' ? (
-              <VirtualizingListBox
-                sizeProvider={{ itemSize: 32, itemCount: groupMemberListLoadable.contents.length }}
-                renderItems={(startIndex, endIndex) =>
-                  groupMemberListLoadable.contents
-                    .slice(startIndex, endIndex)
-                    .map((item) => <GroupMemberItem avatar={item.avatar} name={item.name} />)
-                }
-              />
-            ) : null}
+            <VirtualizingListBox
+              sizeProvider={{ itemSize: 32, itemCount: groupMemberList.length }}
+              renderItems={(startIndex, endIndex) =>
+                groupMemberList
+                  .slice(startIndex, endIndex)
+                  .map((item) => <GroupMemberItem avatar={item.avatar} name={item.name} />)
+              }
+            />
           </div>
         </div>
       </div>

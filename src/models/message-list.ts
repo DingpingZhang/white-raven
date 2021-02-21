@@ -33,7 +33,7 @@ export default class MessageList {
     this.getItems = getItems;
   }
 
-  async prevItems(): Promise<void> {
+  async previous(): Promise<void> {
     this.lock(async () => {
       const start = firstItem(this.storage.items);
       const prevItems = await this.getItems(start.id, BATCH_COUNT, true);
@@ -45,7 +45,7 @@ export default class MessageList {
     });
   }
 
-  async nextItems(): Promise<void> {
+  async next(): Promise<void> {
     this.lock(async () => {
       const end = lastItem(this.storage.items);
       const nextItems = await this.getItems(end.id, BATCH_COUNT, false);
