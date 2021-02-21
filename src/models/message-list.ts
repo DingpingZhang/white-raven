@@ -22,7 +22,7 @@ export default class MessageList {
 
   private isBusy: boolean = false;
 
-  readonly capacity: number = 200;
+  readonly capacity: number = 100;
   readonly storage: SortedSet<Message>;
 
   startIndex: number = 0;
@@ -45,32 +45,53 @@ export default class MessageList {
 
   async pullPrev(): Promise<void> {
     this.lock(async () => {
-      const start = firstItemOrDefault(this.storage.items);
-      const prevItems = await this.getItems(start?.id, BATCH_COUNT, true);
-      const count = this.storage.addRange(prevItems);
-      if (count > 0) {
-        this.startIndex = 0;
+      if (this.startIndex >= BATCH_COUNT) {
+        this.startIndex -= BATCH_COUNT;
         this.raiseItemsChanged({
           type: 'pull-prev',
-          changedCount: count,
+          changedCount: BATCH_COUNT,
           sliceCount: this.getSliceCount(),
         });
+      } else {
+        const start = firstItemOrDefault(this.storage.items);
+        const prevItems = await this.getItems(start?.id, BATCH_COUNT, true);
+        const count = this.storage.addRange(prevItems);
+        if (count > 0) {
+          this.startIndex = 0;
+          this.raiseItemsChanged({
+            type: 'pull-prev',
+            changedCount: count,
+            sliceCount: this.getSliceCount(),
+          });
+        }
       }
     });
   }
 
   async pullNext(): Promise<void> {
     this.lock(async () => {
-      const end = lastItemOrDefault(this.storage.items);
-      const nextItems = await this.getItems(end?.id, BATCH_COUNT, false);
-      const count = this.storage.addRange(nextItems);
-      if (count > 0) {
-        this.startIndex = Math.max(this.storage.items.length - this.capacity, 0);
+      if (this.startIndex + BATCH_COUNT < this.storage.items.length) {
+        this.startIndex =
+          this.startIndex + this.capacity < this.storage.items.length
+            ? this.startIndex + BATCH_COUNT
+            : this.startIndex;
         this.raiseItemsChanged({
           type: 'pull-next',
-          changedCount: count,
+          changedCount: BATCH_COUNT,
           sliceCount: this.getSliceCount(),
         });
+      } else {
+        const end = lastItemOrDefault(this.storage.items);
+        const nextItems = await this.getItems(end?.id, BATCH_COUNT, false);
+        const count = this.storage.addRange(nextItems);
+        if (count > 0) {
+          this.startIndex = Math.max(this.storage.items.length - this.capacity, 0);
+          this.raiseItemsChanged({
+            type: 'pull-next',
+            changedCount: count,
+            sliceCount: this.getSliceCount(),
+          });
+        }
       }
     });
   }

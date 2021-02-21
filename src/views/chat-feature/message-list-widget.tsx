@@ -28,6 +28,7 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
       messageList.pullNext();
     }
   }, [inViewNextMore, messageList]);
+
   const handleItemsChanged = useCallback(({ type, changedCount, sliceCount }: ItemsChangedInfo) => {
     if (changedCount <= 0 || sliceCount <= 0) return;
 
@@ -37,23 +38,23 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
           const scrollViewer = scrollViewerRef.current;
           if (!scrollViewer) return;
           const isArrivedBottom =
-            scrollViewer.scrollTop + scrollViewer.offsetHeight / scrollViewer.scrollHeight > 0.8;
+            (scrollViewer.scrollTop + scrollViewer.offsetHeight) / scrollViewer.scrollHeight > 0.8;
 
           if (isArrivedBottom) {
-            setScrollPointerIndex(Number.MAX_SAFE_INTEGER);
+            setScrollPointerIndex(Number.MIN_SAFE_INTEGER);
             setScrollPointerIndex('bottom');
           } else {
-            setScrollPointerIndex(Number.MAX_SAFE_INTEGER);
+            setScrollPointerIndex(Number.MIN_SAFE_INTEGER);
             setScrollPointerIndex(-1);
           }
         }
         break;
       case 'pull-next':
-        setScrollPointerIndex(Number.MAX_SAFE_INTEGER);
+        setScrollPointerIndex(Number.MIN_SAFE_INTEGER);
         setScrollPointerIndex(sliceCount - changedCount);
         break;
       case 'pull-prev':
-        setScrollPointerIndex(Number.MAX_SAFE_INTEGER);
+        setScrollPointerIndex(Number.MIN_SAFE_INTEGER);
         setScrollPointerIndex(changedCount - 1);
         break;
     }
@@ -67,7 +68,10 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
   const nextMoreElement = nextMoreEntity?.target;
   useEffect(() => {
     if (scrollPointerIndex === 'bottom') {
-      if (nextMoreElement) {
+      if (
+        nextMoreElement &&
+        messageList.startIndex + messageList.capacity >= messageList.storage.items.length
+      ) {
         nextMoreElement.scrollIntoView();
       }
     } else if (scrollPointerIndex === 'top') {
@@ -79,7 +83,14 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
         scrollPointerElementRef.current.scrollIntoView();
       }
     }
-  }, [prevMoreElement, nextMoreElement, scrollPointerIndex]);
+  }, [
+    prevMoreElement,
+    nextMoreElement,
+    scrollPointerIndex,
+    messageList.startIndex,
+    messageList.capacity,
+    messageList.storage.items.length,
+  ]);
 
   return (
     <div className="MessageListWidget">
