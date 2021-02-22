@@ -21,7 +21,6 @@ export default function GroupSessionView({
 }: Props) {
   const messageList = useMessageList('group', contactId);
   const lastMessage = useLastMessage(messageList);
-  const groupMemberList = useRecoilValueLoaded(groupMemberListState(contactId), []);
   const getGroupMemberNameById = useCallback(
     async (memberId: IdType) => {
       const response = await getGroupMember(contactId, memberId);
@@ -65,22 +64,36 @@ export default function GroupSessionView({
             <span className="text tip">{description}</span>
           </div>
         </div>
-        <div className="GroupSessionView__member">
-          <div className="GroupSessionView__memberTitle">
-            <span className="text subtitle">{$t('groupSession.groupInfo')}</span>
-            <span className="text tip-secondary">{`(${groupMemberList.length} / ${memberCapacity})`}</span>
-          </div>
-          <div className="GroupSessionView__memberList">
-            <VirtualizingListBox
-              sizeProvider={{ itemSize: 32, itemCount: groupMemberList.length }}
-              renderItems={(startIndex, endIndex) =>
-                groupMemberList
-                  .slice(startIndex, endIndex)
-                  .map((item) => <GroupMemberItem avatar={item.avatar} name={item.name} />)
-              }
-            />
-          </div>
-        </div>
+        <GroupMemberList contactId={contactId} memberCapacity={memberCapacity} />
+      </div>
+    </div>
+  );
+}
+
+type GroupMemberListProps = {
+  contactId: IdType;
+  memberCapacity: number;
+};
+
+function GroupMemberList({ contactId, memberCapacity }: GroupMemberListProps) {
+  const groupMemberList = useRecoilValueLoaded(groupMemberListState(contactId), []);
+  const { $t } = useI18n();
+
+  return (
+    <div className="GroupSessionView__member">
+      <div className="GroupSessionView__memberTitle">
+        <span className="text subtitle">{$t('groupSession.groupInfo')}</span>
+        <span className="text tip-secondary">{`(${groupMemberList.length} / ${memberCapacity})`}</span>
+      </div>
+      <div className="GroupSessionView__memberList">
+        <VirtualizingListBox
+          sizeProvider={{ itemSize: 32, itemCount: groupMemberList.length }}
+          renderItems={(startIndex, endIndex) =>
+            groupMemberList
+              .slice(startIndex, endIndex)
+              .map((item) => <GroupMemberItem avatar={item.avatar} name={item.name} />)
+          }
+        />
       </div>
     </div>
   );
