@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import MessageTextItem from './message-text-item';
 import SenderWidget from './sender-widget';
 import {
@@ -10,7 +10,7 @@ import {
   StrangerMessageEvent,
 } from 'api';
 import { useRecoilValue } from 'recoil';
-import { SessionKey, userInfoState, groupMemberListState } from 'models/store';
+import { SessionKey, userInfoState, groupMemberListState, contactListState } from 'models/store';
 import { webSocketClient } from 'api/websocket-client';
 import { filter } from 'rxjs/operators';
 import useRecoilValueLoaded from 'hooks/use-recoil-value-loaded';
@@ -27,6 +27,19 @@ export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: 
   const { id: currentUserId } = useRecoilValue(userInfoState);
   const messageList = useMessageList(chatKey.type, chatKey.contactId);
   const groupMemberList = useRecoilValueLoaded(groupMemberListState(chatKey.contactId), []);
+  const contactList = useRecoilValueLoaded(contactListState, []);
+  const getAvatar = useCallback(
+    (senderId: IdType) => {
+      const contact = contactList.find((item) => item.id === senderId);
+      if (contact) {
+        return contact.avatar;
+      } else {
+        const groupMember = groupMemberList.find((item) => item.id === senderId);
+        return groupMember ? groupMember.avatar : '';
+      }
+    },
+    [contactList, groupMemberList]
+  );
 
   useEffect(() => {
     const friendToken = webSocketClient
@@ -78,7 +91,7 @@ export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: 
           renderItem={({ id, senderId, content, timestamp }) => (
             <MessageTextItem
               key={id}
-              avatar={groupMemberList.find((item) => item.id === senderId)?.avatar || ''}
+              avatar={getAvatar(senderId)}
               content={content}
               timestamp={timestamp}
               highlight={senderId === currentUserId}

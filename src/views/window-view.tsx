@@ -54,45 +54,49 @@ export default function WindowView() {
 
   useEffect(() => {
     // Subscribe Events
-    webSocketClient.filter<FriendMessageEvent>('friend/message').subscribe((e) => {
-      setSessionList((prev) => {
-        const session = prev.find((item) => item.contact.id === e.senderId);
-        if (session) {
-          return produce(prev, (draft) => {
-            removeAll(draft, session, (x, y) => x.contact.id === y.contact.id);
-            draft.unshift({ ...session, unreadCount: session.unreadCount + 1 });
-          });
-        } else {
-          const contact = contactList.find((item) => item.id === e.senderId)!;
-          return produce(prev, (draft) => {
-            draft.unshift({ type: 'friend', contact: contact, unreadCount: 1 });
-          });
-        }
-      });
-    });
-    webSocketClient.filter<StrangerMessageEvent>('stranger/message').subscribe(async (e) => {
-      const stranger = await fallbackHttpApi(() => getStrangerInfo(e.senderId), null);
-      if (!stranger) return;
-
-      setSessionList((prev) => {
-        const session = prev.find((item) => item.contact.id === e.senderId);
-        if (session) {
-          return produce(prev, (draft) => {
-            removeAll(draft, session, (x, y) => x.contact.id === y.contact.id);
-            draft.unshift({ ...session, unreadCount: session.unreadCount + 1 });
-          });
-        } else {
-          return produce(prev, (draft) => {
-            draft.unshift({
-              type: 'stranger',
-              contact: stranger,
-              unreadCount: 1,
+    const friendToken = webSocketClient
+      .filter<FriendMessageEvent>('friend/message')
+      .subscribe((e) => {
+        setSessionList((prev) => {
+          const session = prev.find((item) => item.contact.id === e.senderId);
+          if (session) {
+            return produce(prev, (draft) => {
+              removeAll(draft, session, (x, y) => x.contact.id === y.contact.id);
+              draft.unshift({ ...session, unreadCount: session.unreadCount + 1 });
             });
-          });
-        }
+          } else {
+            const contact = contactList.find((item) => item.id === e.senderId)!;
+            return produce(prev, (draft) => {
+              draft.unshift({ type: 'friend', contact: contact, unreadCount: 1 });
+            });
+          }
+        });
       });
-    });
-    webSocketClient.filter<GroupMessageEvent>('group/message').subscribe((e) => {
+    const strangerToken = webSocketClient
+      .filter<StrangerMessageEvent>('stranger/message')
+      .subscribe(async (e) => {
+        const stranger = await fallbackHttpApi(() => getStrangerInfo(e.senderId), null);
+        if (!stranger) return;
+
+        setSessionList((prev) => {
+          const session = prev.find((item) => item.contact.id === e.senderId);
+          if (session) {
+            return produce(prev, (draft) => {
+              removeAll(draft, session, (x, y) => x.contact.id === y.contact.id);
+              draft.unshift({ ...session, unreadCount: session.unreadCount + 1 });
+            });
+          } else {
+            return produce(prev, (draft) => {
+              draft.unshift({
+                type: 'stranger',
+                contact: stranger,
+                unreadCount: 1,
+              });
+            });
+          }
+        });
+      });
+    const groupToken = webSocketClient.filter<GroupMessageEvent>('group/message').subscribe((e) => {
       setSessionList((prev) => {
         const session = prev.find((item) => item.contact.id === e.groupId);
         if (!session) {
@@ -108,6 +112,12 @@ export default function WindowView() {
         return prev;
       });
     });
+
+    return () => {
+      friendToken.unsubscribe();
+      strangerToken.unsubscribe();
+      groupToken.unsubscribe();
+    };
   }, [contactList, setSessionList]);
 
   return (
