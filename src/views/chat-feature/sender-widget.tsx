@@ -31,11 +31,7 @@ export default function SenderWidget({ sendMessage }: Props) {
           className="SenderWidget__input"
           placeholder={$t('input.placeholder.writeAMessage')}
         />
-        <CircleButton
-          buttonType="default"
-          className="SenderWidget__btnFace"
-          icon={<FaceIcon />}
-        />
+        <CircleButton buttonType="default" className="SenderWidget__btnFace" icon={<FaceIcon />} />
         <CircleButton
           buttonType="default"
           className="SenderWidget__btnMore"
@@ -50,7 +46,12 @@ export default function SenderWidget({ sendMessage }: Props) {
         disabled={!canSend}
         onClick={async () => {
           if (inputRef.current && inputRef.current.value) {
-            await sendMessage([{ type: 'text', text: inputRef.current.value }]);
+            const text = inputRef.current.value;
+            inputRef.current.value = '';
+            const success = await sendMessage([{ type: 'text', text }]);
+            if (!success) {
+              inputRef.current.value = text;
+            }
           } else {
             // TODO: Tip: Don't send empty message.
           }
