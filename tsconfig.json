@@ -17,8 +17,7 @@
     "jsx": "react-jsx",
     "baseUrl": "./src",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "types": ["reflect-metadata", "resize-observer-browser"]
+    "emitDecoratorMetadata": true
   },
   "include": ["src"]
 }
