@@ -1,45 +1,28 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import MessageTextItem from './message-text-item';
 import SenderWidget from './sender-widget';
 import {
   FriendMessageEvent,
   GroupMessageEvent,
-  IdType,
   Message,
   MessageContent,
   StrangerMessageEvent,
 } from 'api';
 import { useRecoilValue } from 'recoil';
-import { SessionKey, userInfoState, groupMemberListState, contactListState } from 'models/store';
+import { SessionKey, userInfoState } from 'models/store';
 import { webSocketClient } from 'api/websocket-client';
 import { filter } from 'rxjs/operators';
-import useRecoilValueLoaded from 'hooks/use-recoil-value-loaded';
 import MessageListWidget from './message-list-widget';
 import { useMessageList } from 'models/use-message';
 
 type Props = {
   chatKey: SessionKey;
   sendMessage: (message: MessageContent) => Promise<Message | null>;
-  getSenderNameById?: (id: IdType) => Promise<string>;
 };
 
-export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: Props) {
+export default function ChatWidget({ chatKey, sendMessage }: Props) {
   const { id: currentUserId } = useRecoilValue(userInfoState);
   const messageList = useMessageList(chatKey.type, chatKey.contactId);
-  const groupMemberList = useRecoilValueLoaded(groupMemberListState(chatKey.contactId), []);
-  const contactList = useRecoilValueLoaded(contactListState, []);
-  const getAvatar = useCallback(
-    (senderId: IdType) => {
-      const contact = contactList.find((item) => item.id === senderId);
-      if (contact) {
-        return contact.avatar;
-      } else {
-        const groupMember = groupMemberList.find((item) => item.id === senderId);
-        return groupMember ? groupMember.avatar : '';
-      }
-    },
-    [contactList, groupMemberList]
-  );
 
   useEffect(() => {
     const friendToken = webSocketClient
@@ -91,13 +74,12 @@ export default function ChatWidget({ chatKey, sendMessage, getSenderNameById }: 
           renderItem={({ id, senderId, content, timestamp }) => (
             <MessageTextItem
               key={id}
-              avatar={getAvatar(senderId)}
+              contactType={chatKey.type}
+              contactId={chatKey.contactId}
+              senderId={senderId}
               content={content}
               timestamp={timestamp}
               highlight={senderId === currentUserId}
-              getSenderName={async () =>
-                getSenderNameById ? await getSenderNameById(senderId) : ''
-              }
             />
           )}
         />

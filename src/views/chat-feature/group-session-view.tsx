@@ -1,5 +1,4 @@
-import { useCallback } from 'react';
-import { getGroupMember, GroupSession, IdType, sendMessageToGroup } from 'api';
+import { GroupSession, IdType, sendMessageToGroup } from 'api';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import { toDisplayTimestamp } from 'helpers';
 import ChatWidget from './chat-widget';
@@ -21,19 +20,6 @@ export default function GroupSessionView({
 }: Props) {
   const messageList = useMessageList('group', contactId);
   const lastMessage = useLastMessage(messageList);
-  const groupMemberList = useRecoilValueLoaded(groupMemberListState(contactId), []);
-  const getGroupMemberNameById = useCallback(
-    async (memberId: IdType) => {
-      const member = groupMemberList.find((item) => item.id === memberId);
-      if (member) {
-        return member.remark || member.name;
-      }
-
-      const response = await getGroupMember(contactId, memberId);
-      return response.code === 200 ? response.content.name : '';
-    },
-    [contactId, groupMemberList]
-  );
   const { id } = useRecoilValue(userInfoState);
   const { $t } = useI18n();
 
@@ -58,7 +44,6 @@ export default function GroupSessionView({
               return null;
             }
           }}
-          getSenderNameById={getGroupMemberNameById}
         />
       </div>
       <div className="GroupSessionView__infoArea">
