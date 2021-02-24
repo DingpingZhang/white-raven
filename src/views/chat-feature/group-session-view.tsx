@@ -97,7 +97,9 @@ function GroupMemberList({ contactId, memberCapacity }: GroupMemberListProps) {
           renderItems={(startIndex, endIndex) =>
             groupMemberList
               .slice(startIndex, endIndex)
-              .map((item) => <GroupMemberItem avatar={item.avatar} name={item.name} />)
+              .map((item) => (
+                <GroupMemberItem avatar={item.avatar} name={item.remark || item.name || item.id} />
+              ))
           }
         />
       </div>
