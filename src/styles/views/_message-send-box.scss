@@ -1,5 +1,5 @@
-@use '../../mixins/input';
-@use '../../mixins/common';
+@use '../mixins/input';
+@use '../mixins/common';
 
 .SenderWidget {
   display: grid;

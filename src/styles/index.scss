@@ -30,10 +30,8 @@
 @import './views/session-list-control';
 @import './views/chat-tab-content';
 @import './views/message-list-wirdget';
-
-@import './views/messages/basic-message';
-@import './views/messages/message-send-box';
-
-@import './views/dialogs/base-dialog';
-@import './views/dialogs/contact-dialog';
-@import './views/dialogs/contact-item';
+@import './views/basic-message';
+@import './views/message-send-box';
+@import './views/base-dialog';
+@import './views/contact-dialog';
+@import './views/contact-item';
