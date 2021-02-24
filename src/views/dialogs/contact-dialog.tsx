@@ -3,7 +3,8 @@ import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import useRecoilValueLoaded from 'hooks/use-recoil-value-loaded';
 import { useI18n } from 'i18n';
 import { contactListState } from 'models/store';
-import { useMemo, useState } from 'react';
+import useSearchWithText from 'models/use-search-with-text';
+import { useState } from 'react';
 import SearchWidget from 'views/search-widget';
 import BaseDialog from './base-dialog';
 import ContactItem from './contact-item';
@@ -21,13 +22,9 @@ export function buildContactDialog(close: OnClose) {
 
 export default function ContactDialog({ close }: Props) {
   const [queriesText, setQueriesText] = useState('');
-  const contactList = useRecoilValueLoaded(contactListState, []);
-  const filteredContactInfos = useMemo(
-    () =>
-      queriesText ? contactList.filter((item) => item.name.includes(queriesText)) : contactList,
-    [contactList, queriesText]
-  );
   const { $t } = useI18n();
+  const contactList = useRecoilValueLoaded(contactListState, []);
+  const filteredContactInfos = useSearchWithText(contactList, (item) => item.name, queriesText);
 
   return (
     <BaseDialog title={$t('dialog.title.contact')} close={() => close(null)}>

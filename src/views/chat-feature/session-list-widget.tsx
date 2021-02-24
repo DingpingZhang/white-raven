@@ -6,19 +6,25 @@ import { sessionListState, selectedSessionIndexState } from 'models/store';
 import { useRecoilState } from 'recoil';
 import { produce } from 'immer';
 import { removeAll } from 'helpers/list-helpers';
+import useSearchWithText from 'models/use-search-with-text';
 
 export default function SessionListWidget() {
-  const [searchText, setSearchText] = useState('');
+  const [queriesText, setQueriesText] = useState('');
   const [sessionList, setSessionList] = useRecoilState(sessionListState);
   const [selectedIndex, setSelectedIndex] = useRecoilState(selectedSessionIndexState);
+  const filteredSessionList = useSearchWithText(
+    sessionList,
+    (item) => item.contact.name,
+    queriesText
+  );
 
   return (
     <div className="SessionListWidget">
-      <SearchWidget text={searchText} setText={setSearchText} />
+      <SearchWidget text={queriesText} setText={setQueriesText} />
       <VirtualizingListBox
-        sizeProvider={{ itemSize: 108, itemCount: sessionList.length }}
+        sizeProvider={{ itemSize: 108, itemCount: filteredSessionList.length }}
         renderItems={(startIndex, endIndex) =>
-          sessionList.slice(startIndex, endIndex).map((item, index) => {
+          filteredSessionList.slice(startIndex, endIndex).map((item, index) => {
             const actualIndex = startIndex + index;
             return (
               <SessionItem
@@ -26,6 +32,7 @@ export default function SessionListWidget() {
                 avatar={item.contact.avatar}
                 name={item.contact.name}
                 unreadCount={item.unreadCount}
+                queriesText={queriesText}
                 selected={selectedIndex === actualIndex}
                 onSelected={() => setSelectedIndex(startIndex + index)}
                 onRemoved={() => {

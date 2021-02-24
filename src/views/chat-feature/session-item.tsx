@@ -4,12 +4,14 @@ import { MessageSegment } from 'api';
 import { ReactComponent as CloseIcon } from 'images/close.svg';
 import { SessionKey } from 'models/store';
 import { useLastMessage, useMessageList } from 'models/use-message';
+import HighlightSpan from 'components/highlight-span';
 
 export type Props = {
   sessionKey: SessionKey;
   avatar: string;
   name: string;
   unreadCount: number;
+  queriesText: string;
   selected?: boolean;
   onSelected?: () => void;
   onRemoved?: () => void;
@@ -18,6 +20,7 @@ export type Props = {
 export default function SessionItem({
   sessionKey,
   unreadCount,
+  queriesText,
   selected,
   avatar,
   name,
@@ -37,7 +40,11 @@ export default function SessionItem({
     <div className={contactItemClass} onClick={onSelected}>
       <span className="SessionItem__redDot"></span>
       <img className="SessionItem__avatar" src={avatar} alt="avatar" />
-      <span className="SessionItem__title text ellipsis">{name}</span>
+      <HighlightSpan
+        className="SessionItem__title text ellipsis"
+        sourceText={name}
+        queriesText={queriesText}
+      />
       <button
         className="SessionItem__btnClose"
         onClick={(e) => {
