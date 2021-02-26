@@ -13,6 +13,7 @@ import {
 } from 'api';
 import { CommonErr } from 'api/http-api';
 import { atom, atomFamily } from 'recoil';
+import AvatarDefaultIcon from 'images/avatar-default.png';
 
 export async function fallbackHttpApi<TOk, TErr = CommonErr>(
   api: () => Promise<Ok<TOk> | Err<TErr>>,
@@ -31,7 +32,7 @@ export async function makeMutList<T>(immutList: Promise<ReadonlyArray<T>>): Prom
   return [...result];
 }
 
-export const DEFAULT_USER_INFO: PersonInfo = { id: '', name: '', avatar: '' };
+export const DEFAULT_USER_INFO: PersonInfo = { id: '', name: '', avatar: AvatarDefaultIcon };
 
 export const userInfoState = atom<PersonInfo>({
   key: 'userInfoState',
