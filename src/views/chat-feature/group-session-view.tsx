@@ -4,10 +4,7 @@ import { toDisplayTimestamp } from 'helpers';
 import ChatWidget from './chat-widget';
 import GroupMemberItem from './group-member-item';
 import { useI18n } from 'i18n';
-import { groupMemberListState, userInfoState } from 'models/store';
-import { useRecoilValue } from 'recoil';
-import useRecoilValueLoaded from 'hooks/use-recoil-value-loaded';
-import { useLastMessage, useMessageList } from 'models/use-message';
+import { useGroupMemberList, useLastMessage, useUserInfo } from 'models/global-context';
 
 type Props = {
   session: GroupSession;
@@ -18,9 +15,8 @@ export default function GroupSessionView({
     contact: { id: contactId, name, avatar, description, memberCapacity },
   },
 }: Props) {
-  const messageList = useMessageList('group', contactId);
-  const lastMessage = useLastMessage(messageList);
-  const { id } = useRecoilValue(userInfoState);
+  const lastMessage = useLastMessage('group', contactId);
+  const { id } = useUserInfo();
   const { $t } = useI18n();
 
   return (
@@ -34,7 +30,8 @@ export default function GroupSessionView({
           </span>
         </div>
         <ChatWidget
-          chatKey={{ type: 'group', contactId }}
+          sessionType="group"
+          contactId={contactId}
           sendMessage={async (message) => {
             const response = await sendMessageToGroup(contactId, { content: message });
             if (response.code === 200) {
@@ -67,7 +64,7 @@ type GroupMemberListProps = {
 };
 
 function GroupMemberList({ contactId, memberCapacity }: GroupMemberListProps) {
-  const groupMemberList = useRecoilValueLoaded(groupMemberListState(contactId), []);
+  const groupMemberList = useGroupMemberList(contactId);
   const { $t } = useI18n();
 
   return (

@@ -4,30 +4,33 @@ import SenderWidget from './sender-widget';
 import {
   FriendMessageEvent,
   GroupMessageEvent,
+  IdType,
   Message,
   MessageContent,
+  SessionType,
   StrangerMessageEvent,
 } from 'api';
-import { useRecoilValue } from 'recoil';
-import { SessionKey, userInfoState } from 'models/store';
 import { webSocketClient } from 'api/websocket-client';
 import { filter } from 'rxjs/operators';
 import MessageListWidget from './message-list-widget';
-import { useMessageList } from 'models/use-message';
+import { useMessageList, useUserInfo } from 'models/global-context';
 
 type Props = {
-  chatKey: SessionKey;
+  sessionType: SessionType;
+  contactId: IdType;
   sendMessage: (message: MessageContent) => Promise<Message | null>;
 };
 
-export default function ChatWidget({ chatKey, sendMessage }: Props) {
-  const { id: currentUserId } = useRecoilValue(userInfoState);
-  const messageList = useMessageList(chatKey.type, chatKey.contactId);
+export default function ChatWidget({ sessionType, contactId, sendMessage }: Props) {
+  const { id: currentUserId } = useUserInfo();
+  const messageList = useMessageList(sessionType, contactId);
 
   useEffect(() => {
+    if (!messageList) return;
+
     const friendToken = webSocketClient
       .filter<FriendMessageEvent>('friend/message')
-      .pipe(filter((e) => e.senderId === chatKey.contactId))
+      .pipe(filter((e) => e.senderId === contactId))
       .subscribe((e) => {
         messageList.pushItem({
           id: e.id,
@@ -38,7 +41,7 @@ export default function ChatWidget({ chatKey, sendMessage }: Props) {
       });
     const strangerToken = webSocketClient
       .filter<StrangerMessageEvent>('stranger/message')
-      .pipe(filter((e) => e.senderId === chatKey.contactId))
+      .pipe(filter((e) => e.senderId === contactId))
       .subscribe((e) => {
         messageList.pushItem({
           id: e.id,
@@ -49,7 +52,7 @@ export default function ChatWidget({ chatKey, sendMessage }: Props) {
       });
     const groupToken = webSocketClient
       .filter<GroupMessageEvent>('group/message')
-      .pipe(filter((e) => e.groupId === chatKey.contactId))
+      .pipe(filter((e) => e.groupId === contactId))
       .subscribe((e) => {
         messageList.pushItem({
           id: e.id,
@@ -64,7 +67,7 @@ export default function ChatWidget({ chatKey, sendMessage }: Props) {
       strangerToken.unsubscribe();
       groupToken.unsubscribe();
     };
-  }, [chatKey.contactId, messageList]);
+  }, [contactId, messageList]);
 
   return (
     <div className="ChatWidget">
@@ -74,8 +77,8 @@ export default function ChatWidget({ chatKey, sendMessage }: Props) {
           renderItem={({ id, senderId, content, timestamp }) => (
             <MessageTextItem
               key={id}
-              contactType={chatKey.type}
-              contactId={chatKey.contactId}
+              contactType={sessionType}
+              contactId={contactId}
               senderId={senderId}
               content={content}
               timestamp={timestamp}

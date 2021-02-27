@@ -1,13 +1,13 @@
 import classNames from 'classnames';
 import { toDisplayTimestamp } from 'helpers';
-import { MessageSegment } from 'api';
+import { IdType, MessageSegment, SessionType } from 'api';
 import { ReactComponent as CloseIcon } from 'images/close.svg';
-import { SessionKey } from 'models/store';
-import { useLastMessage, useMessageList } from 'models/use-message';
 import HighlightSpan from 'components/highlight-span';
+import { useLastMessage } from 'models/global-context';
 
 export type Props = {
-  sessionKey: SessionKey;
+  sessionType: SessionType;
+  contactId: IdType;
   avatar: string;
   name: string;
   unreadCount: number;
@@ -18,7 +18,8 @@ export type Props = {
 };
 
 export default function SessionItem({
-  sessionKey,
+  sessionType,
+  contactId,
   unreadCount,
   queriesText,
   selected,
@@ -27,8 +28,7 @@ export default function SessionItem({
   onSelected,
   onRemoved,
 }: Props) {
-  const messageList = useMessageList(sessionKey.type, sessionKey.contactId);
-  const lastMessage = useLastMessage(messageList);
+  const lastMessage = useLastMessage(sessionType, contactId);
   const contactItemClass = classNames('SessionItem', {
     hasMessage: unreadCount,
     selected,

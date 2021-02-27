@@ -1,8 +1,7 @@
 import { FriendInfo, GroupInfo } from 'api';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
-import useRecoilValueLoaded from 'hooks/use-recoil-value-loaded';
 import { useI18n } from 'i18n';
-import { contactListState } from 'models/store';
+import { useContactList } from 'models/global-context';
 import useSearchWithText from 'models/use-search-with-text';
 import { useState } from 'react';
 import SearchWidget from 'views/search-widget';
@@ -23,7 +22,7 @@ export function buildContactDialog(close: OnClose) {
 export default function ContactDialog({ close }: Props) {
   const [queriesText, setQueriesText] = useState('');
   const { $t } = useI18n();
-  const contactList = useRecoilValueLoaded(contactListState, []);
+  const contactList = useContactList();
   const filteredContactInfos = useSearchWithText(contactList, (item) => item.name, queriesText);
 
   return (

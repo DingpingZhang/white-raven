@@ -2,16 +2,15 @@ import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import SessionItem from './session-item';
 import SearchWidget from 'views/search-widget';
 import { useState } from 'react';
-import { sessionListState, selectedSessionIndexState } from 'models/store';
-import { useRecoilState } from 'recoil';
 import { produce } from 'immer';
 import { removeAll } from 'helpers/list-helpers';
 import useSearchWithText from 'models/use-search-with-text';
+import { useSelectedSessionIndex, useSessionList } from 'models/global-context';
 
 export default function SessionListWidget() {
   const [queriesText, setQueriesText] = useState('');
-  const [sessionList, setSessionList] = useRecoilState(sessionListState);
-  const [selectedIndex, setSelectedIndex] = useRecoilState(selectedSessionIndexState);
+  const [sessionList, setSessionList] = useSessionList();
+  const [selectedIndex, setSelectedIndex] = useSelectedSessionIndex();
   const filteredSessionList = useSearchWithText(
     sessionList,
     (item) => item.contact.name,
@@ -28,7 +27,8 @@ export default function SessionListWidget() {
             const actualIndex = startIndex + index;
             return (
               <SessionItem
-                sessionKey={{ type: item.type, contactId: item.contact.id }}
+                sessionType={item.type}
+                contactId={item.contact.id}
                 avatar={item.contact.avatar}
                 name={item.contact.name}
                 unreadCount={item.unreadCount}
@@ -38,7 +38,7 @@ export default function SessionListWidget() {
                 onRemoved={() => {
                   setSessionList((prev) =>
                     produce(prev, (draft) => {
-                      removeAll(draft, item, (x, y) => x.contact.id === y.contact.id);
+                      removeAll(draft, (element) => element.contact.id === item.contact.id);
                     })
                   );
                 }}

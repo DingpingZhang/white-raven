@@ -1,8 +1,6 @@
 import { FriendSession, sendMessageToFriend, sendMessageToStranger, StrangerSession } from 'api';
 import { toDisplayTimestamp } from 'helpers';
-import { userInfoState } from 'models/store';
-import { useLastMessage, useMessageList } from 'models/use-message';
-import { useRecoilValue } from 'recoil';
+import { useLastMessage, useUserInfo } from 'models/global-context';
 import ChatWidget from './chat-widget';
 
 type Props = {
@@ -10,9 +8,8 @@ type Props = {
 };
 
 export default function PrivateSessionView({ session }: Props) {
-  const messageList = useMessageList('group', session.contact.id);
-  const lastMessage = useLastMessage(messageList);
-  const { id } = useRecoilValue(userInfoState);
+  const lastMessage = useLastMessage(session.type, session.contact.id);
+  const { id } = useUserInfo();
 
   return (
     <div className="PrivateSessionView">
@@ -24,7 +21,8 @@ export default function PrivateSessionView({ session }: Props) {
         </span>
       </div>
       <ChatWidget
-        chatKey={{ type: session.type, contactId: session.contact.id }}
+        sessionType={session.type}
+        contactId={session.contact.id}
         sendMessage={async (content) => {
           const send = session.type === 'friend' ? sendMessageToFriend : sendMessageToStranger;
 

@@ -105,3 +105,4 @@ export type GroupSession = SessionBase & {
 };
 
 export type SessionInfo = FriendSession | StrangerSession | GroupSession;
+export type SessionType = 'friend' | 'stranger' | 'group';

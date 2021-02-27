@@ -8,9 +8,7 @@ import { buildContactDialog } from './dialogs/contact-dialog';
 import {
   FriendInfo,
   FriendMessageEvent,
-  getSessions,
   getStrangerInfo,
-  getUserInfo,
   GroupInfo,
   GroupMessageEvent,
   isGroupInfo,
@@ -18,39 +16,23 @@ import {
 } from 'api';
 import CircleIcon from 'components/circle-icon';
 import { useI18n } from 'i18n';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import {
-  contactListState,
-  DEFAULT_USER_INFO,
-  fallbackHttpApi,
-  makeMutList,
-  sessionListState,
-  userInfoState,
-} from 'models/store';
 import { useEffect } from 'react';
 import { webSocketClient } from 'api/websocket-client';
 import { produce } from 'immer';
 import { removeAll } from 'helpers/list-helpers';
-import useRecoilValueLoaded from 'hooks/use-recoil-value-loaded';
+import {
+  fallbackHttpApi,
+  useContactList,
+  useSessionList,
+  useUserInfo,
+} from 'models/global-context';
 
 export default function WindowView() {
   const contactDialogToken = useDialog<FriendInfo | GroupInfo | null>(buildContactDialog);
-  const { avatar } = useRecoilValue(userInfoState);
+  const { avatar } = useUserInfo();
   const { $t } = useI18n();
-
-  const setUserInfo = useSetRecoilState(userInfoState);
-  const [, setSessionList] = useRecoilState(sessionListState);
-  const contactList = useRecoilValueLoaded(contactListState, []);
-
-  // Initiailze
-  useEffect(() => {
-    const initiailze = async () => {
-      setUserInfo(await fallbackHttpApi(getUserInfo, DEFAULT_USER_INFO));
-      setSessionList(await makeMutList(fallbackHttpApi(getSessions, [])));
-    };
-
-    initiailze();
-  }, [setSessionList, setUserInfo]);
+  const contactList = useContactList();
+  const [, setSessionList] = useSessionList();
 
   useEffect(() => {
     // Subscribe Events
@@ -61,7 +43,7 @@ export default function WindowView() {
           const session = prev.find((item) => item.contact.id === e.senderId);
           if (session) {
             return produce(prev, (draft) => {
-              removeAll(draft, session, (x, y) => x.contact.id === y.contact.id);
+              removeAll(draft, (item) => item.contact.id === session.contact.id);
               draft.unshift({ ...session, unreadCount: session.unreadCount + 1 });
             });
           } else {
@@ -82,7 +64,7 @@ export default function WindowView() {
           const session = prev.find((item) => item.contact.id === e.senderId);
           if (session) {
             return produce(prev, (draft) => {
-              removeAll(draft, session, (x, y) => x.contact.id === y.contact.id);
+              removeAll(draft, (item) => item.contact.id === session.contact.id);
               draft.unshift({ ...session, unreadCount: session.unreadCount + 1 });
             });
           } else {
@@ -138,20 +120,24 @@ export default function WindowView() {
               onClick={async () => {
                 const result = await contactDialogToken.show();
                 if (result) {
-                  setSessionList((prev) => [
-                    isGroupInfo(result)
-                      ? {
-                          type: 'group',
-                          unreadCount: 0,
-                          contact: result,
-                        }
-                      : {
-                          type: 'friend',
-                          unreadCount: 0,
-                          contact: result,
-                        },
-                    ...prev,
-                  ]);
+                  setSessionList((prev) => {
+                    if (prev.some((item) => item.contact.id === result.id)) return prev;
+
+                    return [
+                      isGroupInfo(result)
+                        ? {
+                            type: 'group',
+                            unreadCount: 0,
+                            contact: result,
+                          }
+                        : {
+                            type: 'friend',
+                            unreadCount: 0,
+                            contact: result,
+                          },
+                      ...prev,
+                    ];
+                  });
                 }
               }}
             />,

@@ -6,12 +6,11 @@ import { SWITCH_NAME } from 'views/constants';
 import GroupSessionView from './group-session-view';
 import PrivateSessionView from './private-session-view';
 import SessionListWidget from './session-list-widget';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { selectedSessionIndexState, sessionListState } from 'models/store';
+import { useSelectedSessionIndex, useSessionList } from 'models/global-context';
 
 export default function ChatView() {
-  const sessionList = useRecoilValue(sessionListState);
-  const [selectedIndex, setSelectedIndex] = useRecoilState(selectedSessionIndexState);
+  const [sessionList] = useSessionList();
+  const [selectedIndex, setSelectedIndex] = useSelectedSessionIndex();
   const chatAreaNavigator = useNavigator(SWITCH_NAME.CHAT_AREA);
   useEffect(() => {
     if (sessionList.length > 0) {

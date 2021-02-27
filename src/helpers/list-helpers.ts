@@ -1,10 +1,8 @@
-export function removeAll<T>(list: T[], item: T, equals?: (x: T, y: T) => boolean): number {
+export function removeAll<T>(list: T[], predicate: (item: T) => boolean): number {
   let toRemovedIndex = -1;
   let removedCount = 0;
   while (true) {
-    toRemovedIndex = list.findIndex((element) =>
-      equals ? equals(element, item) : element === item
-    );
+    toRemovedIndex = list.findIndex(predicate);
     if (toRemovedIndex >= 0) {
       list.splice(toRemovedIndex, 1);
       removedCount++;

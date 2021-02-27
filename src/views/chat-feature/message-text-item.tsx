@@ -4,8 +4,7 @@ import { IdType, MessageContent, MessageSegment } from 'api';
 import { DialogBuilder, useDialogBuilder } from 'components/dialog';
 import ImageExplorerDialog from 'views/dialogs/image-explorer-dialog';
 import { useCallback, useMemo } from 'react';
-import useRecoilValueLoaded from 'hooks/use-recoil-value-loaded';
-import { groupMemberListState, contactListState } from 'models/store';
+import { useContactList, useGroupMemberList } from 'models/global-context';
 
 type Props = {
   contactType: 'friend' | 'stranger' | 'group';
@@ -29,8 +28,8 @@ export default function MessageTextItem({
   const dialogBuilder = useDialogBuilder();
   const messageBoxClass = classNames('MessageTextItem__messageArea', { highlight });
 
-  const groupMemberList = useRecoilValueLoaded(groupMemberListState(contactId), []);
-  const contactList = useRecoilValueLoaded(contactListState, []);
+  const groupMemberList = useGroupMemberList(contactId);
+  const contactList = useContactList();
   const getContactById = useCallback(
     (id: IdType) => {
       const contact = contactList.find((item) => item.id === id);

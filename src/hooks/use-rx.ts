@@ -46,9 +46,9 @@ export function useRxState<T>(
   subject: Subject<T>
 ): [T | undefined, Dispatch<SetStateAction<T | undefined>>];
 export function useRxState(subject: any, initialValue?: any) {
-  return [useRxValue(subject), useSetRxState(subject, initialValue)];
+  return [useRxValue(subject, initialValue), useSetRxState(subject, initialValue)];
 }
 
 function isSetCallback<T>(action: SetStateAction<T>): action is (prev: T) => T {
-  return (action as (prev: T) => T) !== undefined;
+  return typeof action === 'function';
 }
