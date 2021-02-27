@@ -29,6 +29,7 @@ export function useSetRxState<T>(observer: any, initialValue?: any): any {
   const setValue = useCallback(
     (action: SetStateAction<T | undefined>) => {
       const nextValue = isSetCallback(action) ? action(prevValue.current) : action;
+      if (nextValue === prevValue.current) return;
       observer.next(nextValue);
       prevValue.current = nextValue;
     },
