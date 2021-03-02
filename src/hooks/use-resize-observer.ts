@@ -17,7 +17,6 @@ export function useResizeObserver<T extends HTMLElement>(
     if (!target) return;
 
     if (window.ResizeObserver) {
-      log('debug', 'The current browser is support the ResizeObserver.');
       let cancel = false;
       const resizeObserver = new ResizeObserver((entities) =>
         // Ref: https://stackoverflow.com/a/58701523/9078911

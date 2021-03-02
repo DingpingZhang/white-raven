@@ -2,8 +2,6 @@ import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import SessionItem from './session-item';
 import SearchWidget from 'views/search-widget';
 import { useState } from 'react';
-import { produce } from 'immer';
-import { removeAll } from 'helpers/list-helpers';
 import useSearchWithText from 'models/use-search-with-text';
 import { useSelectedSessionIndex, useSessionList } from 'models/global-context';
 
@@ -36,11 +34,9 @@ export default function SessionListWidget() {
                 selected={selectedIndex === actualIndex}
                 onSelected={() => setSelectedIndex(startIndex + index)}
                 onRemoved={() => {
-                  setSessionList((prev) =>
-                    produce(prev, (draft) => {
-                      removeAll(draft, (element) => element.contact.id === item.contact.id);
-                    })
-                  );
+                  setSessionList((prev) => [
+                    ...prev.filter((element) => element.contact.id !== item.contact.id),
+                  ]);
                 }}
               />
             );
