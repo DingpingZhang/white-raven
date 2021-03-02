@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { ReactNode, useContext, useEffect, useCallback, useState, ReactElement } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { useForceUpdate, useLazyRef } from 'hooks';
+import { useForceUpdate, useConstant } from 'hooks';
 import { SwitchHostContext } from './switch-host';
 
 const EMPTY_OBJECT = {};
@@ -53,7 +53,7 @@ function equalProps(left: any, right: any) {
 
 export function Switch<T extends string>({ name, contentProvider, animation }: SwitchProps<T>) {
   const forceUpdate = useForceUpdate();
-  const loadedViewCache = useLazyRef(() => new Map<T, ReactNode>());
+  const loadedViewCache = useConstant(() => new Map<T, ReactNode>());
   const [selectedLabel, setSelectedLabel] = useState('');
   const { registerSwitch, unregisterSwitch } = useContext(SwitchHostContext);
 

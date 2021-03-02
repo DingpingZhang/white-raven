@@ -22,13 +22,17 @@ import {
 import { createContext, ReactNode, useContext, useEffect, useMemo } from 'react';
 import MessageList from './message-list';
 import AvatarDefaultIcon from 'images/avatar-default.png';
-import { useLazyRef } from 'hooks';
+import { useConstant } from 'hooks';
 import { BehaviorSubject } from 'rxjs';
 import { useRxState } from 'hooks/use-rx';
 import { lastItemOrDefault } from 'helpers/list-helpers';
 import { useState } from 'react';
+import { LanguageCode } from 'i18n';
 
+type ThemeType = 'theme-light' | 'theme-dark';
 type GlobalContextType = {
+  theme: BehaviorSubject<ThemeType>;
+  culture: BehaviorSubject<LanguageCode>;
   userInfo: BehaviorSubject<PersonInfo>;
   selectedSessionIndex: BehaviorSubject<number>;
   sessionList: BehaviorSubject<SessionInfo[]>;
@@ -42,7 +46,9 @@ const defaultUserInfo: PersonInfo = { id: '', name: '', avatar: AvatarDefaultIco
 const GlobalContext = createContext<GlobalContextType>(undefined as any);
 
 export default function GlobalContextRoot({ children }: { children: ReactNode }) {
-  const store = useLazyRef<GlobalContextType>(() => ({
+  const store = useConstant<GlobalContextType>(() => ({
+    theme: new BehaviorSubject<ThemeType>('theme-dark'),
+    culture: new BehaviorSubject<LanguageCode>('zh-CN'),
     userInfo: new BehaviorSubject<PersonInfo>(defaultUserInfo),
     selectedSessionIndex: new BehaviorSubject<number>(0),
     sessionList: new BehaviorSubject<SessionInfo[]>([]),

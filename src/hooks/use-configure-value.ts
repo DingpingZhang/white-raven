@@ -1,5 +1,5 @@
 import { useForceUpdate } from './use-force-update';
-import { useLazyRef } from './use-lazy-ref';
+import { useConstant } from './use-constant';
 
 // TODO: Replace with log system
 const log = (level: string, message: string) => console.log(`$[${level} ${message}]`);
@@ -121,7 +121,7 @@ class AsyncConfigureValue<T> extends ConfigureValueBase<T> {
 
 export function useConfigureValue<T>(getter: () => T, setter: (value: T) => void) {
   const forceUpdate = useForceUpdate();
-  return useLazyRef(() => new ConfigureValue<T>(getter, setter, forceUpdate));
+  return useConstant(() => new ConfigureValue<T>(getter, setter, forceUpdate));
 }
 
 export function useAsyncConfigureValue<T>(
@@ -130,5 +130,5 @@ export function useAsyncConfigureValue<T>(
   initialValue: T
 ) {
   const forceUpdate = useForceUpdate();
-  return useLazyRef(() => new AsyncConfigureValue<T>(getter, setter, forceUpdate, initialValue));
+  return useConstant(() => new AsyncConfigureValue<T>(getter, setter, forceUpdate, initialValue));
 }
