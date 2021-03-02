@@ -1,37 +1,28 @@
-import { useState, useEffect, Dispatch, SetStateAction, useRef, useCallback } from 'react';
-import { Observable, Subject } from 'rxjs';
+import { useState, useEffect, Dispatch, SetStateAction, useCallback } from 'react';
+import { BehaviorSubject, Observable } from 'rxjs';
+
+type ObserverLike<T> = {
+  next: (value: T) => void;
+  value: T;
+};
 
 export function useRxValue<T>(observable: Observable<T>, initialValue: T): T;
 export function useRxValue<T>(observable: Observable<T>): T | undefined;
-export function useRxValue<T>(observable: any, initialValue?: any) {
+export function useRxValue<T>(observable: Observable<T>, initialValue?: T) {
   const [innerValue, setInnerValue] = useState<T | undefined>(initialValue);
   useEffect(() => {
     const token = observable.subscribe((next: T | undefined) => setInnerValue(next));
-    return () => {
-      if (!token.closed) {
-        token.unsubscribe();
-      }
-    };
+    return () => token.unsubscribe();
   }, [observable]);
 
   return innerValue;
 }
 
-export function useSetRxState<T>(
-  observer: { next: (value?: T) => void },
-  initialValue: T
-): Dispatch<SetStateAction<T>>;
-export function useSetRxState<T>(observer: {
-  next: (value?: T) => void;
-}): Dispatch<SetStateAction<T | undefined>>;
-export function useSetRxState<T>(observer: any, initialValue?: any): any {
-  const prevValue = useRef<T | undefined>(initialValue);
+export function useSetRxState<T>(observer: ObserverLike<T>): Dispatch<SetStateAction<T>> {
   const setValue = useCallback(
-    (action: SetStateAction<T | undefined>) => {
-      const nextValue = isSetCallback(action) ? action(prevValue.current) : action;
-      if (nextValue === prevValue.current) return;
+    (action: SetStateAction<T>) => {
+      const nextValue = isSetCallback(action) ? action(observer.value) : action;
       observer.next(nextValue);
-      prevValue.current = nextValue;
     },
     [observer]
   );
@@ -40,14 +31,14 @@ export function useSetRxState<T>(observer: any, initialValue?: any): any {
 }
 
 export function useRxState<T>(
-  subject: Subject<T>,
+  subject: BehaviorSubject<T>,
   initialValue: T
 ): [T, Dispatch<SetStateAction<T>>];
 export function useRxState<T>(
-  subject: Subject<T>
+  subject: BehaviorSubject<T>
 ): [T | undefined, Dispatch<SetStateAction<T | undefined>>];
-export function useRxState(subject: any, initialValue?: any) {
-  return [useRxValue(subject, initialValue), useSetRxState(subject, initialValue)];
+export function useRxState<T>(subject: BehaviorSubject<T>, initialValue?: any) {
+  return [useRxValue(subject, initialValue), useSetRxState(subject)];
 }
 
 function isSetCallback<T>(action: SetStateAction<T>): action is (prev: T) => T {

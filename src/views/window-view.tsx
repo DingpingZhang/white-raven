@@ -22,18 +22,27 @@ import { produce } from 'immer';
 import { removeAll } from 'helpers/list-helpers';
 import {
   fallbackHttpApi,
+  ThemeType,
   useContactList,
   useSessionList,
+  useTheme,
   useUserInfo,
 } from 'models/global-context';
 
 export default function WindowView() {
   const contactDialogToken = useDialog<FriendInfo | GroupInfo | null>(buildContactDialog);
-  const { avatar } = useUserInfo();
   const { $t } = useI18n();
+  const { avatar } = useUserInfo();
   const contactList = useContactList();
   const [, setSessionList] = useSessionList();
 
+  const [theme, setTheme] = useTheme();
+  useEffect(() => {
+    const classList = document.body.classList;
+    const prevTheme: ThemeType = theme === 'theme-light' ? 'theme-dark' : 'theme-light';
+    classList.remove(prevTheme);
+    classList.add(theme);
+  }, [theme]);
   useEffect(() => {
     // Subscribe Events
     const friendToken = webSocketClient
@@ -148,11 +157,7 @@ export default function WindowView() {
               icon={avatar}
               diameter={36}
               onClick={() => {
-                if (document.body.classList.contains('theme-dark')) {
-                  document.body.classList.remove('theme-dark');
-                } else {
-                  document.body.classList.add('theme-dark');
-                }
+                setTheme((prev) => (prev === 'theme-light' ? 'theme-dark' : 'theme-light'));
               }}
             />,
           ]}

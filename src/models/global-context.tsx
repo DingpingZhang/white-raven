@@ -29,7 +29,7 @@ import { lastItemOrDefault } from 'helpers/list-helpers';
 import { useState } from 'react';
 import { LanguageCode } from 'i18n';
 
-type ThemeType = 'theme-light' | 'theme-dark';
+export type ThemeType = 'theme-light' | 'theme-dark';
 type GlobalContextType = {
   theme: BehaviorSubject<ThemeType>;
   culture: BehaviorSubject<LanguageCode>;
@@ -58,6 +58,11 @@ export default function GlobalContextRoot({ children }: { children: ReactNode })
   }));
 
   return <GlobalContext.Provider value={store}>{children}</GlobalContext.Provider>;
+}
+
+export function useTheme() {
+  const ctx = useContext(GlobalContext);
+  return useRxState(ctx.theme, 'theme-dark');
 }
 
 export function useUserInfo() {
