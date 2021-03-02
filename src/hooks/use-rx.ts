@@ -36,7 +36,7 @@ export function useRxState<T>(
 ): [T, Dispatch<SetStateAction<T>>];
 export function useRxState<T>(
   subject: BehaviorSubject<T>
-): [T | undefined, Dispatch<SetStateAction<T | undefined>>];
+): [T | undefined, Dispatch<SetStateAction<T>>];
 export function useRxState<T>(subject: BehaviorSubject<T>, initialValue?: any) {
   return [useRxValue(subject, initialValue), useSetRxState(subject)];
 }
