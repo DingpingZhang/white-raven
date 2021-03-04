@@ -7,17 +7,23 @@ import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { ReactComponent as BottomIcon } from 'images/bottom.svg';
 import classNames from 'classnames';
-import { equalNumber } from 'helpers';
 
 type Props = {
   messageList: MessageList;
   renderItem: (item: Message, index: number) => ReactElement;
 };
+type ScrollIndex = {
+  alignToTop: boolean;
+  index: number | 'top' | 'bottom';
+};
 
 export default function MessageListWidget({ messageList, renderItem }: Props) {
   const scrollViewerRef = useRef<HTMLDivElement>(null);
   const scrollPointerElementRef = useRef<HTMLDivElement>(null);
-  const [scrollPointerIndex, setScrollPointerIndex] = useState<number | 'top' | 'bottom'>('bottom');
+  const [scrollPointerIndex, setScrollPointerIndex] = useState<ScrollIndex>({
+    alignToTop: false,
+    index: 'bottom',
+  });
   const [isGotoBottomVisible, setIsGotoBottomVisible] = useState(false);
 
   const [prevMoreRef, inViewPrevMore, prevMoreEntity] = useInView();
@@ -46,21 +52,20 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
             (scrollViewer.scrollTop + scrollViewer.offsetHeight) / scrollViewer.scrollHeight > 0.8;
 
           if (isNearBottom) {
-            setScrollPointerIndex(Number.MIN_SAFE_INTEGER);
-            setScrollPointerIndex('bottom');
+            setScrollPointerIndex({ alignToTop: false, index: 'bottom' });
           } else {
-            setScrollPointerIndex(Number.MIN_SAFE_INTEGER);
-            setScrollPointerIndex(-1);
+            setScrollPointerIndex({ alignToTop: false, index: -1 });
           }
         }
         break;
       case 'pull-next':
-        setScrollPointerIndex(Number.MIN_SAFE_INTEGER);
-        setScrollPointerIndex(sliceCount - changedCount);
+        setScrollPointerIndex({ alignToTop: false, index: sliceCount - changedCount });
         break;
       case 'pull-prev':
-        setScrollPointerIndex(Number.MIN_SAFE_INTEGER);
-        setScrollPointerIndex(changedCount - 1);
+        setScrollPointerIndex({ alignToTop: true, index: changedCount - 1 });
+        break;
+      case 'pull-until-latest':
+        setScrollPointerIndex({ alignToTop: false, index: 'bottom' });
         break;
     }
   }, []);
@@ -72,20 +77,20 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
   const prevMoreElement = prevMoreEntity?.target;
   const nextMoreElement = nextMoreEntity?.target;
   useEffect(() => {
-    if (scrollPointerIndex === 'bottom') {
+    if (scrollPointerIndex.index === 'bottom') {
       if (
         nextMoreElement &&
         messageList.startIndex + messageList.capacity >= messageList.storage.items.length
       ) {
-        nextMoreElement.scrollIntoView();
+        nextMoreElement.scrollIntoView(scrollPointerIndex.alignToTop);
       }
-    } else if (scrollPointerIndex === 'top') {
+    } else if (scrollPointerIndex.index === 'top') {
       if (prevMoreElement) {
-        prevMoreElement.scrollIntoView();
+        prevMoreElement.scrollIntoView(scrollPointerIndex.alignToTop);
       }
-    } else if (scrollPointerIndex >= 0) {
+    } else if (scrollPointerIndex.index >= 0) {
       if (scrollPointerElementRef.current) {
-        scrollPointerElementRef.current.scrollIntoView();
+        scrollPointerElementRef.current.scrollIntoView(scrollPointerIndex.alignToTop);
       }
     }
   }, [
@@ -123,7 +128,7 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
           const element = renderItem(item, index);
           return (
             <div
-              ref={scrollPointerIndex === index ? scrollPointerElementRef : null}
+              ref={scrollPointerIndex.index === index ? scrollPointerElementRef : null}
               key={element.key}
             >
               {element}
@@ -136,23 +141,7 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
         className={gotoBottomClass}
         buttonType="default"
         icon={<BottomIcon />}
-        onClick={async () => {
-          const scrollViewer = scrollViewerRef.current;
-          if (!nextMoreElement || !scrollViewer) return;
-
-          let isNearBottom: boolean;
-          do {
-            nextMoreElement.scrollIntoView();
-            await messageList.pullNext();
-            isNearBottom =
-              messageList.startIndex + messageList.capacity >= messageList.storage.items.length &&
-              equalNumber(
-                scrollViewer.scrollTop + scrollViewer.offsetHeight,
-                scrollViewer.scrollHeight,
-                1
-              );
-          } while (!isNearBottom);
-        }}
+        onClick={() => messageList.pullUntilLatest()}
       />
     </div>
   );

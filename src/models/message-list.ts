@@ -9,7 +9,7 @@ type GetItems = (
   previous: boolean
 ) => Promise<ReadonlyArray<Message>>;
 export type ItemsChangedInfo = {
-  type: 'push' | 'pull-prev' | 'pull-next';
+  type: 'push' | 'pull-prev' | 'pull-next' | 'pull-until-latest';
   changedCount: number;
   sliceCount: number;
 };
@@ -43,8 +43,8 @@ export default class MessageList {
     this.getItems = getItems;
   }
 
-  async pullPrev(): Promise<void> {
-    this.lock(async () => {
+  pullPrev(): Promise<void> {
+    return this.lock(async () => {
       if (this.startIndex >= BATCH_COUNT) {
         this.startIndex -= BATCH_COUNT;
         this.raiseItemsChanged({
@@ -68,16 +68,17 @@ export default class MessageList {
     });
   }
 
-  async pullNext(): Promise<void> {
-    this.lock(async () => {
+  pullNext(): Promise<void> {
+    return this.lock(async () => {
       if (this.startIndex + BATCH_COUNT < this.storage.items.length) {
+        const prevStartIndex = this.startIndex;
         this.startIndex =
           this.startIndex + this.capacity < this.storage.items.length
             ? this.startIndex + BATCH_COUNT
             : this.startIndex;
         this.raiseItemsChanged({
           type: 'pull-next',
-          changedCount: BATCH_COUNT,
+          changedCount: this.startIndex - prevStartIndex,
           sliceCount: this.getSliceCount(),
         });
       } else {
@@ -93,6 +94,15 @@ export default class MessageList {
           });
         }
       }
+    });
+  }
+
+  pullUntilLatest() {
+    this.startIndex = Math.max(this.storage.items.length - this.capacity, 0);
+    this.raiseItemsChanged({
+      type: 'pull-until-latest',
+      changedCount: Number.MAX_SAFE_INTEGER,
+      sliceCount: this.getSliceCount(),
     });
   }
 
@@ -118,7 +128,7 @@ export default class MessageList {
   }
 
   private getSliceCount() {
-    return this.startIndex + this.capacity > this.storage.items.length
+    return this.startIndex + this.capacity < this.storage.items.length
       ? this.capacity
       : this.storage.items.length - this.startIndex;
   }
