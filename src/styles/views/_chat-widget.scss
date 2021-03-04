@@ -3,11 +3,6 @@
   grid-template-rows: 1fr auto;
   height: 100%;
 
-  .ChatWidget__messageList {
-    display: flex;
-    flex-direction: column;
-  }
-
   .ChatWidget__inputBox {
     display: grid;
 

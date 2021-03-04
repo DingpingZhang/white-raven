@@ -1,9 +1,13 @@
 import { Message } from 'api';
+import CircleButton from 'components/circle-button';
 import ScrollViewer from 'components/scroll-viewer';
 import MessageList, { ItemsChangedInfo } from 'models/message-list';
 import React from 'react';
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { ReactComponent as BottomIcon } from 'images/bottom.svg';
+import classNames from 'classnames';
+import { equalNumber } from 'helpers';
 
 type Props = {
   messageList: MessageList;
@@ -14,6 +18,7 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
   const scrollViewerRef = useRef<HTMLDivElement>(null);
   const scrollPointerElementRef = useRef<HTMLDivElement>(null);
   const [scrollPointerIndex, setScrollPointerIndex] = useState<number | 'top' | 'bottom'>('bottom');
+  const [isGotoBottomVisible, setIsGotoBottomVisible] = useState(false);
 
   const [prevMoreRef, inViewPrevMore, prevMoreEntity] = useInView();
   const [nextMoreRef, inViewNextMore, nextMoreEntity] = useInView();
@@ -37,10 +42,10 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
         {
           const scrollViewer = scrollViewerRef.current;
           if (!scrollViewer) return;
-          const isArrivedBottom =
+          const isNearBottom =
             (scrollViewer.scrollTop + scrollViewer.offsetHeight) / scrollViewer.scrollHeight > 0.8;
 
-          if (isArrivedBottom) {
+          if (isNearBottom) {
             setScrollPointerIndex(Number.MIN_SAFE_INTEGER);
             setScrollPointerIndex('bottom');
           } else {
@@ -91,12 +96,26 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
     messageList.capacity,
     messageList.storage.items.length,
   ]);
+  const handleGotoBottomVisible = useCallback(() => {
+    const scrollViewer = scrollViewerRef.current;
+    if (!scrollViewer) return;
+
+    const isNearBottom =
+      messageList.startIndex + messageList.capacity >= messageList.storage.items.length &&
+      (scrollViewer.scrollTop + scrollViewer.offsetHeight) / scrollViewer.scrollHeight > 0.8;
+    setIsGotoBottomVisible(!isNearBottom);
+  }, [messageList.capacity, messageList.startIndex, messageList.storage.items.length]);
+
+  const gotoBottomClass = classNames('MessageListWidget__gotoBottom', {
+    active: isGotoBottomVisible,
+  });
 
   return (
     <div className="MessageListWidget">
       <ScrollViewer
         ref={scrollViewerRef}
         className="MessageListWidget__messageList"
+        onScroll={handleGotoBottomVisible}
         enableVerticalScrollBar
       >
         <div ref={prevMoreRef} className="MessageListWidget__prevMore"></div>
@@ -113,6 +132,28 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
         })}
         <div ref={nextMoreRef} className="MessageListWidget__nextMore"></div>
       </ScrollViewer>
+      <CircleButton
+        className={gotoBottomClass}
+        buttonType="default"
+        icon={<BottomIcon />}
+        onClick={async () => {
+          const scrollViewer = scrollViewerRef.current;
+          if (!nextMoreElement || !scrollViewer) return;
+
+          let isNearBottom: boolean;
+          do {
+            nextMoreElement.scrollIntoView();
+            await messageList.pullNext();
+            isNearBottom =
+              messageList.startIndex + messageList.capacity >= messageList.storage.items.length &&
+              equalNumber(
+                scrollViewer.scrollTop + scrollViewer.offsetHeight,
+                scrollViewer.scrollHeight,
+                1
+              );
+          } while (!isNearBottom);
+        }}
+      />
     </div>
   );
 }
