@@ -13,6 +13,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   {
     id: '',
     senderId: '787673395',
+    recipientId: 'self',
     content: [
       {
         type: 'text',
@@ -47,6 +48,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   {
     id: '',
     senderId: '1844812067',
+    recipientId: 'self',
     content: [
       {
         type: 'text',
@@ -64,6 +66,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   {
     id: '',
     senderId: '1844812067',
+    recipientId: 'self',
     content: [
       {
         type: 'text',
@@ -75,6 +78,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   {
     id: '',
     senderId: '787673395',
+    recipientId: 'self',
     content: [
       {
         type: 'text',
@@ -87,6 +91,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   {
     id: '',
     senderId: '622811874',
+    recipientId: 'self',
     content: [
       {
         type: 'text',
@@ -99,6 +104,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   {
     id: '',
     senderId: '622811874',
+    recipientId: 'self',
     content: [
       {
         type: 'text',
@@ -110,6 +116,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   {
     id: '',
     senderId: '622811874',
+    recipientId: 'self',
     content: [
       {
         type: 'text',
@@ -121,6 +128,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   {
     id: '',
     senderId: '622811874',
+    recipientId: 'self',
     content: [
       {
         type: 'text',
@@ -133,6 +141,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   {
     id: '',
     senderId: '622811874',
+    recipientId: 'self',
     content: [
       {
         type: 'text',
