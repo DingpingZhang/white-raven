@@ -29,7 +29,13 @@ export default function PrivateSessionView({ session }: Props) {
           const response = await send(session.contact.id, { content });
           if (response.code === 200) {
             const { id: messageId, timestamp } = response.content;
-            return { id: messageId, senderId: id, content, timestamp };
+            return {
+              id: messageId,
+              senderId: id,
+              recipientId: session.contact.id,
+              content,
+              timestamp,
+            };
           } else {
             return null;
           }

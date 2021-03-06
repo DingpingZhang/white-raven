@@ -36,6 +36,7 @@ export type MessageContent = ReadonlyArray<MessageSegment>;
 export type Message = {
   id: IdType;
   senderId: IdType;
+  recipientId: IdType;
   timestamp: number;
   content: MessageContent;
 };

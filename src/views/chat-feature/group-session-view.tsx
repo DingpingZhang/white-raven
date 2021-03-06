@@ -36,7 +36,13 @@ export default function GroupSessionView({
             const response = await sendMessageToGroup(contactId, { content: message });
             if (response.code === 200) {
               const { id: messageId, timestamp } = response.content;
-              return { id: messageId, senderId: id, content: message, timestamp };
+              return {
+                id: messageId,
+                senderId: id,
+                recipientId: contactId,
+                content: message,
+                timestamp,
+              };
             } else {
               return null;
             }

@@ -30,22 +30,24 @@ export default function ChatWidget({ sessionType, contactId, sendMessage }: Prop
 
     const friendToken = webSocketClient
       .filter<FriendMessageEvent>('friend/message')
-      .pipe(filter((e) => e.senderId === contactId))
+      .pipe(filter((e) => e.senderId === contactId || e.recipientId === contactId))
       .subscribe((e) => {
         messageList.pushItem({
           id: e.id,
           senderId: e.senderId,
+          recipientId: currentUserId,
           content: [...e.content],
           timestamp: e.timestamp,
         });
       });
     const strangerToken = webSocketClient
       .filter<StrangerMessageEvent>('stranger/message')
-      .pipe(filter((e) => e.senderId === contactId))
+      .pipe(filter((e) => e.senderId === contactId || e.recipientId === contactId))
       .subscribe((e) => {
         messageList.pushItem({
           id: e.id,
           senderId: e.senderId,
+          recipientId: currentUserId,
           content: [...e.content],
           timestamp: e.timestamp,
         });
@@ -57,6 +59,7 @@ export default function ChatWidget({ sessionType, contactId, sendMessage }: Prop
         messageList.pushItem({
           id: e.id,
           senderId: e.senderId,
+          recipientId: currentUserId,
           content: [...e.content],
           timestamp: e.timestamp,
         });
@@ -67,7 +70,7 @@ export default function ChatWidget({ sessionType, contactId, sendMessage }: Prop
       strangerToken.unsubscribe();
       groupToken.unsubscribe();
     };
-  }, [contactId, messageList]);
+  }, [contactId, currentUserId, messageList]);
 
   return (
     <div className="ChatWidget">
