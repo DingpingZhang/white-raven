@@ -5,7 +5,7 @@ import { ReactComponent as FaceIcon } from 'images/face.svg';
 import CircleButton from 'components/circle-button';
 import { useI18n } from 'i18n';
 import { MessageContent } from 'api';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 type Props = {
   sendMessage: (message: MessageContent) => Promise<boolean>;
@@ -15,6 +15,28 @@ export default function SenderWidget({ sendMessage }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [canSend, setCanSend] = useState(false);
   const { $t } = useI18n();
+  const handleEnterClick = useCallback(async () => {
+    if (inputRef.current && inputRef.current.value) {
+      const text = inputRef.current.value;
+      inputRef.current.value = '';
+      const success = await sendMessage([{ type: 'text', text }]);
+      if (success) {
+        setCanSend(false);
+      } else {
+        inputRef.current.value = text;
+      }
+    } else {
+      // TODO: Tip: Don't send empty message.
+    }
+  }, [sendMessage]);
+  const handleEnterDown = useCallback(
+    (e: React.KeyboardEvent<HTMLElement>) => {
+      if (e.key === 'Enter') {
+        handleEnterClick();
+      }
+    },
+    [handleEnterClick]
+  );
 
   return (
     <div className="SenderWidget">
@@ -30,6 +52,7 @@ export default function SenderWidget({ sendMessage }: Props) {
           type="text"
           className="SenderWidget__input"
           placeholder={$t('input.placeholder.writeAMessage')}
+          onKeyDown={handleEnterDown}
         />
         <CircleButton buttonType="default" className="SenderWidget__btnFace" icon={<FaceIcon />} />
         <CircleButton
@@ -44,18 +67,7 @@ export default function SenderWidget({ sendMessage }: Props) {
         className="SenderWidget__btnSend"
         icon={<SendIcon />}
         disabled={!canSend}
-        onClick={async () => {
-          if (inputRef.current && inputRef.current.value) {
-            const text = inputRef.current.value;
-            inputRef.current.value = '';
-            const success = await sendMessage([{ type: 'text', text }]);
-            if (!success) {
-              inputRef.current.value = text;
-            }
-          } else {
-            // TODO: Tip: Don't send empty message.
-          }
-        }}
+        onClick={handleEnterClick}
       />
     </div>
   );
