@@ -13,7 +13,7 @@ import {
 import { webSocketClient } from 'api/websocket-client';
 import { filter } from 'rxjs/operators';
 import MessageListWidget from './message-list-widget';
-import { useMessageList, useUserInfo } from 'models/global-context';
+import { useMessageList, useUserInfo } from 'models/store';
 
 type Props = {
   sessionType: SessionType;

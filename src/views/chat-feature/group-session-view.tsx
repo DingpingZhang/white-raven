@@ -4,7 +4,7 @@ import { toDisplayTimestamp } from 'helpers';
 import ChatWidget from './chat-widget';
 import GroupMemberItem from './group-member-item';
 import { useI18n } from 'i18n';
-import { useGroupMemberList, useLastMessage, useUserInfo } from 'models/global-context';
+import { useGroupMemberList, useLastMessage, useUserInfo } from 'models/store';
 
 type Props = {
   session: GroupSession;

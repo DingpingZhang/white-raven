@@ -4,7 +4,7 @@ import { IdType, MessageContent, MessageSegment } from 'api';
 import { DialogBuilder, useDialogBuilder } from 'components/dialog';
 import ImageExplorerDialog from 'views/dialogs/image-explorer-dialog';
 import { useCallback, useMemo } from 'react';
-import { useContactList, useGroupMemberList } from 'models/global-context';
+import { useContactList, useGroupMemberList } from 'models/store';
 
 type Props = {
   contactType: 'friend' | 'stranger' | 'group';

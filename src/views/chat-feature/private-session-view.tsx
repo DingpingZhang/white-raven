@@ -1,6 +1,6 @@
 import { FriendSession, sendMessageToFriend, sendMessageToStranger, StrangerSession } from 'api';
 import { toDisplayTimestamp } from 'helpers';
-import { useLastMessage, useUserInfo } from 'models/global-context';
+import { useLastMessage, useUserInfo } from 'models/store';
 import ChatWidget from './chat-widget';
 
 type Props = {

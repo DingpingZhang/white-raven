@@ -6,7 +6,7 @@ import { SWITCH_NAME } from 'views/constants';
 import GroupSessionView from './group-session-view';
 import PrivateSessionView from './private-session-view';
 import SessionListWidget from './session-list-widget';
-import { useSelectedSessionIndex, useSessionList } from 'models/global-context';
+import { useSelectedSessionIndex, useSessionList } from 'models/store';
 
 export default function ChatView() {
   const [sessionList] = useSessionList();

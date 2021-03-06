@@ -21,13 +21,13 @@ import { webSocketClient } from 'api/websocket-client';
 import { produce } from 'immer';
 import { removeAll } from 'helpers/list-helpers';
 import {
-  fallbackHttpApi,
-  ThemeType,
+  useUserInfo,
   useContactList,
   useSessionList,
   useTheme,
-  useUserInfo,
-} from 'models/global-context';
+  ThemeType,
+  fallbackHttpApi,
+} from 'models/store';
 
 export default function WindowView() {
   const contactDialogToken = useDialog<FriendInfo | GroupInfo | null>(buildContactDialog);
