@@ -23,22 +23,22 @@ import { createContext, ReactNode, useContext, useEffect, useMemo } from 'react'
 import MessageList from './message-list';
 import AvatarDefaultIcon from 'images/avatar-default.png';
 import { useConstant } from 'hooks';
-import { BehaviorSubject } from 'rxjs';
-import { useRxState } from 'hooks/use-rx';
+import { useRxState, useRxValue } from 'hooks/use-rx';
 import { lastItemOrDefault } from 'helpers/list-helpers';
 import { useState } from 'react';
 import { LanguageCode } from 'i18n';
+import { IRxState, RxState, RxStateCluster } from 'hooks/rx-state';
 
 export type ThemeType = 'theme-light' | 'theme-dark';
 type GlobalContextType = {
-  theme: BehaviorSubject<ThemeType>;
-  culture: BehaviorSubject<LanguageCode>;
-  userInfo: BehaviorSubject<PersonInfo>;
-  selectedSessionIndex: BehaviorSubject<number>;
-  sessionList: BehaviorSubject<SessionInfo[]>;
-  contactList: BehaviorSubject<Array<FriendInfo | GroupInfo>>;
-  messageListStore: Map<IdType, MessageList>;
-  groupMemberListStore: Map<IdType, BehaviorSubject<GroupMemberInfo[]>>;
+  theme: IRxState<ThemeType>;
+  culture: IRxState<LanguageCode>;
+  userInfo: IRxState<PersonInfo>;
+  selectedSessionIndex: IRxState<number>;
+  sessionList: IRxState<SessionInfo[]>;
+  contactList: IRxState<Array<FriendInfo | GroupInfo>>;
+  messageListCluster: Map<IdType, MessageList>;
+  groupMemberListCluster: RxStateCluster<IdType, GroupMemberInfo[]>;
 };
 
 const defaultUserInfo: PersonInfo = { id: '', name: '', avatar: AvatarDefaultIcon };
@@ -47,14 +47,30 @@ const GlobalContext = createContext<GlobalContextType>(undefined as any);
 
 export default function GlobalContextRoot({ children }: { children: ReactNode }) {
   const store = useConstant<GlobalContextType>(() => ({
-    theme: new BehaviorSubject<ThemeType>('theme-dark'),
-    culture: new BehaviorSubject<LanguageCode>('zh-CN'),
-    userInfo: new BehaviorSubject<PersonInfo>(defaultUserInfo),
-    selectedSessionIndex: new BehaviorSubject<number>(0),
-    sessionList: new BehaviorSubject<SessionInfo[]>([]),
-    contactList: new BehaviorSubject<Array<FriendInfo | GroupInfo>>([]),
-    messageListStore: new Map<IdType, MessageList>(),
-    groupMemberListStore: new Map<IdType, BehaviorSubject<GroupMemberInfo[]>>(),
+    theme: new RxState<ThemeType>('theme-dark'),
+    culture: new RxState<LanguageCode>('zh-CN'),
+    userInfo: new RxState<PersonInfo>(defaultUserInfo, async (set) => {
+      const value = await fallbackHttpApi(getUserInfo, defaultUserInfo);
+      set(value);
+    }),
+    selectedSessionIndex: new RxState<number>(0),
+    sessionList: new RxState<SessionInfo[]>([], async (set) => {
+      const value = await makeMutList(fallbackHttpApi(getSessions, []));
+      set(value);
+    }),
+    contactList: new RxState<Array<FriendInfo | GroupInfo>>([], async (set) => {
+      const friends = await fallbackHttpApi(getFriendInfos, []);
+      const groups = await fallbackHttpApi(getGroupInfos, []);
+      set([...friends, ...groups]);
+    }),
+    messageListCluster: new Map<IdType, MessageList>(),
+    groupMemberListCluster: new RxStateCluster<IdType, GroupMemberInfo[]>(
+      (key) =>
+        new RxState<GroupMemberInfo[]>([], async (set) => {
+          const value = await makeMutList(fallbackHttpApi(() => getGroupMembers(key), []));
+          set(value);
+        })
+    ),
   }));
 
   return <GlobalContext.Provider value={store}>{children}</GlobalContext.Provider>;
@@ -62,56 +78,27 @@ export default function GlobalContextRoot({ children }: { children: ReactNode })
 
 export function useTheme() {
   const ctx = useContext(GlobalContext);
-  return useRxState(ctx.theme, 'theme-dark');
+  return useRxState(ctx.theme);
 }
 
 export function useUserInfo() {
   const ctx = useContext(GlobalContext);
-  const [value, setValue] = useRxState(ctx.userInfo, defaultUserInfo);
-  useEffect(() => {
-    const fetch = async () => setValue(await fallbackHttpApi(getUserInfo, defaultUserInfo));
-
-    fetch();
-  }, [setValue]);
-
-  return value;
+  return useRxValue(ctx.userInfo);
 }
 
 export function useSelectedSessionIndex() {
   const ctx = useContext(GlobalContext);
-  return useRxState(ctx.selectedSessionIndex, 0);
+  return useRxState(ctx.selectedSessionIndex);
 }
 
-export function useSessionList(): [
-  SessionInfo[],
-  React.Dispatch<React.SetStateAction<SessionInfo[]>>
-] {
+export function useSessionList() {
   const ctx = useContext(GlobalContext);
-  const [value, setValue] = useRxState(ctx.sessionList, []);
-  useEffect(() => {
-    const fetch = async () => setValue(await makeMutList(fallbackHttpApi(getSessions, [])));
-
-    fetch();
-  }, [setValue]);
-
-  return [value, setValue];
+  return useRxState(ctx.sessionList);
 }
 
 export function useContactList() {
   const ctx = useContext(GlobalContext);
-  const [value, setValue] = useRxState(ctx.contactList, []);
-  useEffect(() => {
-    const fetch = async () => {
-      const friends = await fallbackHttpApi(getFriendInfos, []);
-      const groups = await fallbackHttpApi(getGroupInfos, []);
-
-      setValue([...friends, ...groups]);
-    };
-
-    fetch();
-  }, [setValue]);
-
-  return value;
+  return useRxValue(ctx.contactList);
 }
 
 export function useMessageList(sessionType: SessionType, contactId: IdType) {
@@ -119,8 +106,8 @@ export function useMessageList(sessionType: SessionType, contactId: IdType) {
 
   return useMemo(() => {
     const getPrevMessages = getGetMessages(sessionType);
-    if (!ctx.messageListStore.has(contactId)) {
-      ctx.messageListStore.set(
+    if (!ctx.messageListCluster.has(contactId)) {
+      ctx.messageListCluster.set(
         contactId,
         new MessageList(async (startId, _, prev) =>
           prev ? await fallbackHttpApi(() => getPrevMessages(contactId, startId), []) : []
@@ -128,8 +115,8 @@ export function useMessageList(sessionType: SessionType, contactId: IdType) {
       );
     }
 
-    return ctx.messageListStore.get(contactId)!;
-  }, [contactId, ctx.messageListStore, sessionType]);
+    return ctx.messageListCluster.get(contactId)!;
+  }, [contactId, ctx.messageListCluster, sessionType]);
 }
 
 export function useLastMessage(sessionType: SessionType, contactId: IdType) {
@@ -148,23 +135,7 @@ export function useLastMessage(sessionType: SessionType, contactId: IdType) {
 
 export function useGroupMemberList(groupId: IdType) {
   const ctx = useContext(GlobalContext);
-  const groupMemberListState = useMemo(() => {
-    if (!ctx.groupMemberListStore.has(groupId)) {
-      ctx.groupMemberListStore.set(groupId, new BehaviorSubject<GroupMemberInfo[]>([]));
-    }
-
-    return ctx.groupMemberListStore.get(groupId)!;
-  }, [ctx.groupMemberListStore, groupId]);
-
-  const [value, setValue] = useRxState(groupMemberListState, []);
-  useEffect(() => {
-    const fetch = async () =>
-      setValue(await makeMutList(fallbackHttpApi(() => getGroupMembers(groupId), [])));
-
-    fetch();
-  }, [groupId, setValue]);
-
-  return value;
+  return useRxValue(ctx.groupMemberListCluster.get(groupId));
 }
 
 // ********************************************************************
