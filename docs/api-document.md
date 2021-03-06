@@ -45,3 +45,23 @@
 | ------ | ------------------------------ | --------------------- | ----------------- |
 | `POST` | `groups/:id/messages`          | `MessageBody`         | `MessageResponse` |
 | `POST` | `groups/:id/messages/readedId` | `ReadedMessageIdBody` | `<Empty>: 200`    |
+
+## 3. Authentication
+
+| Method | Api     | Body        | Response        |
+| ------ | ------- | ----------- | --------------- |
+| `POST` | `login` | `LoginBody` | `LoginResponse` |
+
+```ts
+type LoginBody = {
+  account: string;
+  password: string;
+};
+
+export type LoginResponse = {
+  /**
+   * The token is jwt currently.
+   */
+  token: string;
+};
+```
