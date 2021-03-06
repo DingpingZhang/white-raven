@@ -20,11 +20,11 @@ type ScrollIndex = {
 export default function MessageListWidget({ messageList, renderItem }: Props) {
   const scrollViewerRef = useRef<HTMLDivElement>(null);
   const scrollPointerElementRef = useRef<HTMLDivElement>(null);
+  const setIsGotoBottomButtonVisibleRef = useRef<(visible: boolean) => void | null>();
   const [scrollPointerIndex, setScrollPointerIndex] = useState<ScrollIndex>({
     alignToTop: false,
     index: 'bottom',
   });
-  const [isGotoBottomVisible, setIsGotoBottomVisible] = useState(false);
 
   const [prevMoreRef, inViewPrevMore, prevMoreEntity] = useInView();
   const [nextMoreRef, inViewNextMore, nextMoreEntity] = useInView();
@@ -108,12 +108,10 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
     const isNearBottom =
       messageList.startIndex + messageList.capacity >= messageList.storage.items.length &&
       (scrollViewer.scrollTop + scrollViewer.offsetHeight) / scrollViewer.scrollHeight > 0.8;
-    setIsGotoBottomVisible(!isNearBottom);
+    if (setIsGotoBottomButtonVisibleRef.current) {
+      setIsGotoBottomButtonVisibleRef.current(!isNearBottom);
+    }
   }, [messageList.capacity, messageList.startIndex, messageList.storage.items.length]);
-
-  const gotoBottomClass = classNames('MessageListWidget__gotoBottom', {
-    active: isGotoBottomVisible,
-  });
 
   return (
     <div className="MessageListWidget">
@@ -137,12 +135,38 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
         })}
         <div ref={nextMoreRef} className="MessageListWidget__nextMore"></div>
       </ScrollViewer>
-      <CircleButton
-        className={gotoBottomClass}
-        buttonType="default"
-        icon={<BottomIcon />}
-        onClick={() => messageList.pullUntilLatest()}
+      <GotoButtomButton
+        messageList={messageList}
+        setIsVisibleCallback={(set) => (setIsGotoBottomButtonVisibleRef.current = set)}
       />
     </div>
+  );
+}
+
+type GotoBottomButtonProps = {
+  messageList: MessageList;
+  setIsVisibleCallback: (set: (visible: boolean) => void) => void;
+};
+
+function GotoButtomButton({ messageList, setIsVisibleCallback }: GotoBottomButtonProps) {
+  // NOTE: 单独将 GotoButtomButton 提取出来，以保存 isVisible state，若将 isVisible state 放置
+  // 父控件 MessageList 中，则会在变化时触发整个 MessageList 重新渲染。该渲染会导致在 Safari 上严重的卡顿，
+  // 但在 Chromium 内核的浏览器中还可以接受。
+  const [isVisible, setIsVisible] = useState(false);
+  useEffect(() => {
+    setIsVisibleCallback(setIsVisible);
+  }, [setIsVisibleCallback]);
+
+  const gotoBottomClass = classNames('MessageListWidget__gotoBottom', {
+    active: isVisible,
+  });
+
+  return (
+    <CircleButton
+      className={gotoBottomClass}
+      buttonType="default"
+      icon={<BottomIcon />}
+      onClick={() => messageList.pullUntilLatest()}
+    />
   );
 }
