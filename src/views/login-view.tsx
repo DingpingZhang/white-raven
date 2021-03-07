@@ -27,7 +27,7 @@ export default function LoginView({ setIsLoggedIn }: Props) {
           localStorage.setItem(jwtTokenKey, response.content.token);
           setIsLoggedIn(true);
         }
-      } finally {
+      } catch {
         setIsBusy(false);
       }
     }

@@ -1,4 +1,5 @@
 import { jwtTokenKey } from 'api';
+import { DialogHost } from 'components/dialog';
 import LoggedInContextRoot from 'models/logged-in-context';
 import { ThemeType, useTheme } from 'models/store';
 import { useEffect, useState } from 'react';
@@ -19,7 +20,11 @@ function App() {
 
   return isLoggedIn ? (
     <LoggedInContextRoot>
-      <WindowView />
+      {/* FIXME: 需要想办法让 Dialog 的实例就地创建，否则组件中使用的 hook 将获取不到 DialogHost 内部的 Context；
+      这是因为当前创建组件在 DialogHost 内，只能获得 DialogHost 上级的 Context。 */}
+      <DialogHost>
+        <WindowView />
+      </DialogHost>
     </LoggedInContextRoot>
   ) : (
     <LoginView setIsLoggedIn={setIsLoggedIn} />

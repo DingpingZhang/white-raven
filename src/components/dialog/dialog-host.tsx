@@ -1,7 +1,8 @@
-import React, { ReactNode, createContext, useState, useContext, useRef, useMemo } from 'react';
+import React, { ReactNode, createContext, useState, useContext, useMemo } from 'react';
 import classNames from 'classnames';
 import { uuidv4 } from 'helpers';
 import DialogManager from './dialog-manager';
+import { useConstant } from 'hooks';
 
 interface DialogHostProps {
   children: ReactNode;
@@ -62,7 +63,7 @@ export function useDialog<T>(factory: DialogFactory<T>): DialogToken<T> {
 
 export function DialogHost({ children }: DialogHostProps) {
   const [currentDialog, setCurrentDialog] = useState<ReactNode>();
-  const dialogManagerRef = useRef(new DialogManager(setCurrentDialog));
+  const dialogManager = useConstant(() => new DialogManager(setCurrentDialog));
 
   const contentClass = classNames('DialogHost__content', {
     blur: currentDialog,
@@ -73,7 +74,7 @@ export function DialogHost({ children }: DialogHostProps) {
 
   return (
     <div className="DialogHost">
-      <DialogHostContext.Provider value={dialogManagerRef.current}>
+      <DialogHostContext.Provider value={dialogManager}>
         <div className={contentClass}>{children}</div>
         <div className={maskClass}>
           <div className="DialogHost__placeholder">{currentDialog}</div>
