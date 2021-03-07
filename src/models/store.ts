@@ -23,9 +23,13 @@ import { LanguageCode } from 'i18n';
 import { IRxState, RxStateCluster } from 'hooks/rx-state';
 
 export type ThemeType = 'theme-light' | 'theme-dark';
+
 export type GlobalContextType = {
   theme: IRxState<ThemeType>;
   culture: IRxState<LanguageCode>;
+};
+
+export type LoggedInContextType = {
   userInfo: IRxState<PersonInfo>;
   selectedSessionIndex: IRxState<number>;
   sessionList: IRxState<SessionInfo[]>;
@@ -36,33 +40,40 @@ export type GlobalContextType = {
 
 export const GlobalContext = createContext<GlobalContextType>(undefined as any);
 
+export const LoggedInContext = createContext<LoggedInContextType>(undefined as any);
+
 export function useTheme() {
   const ctx = useContext(GlobalContext);
   return useRxState(ctx.theme);
 }
 
-export function useUserInfo() {
+export function useCulture() {
   const ctx = useContext(GlobalContext);
+  return useRxState(ctx.culture);
+}
+
+export function useUserInfo() {
+  const ctx = useContext(LoggedInContext);
   return useRxValue(ctx.userInfo);
 }
 
 export function useSelectedSessionIndex() {
-  const ctx = useContext(GlobalContext);
+  const ctx = useContext(LoggedInContext);
   return useRxState(ctx.selectedSessionIndex);
 }
 
 export function useSessionList() {
-  const ctx = useContext(GlobalContext);
+  const ctx = useContext(LoggedInContext);
   return useRxState(ctx.sessionList);
 }
 
 export function useContactList() {
-  const ctx = useContext(GlobalContext);
+  const ctx = useContext(LoggedInContext);
   return useRxValue(ctx.contactList);
 }
 
 export function useMessageList(sessionType: SessionType, contactId: IdType) {
-  const ctx = useContext(GlobalContext);
+  const ctx = useContext(LoggedInContext);
 
   return useMemo(() => {
     const getPrevMessages = getGetMessages(sessionType);
@@ -94,7 +105,7 @@ export function useLastMessage(sessionType: SessionType, contactId: IdType) {
 }
 
 export function useGroupMemberList(groupId: IdType) {
-  const ctx = useContext(GlobalContext);
+  const ctx = useContext(LoggedInContext);
   return useRxValue(ctx.groupMemberListCluster.get(groupId));
 }
 

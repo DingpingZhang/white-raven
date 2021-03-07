@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import {
   FriendInfo,
   GroupInfo,
@@ -24,21 +24,27 @@ const client = axios.create({
 });
 
 async function get<TOk, TErr = CommonErr>(url: string) {
-  const token = localStorage.getItem(jwtTokenKey);
-
-  const res = await client.get<Ok<TOk> | Err<TErr | CommonErr>>(url, {
-    headers: { Authorization: token },
-  });
+  const res = await client.get<Ok<TOk> | Err<TErr | CommonErr>>(url, getRequestConfig());
   return res.data;
 }
 
 async function post<TOk, TErr = CommonErr>(url: string, data?: any) {
+  const res = await client.post<Ok<TOk> | Err<TErr | CommonErr>>(url, data, getRequestConfig());
+  return res.data;
+}
+
+function getRequestConfig(): AxiosRequestConfig | undefined {
   const token = localStorage.getItem(jwtTokenKey);
 
-  const res = await client.post<Ok<TOk> | Err<TErr | CommonErr>>(url, data, {
-    headers: { Authorization: token },
-  });
-  return res.data;
+  if (token) {
+    const config: AxiosRequestConfig = {
+      headers: { Authorization: token },
+    };
+
+    return config;
+  }
+
+  return undefined;
 }
 
 // ********************************************************

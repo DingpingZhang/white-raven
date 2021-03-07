@@ -1,4 +1,5 @@
 import { jwtTokenKey } from 'api';
+import LoggedInContextRoot from 'models/logged-in-context';
 import { ThemeType, useTheme } from 'models/store';
 import { useEffect, useState } from 'react';
 import LoginView from 'views/login-view';
@@ -16,7 +17,13 @@ function App() {
     classList.add(theme);
   }, [theme]);
 
-  return isLoggedIn ? <WindowView /> : <LoginView setIsLoggedIn={setIsLoggedIn} />;
+  return isLoggedIn ? (
+    <LoggedInContextRoot>
+      <WindowView />
+    </LoggedInContextRoot>
+  ) : (
+    <LoginView setIsLoggedIn={setIsLoggedIn} />
+  );
 }
 
 export default App;
