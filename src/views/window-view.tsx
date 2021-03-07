@@ -25,7 +25,6 @@ import {
   useContactList,
   useSessionList,
   useTheme,
-  ThemeType,
   fallbackHttpApi,
 } from 'models/store';
 
@@ -36,13 +35,8 @@ export default function WindowView() {
   const contactList = useContactList();
   const [, setSessionList] = useSessionList();
 
-  const [theme, setTheme] = useTheme();
-  useEffect(() => {
-    const classList = document.body.classList;
-    const prevTheme: ThemeType = theme === 'theme-light' ? 'theme-dark' : 'theme-light';
-    classList.remove(prevTheme);
-    classList.add(theme);
-  }, [theme]);
+  const [, setTheme] = useTheme();
+
   useEffect(() => {
     // Subscribe Events
     const friendToken = webSocketClient

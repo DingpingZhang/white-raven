@@ -3,8 +3,8 @@ import { ReactNode } from 'react';
 
 type Props = {
   title: string;
-  close: () => void;
   children: ReactNode;
+  close?: () => void;
 };
 
 export default function BaseDialog({ title, close, children }: Props) {
@@ -12,9 +12,11 @@ export default function BaseDialog({ title, close, children }: Props) {
     <div className="BaseDialog">
       <div className="BaseDialog__titleBar">
         <span className="BaseDialog__title">{title}</span>
-        <button className="BaseDialog__btnClose" onClick={close}>
-          <CloseIcon className="BaseDialog__iconClose" />
-        </button>
+        {close ? (
+          <button className="BaseDialog__btnClose" onClick={close}>
+            <CloseIcon className="BaseDialog__iconClose" />
+          </button>
+        ) : null}
       </div>
       <div className="BaseDialog__content">{children}</div>
     </div>

@@ -1,9 +1,18 @@
 {
   "window.tabHeader.chat": "会话",
   "window.tabHeader.contact": "联系人",
+  "loginView.title": "登 录",
+
   "groupSession.groupInfo": "群信息",
   "groupSession.groupMembers": "群成员",
+
   "dialog.title.contact": "联系人",
   "dialog.title.image": "图片",
-  "input.placeholder.writeAMessage": "请输入消息..."
+
+  "input.placeholder.writeAMessage": "请输入消息...",
+  "input.placeholder.inputAccount": "请输入账号",
+  "input.placeholder.inputPassword": "请输入密码",
+
+  "button.confirm": "确定",
+  "button.cancel": "取消"
 }

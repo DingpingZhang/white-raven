@@ -1,9 +1,18 @@
 {
   "window.tabHeader.chat": "Chat",
   "window.tabHeader.contact": "Contact",
+  "loginView.title": "Login",
+
   "groupSession.groupInfo": "Group Info",
   "groupSession.groupMembers": "Group Members",
+
   "dialog.title.contact": "Contact",
   "dialog.title.image": "Image",
-  "input.placeholder.writeAMessage": "Write a message..."
+
+  "input.placeholder.writeAMessage": "Write a message...",
+  "input.placeholder.inputAccount": "Please input your account",
+  "input.placeholder.inputPassword": "Please input your password",
+
+  "button.confirm": "Confirm",
+  "button.cancel": "Cancel"
 }

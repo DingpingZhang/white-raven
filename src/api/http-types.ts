@@ -31,3 +31,10 @@ export type MessageResponse = {
   id: IdType;
   timestamp: number;
 };
+
+export type LoginResponse = {
+  /**
+   * The token is jwt currently.
+   */
+  token: string;
+};

@@ -9,7 +9,7 @@ import {
   SessionInfo,
   StrangerInfo,
 } from './basic-types';
-import { Ok, Err, MessageBody, MessageResponse } from './http-types';
+import { Ok, Err, MessageBody, MessageResponse, LoginResponse } from './http-types';
 
 export type CommonErr = 'connection-timeout';
 
@@ -30,7 +30,7 @@ async function post<TOk, TErr = CommonErr>(url: string, data?: any) {
 }
 
 // ********************************************************
-// 0. Uncategorized Api
+// Uncategorized Api
 // ********************************************************
 
 export async function getUserInfo() {
@@ -42,7 +42,7 @@ export async function getSessions() {
 }
 
 // ********************************************************
-// 1. Person Api
+// Person Api
 // ********************************************************
 
 export async function getFriendInfo(id: IdType) {
@@ -86,7 +86,7 @@ export async function sendMessageToStranger(id: IdType, message: MessageBody) {
 }
 
 // ********************************************************
-// 2. Group Api
+// Group Api
 // ********************************************************
 
 export async function getGroupInfo(id: IdType) {
@@ -117,4 +117,17 @@ export async function getGroupMessages(id: IdType, startId?: IdType) {
 
 export async function sendMessageToGroup(id: IdType, message: MessageBody) {
   return post<MessageResponse>(`groups/${id}/messages`, message);
+}
+
+// ***************************************************
+// Authentication Api
+// ***************************************************
+
+/**
+ * Login api.
+ * @param account The acount.
+ * @param password The password encrypted by MD5, rather than clear text.
+ */
+export async function login(account: string, password: string) {
+  return post<LoginResponse>(`login`, { account, password });
 }

@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { DialogHost } from 'components/dialog';
+import { SwitchHost } from 'components/switch-host';
+import GlobalContextRoot from 'models/global-context';
 
 import './styles/normalize.css';
 import './styles/index.scss';
@@ -11,7 +14,13 @@ document.addEventListener('contextmenu', (e) => e.preventDefault());
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <GlobalContextRoot>
+      <DialogHost>
+        <SwitchHost>
+          <App />
+        </SwitchHost>
+      </DialogHost>
+    </GlobalContextRoot>
   </React.StrictMode>,
   document.getElementById('root')
 );

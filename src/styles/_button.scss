@@ -1,0 +1,38 @@
+@use './mixins/button';
+
+@mixin button-style-base() {
+  @include button.non-style-button();
+
+  white-space: nowrap;
+  padding: 0 12px;
+  font-size: 14px;
+  border-radius: 4px;
+  height: 28px;
+  color: var(--fore-primary-color);
+  border: 1px solid transparent;
+
+  &:not([disabled]):hover {
+    filter: brightness(120%);
+  }
+}
+
+button.button {
+  &-default {
+    @include button-style-base();
+
+    background-color: var(--background-color);
+    border: 1px solid var(--primary-color);
+  }
+
+  &-primary {
+    @include button-style-base();
+
+    background-color: var(--primary-color);
+  }
+
+  &-darger {
+    @include button-style-base();
+
+    background-color: var(--secondary-color);
+  }
+}
