@@ -1,10 +1,13 @@
+import { jwtTokenKey } from 'api';
 import { ThemeType, useTheme } from 'models/store';
 import { useEffect, useState } from 'react';
 import LoginView from 'views/login-view';
 import WindowView from './views/window-view';
 
+const hasBeenLoggedIn = !!localStorage.getItem(jwtTokenKey);
+
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(hasBeenLoggedIn);
   const [theme] = useTheme();
   useEffect(() => {
     const classList = document.body.classList;

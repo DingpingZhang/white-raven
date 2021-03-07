@@ -1,4 +1,4 @@
-import { login } from 'api';
+import { jwtTokenKey, login } from 'api';
 import { useI18n } from 'i18n';
 import md5 from 'md5';
 import { useRef, useCallback, useState } from 'react';
@@ -24,11 +24,11 @@ export default function LoginView({ setIsLoggedIn }: Props) {
       try {
         const response = await login(account, md5(password));
         if (response.code === 200) {
-          localStorage.setItem('jwt-token', response.content.token);
+          localStorage.setItem(jwtTokenKey, response.content.token);
           setIsLoggedIn(true);
         }
       } finally {
-          setIsBusy(false);
+        setIsBusy(false);
       }
     }
   }, [setIsLoggedIn]);

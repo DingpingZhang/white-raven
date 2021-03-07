@@ -13,19 +13,31 @@ import { Ok, Err, MessageBody, MessageResponse, LoginResponse } from './http-typ
 
 export type CommonErr = 'connection-timeout';
 
+export const jwtTokenKey = 'jwt-token';
+
 const client = axios.create({
   baseURL: 'http://localhost:6900/api/v1',
   timeout: 100_000,
-  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+  },
 });
 
 async function get<TOk, TErr = CommonErr>(url: string) {
-  const res = await client.get<Ok<TOk> | Err<TErr | CommonErr>>(url);
+  const token = localStorage.getItem(jwtTokenKey);
+
+  const res = await client.get<Ok<TOk> | Err<TErr | CommonErr>>(url, {
+    headers: { Authorization: token },
+  });
   return res.data;
 }
 
 async function post<TOk, TErr = CommonErr>(url: string, data?: any) {
-  const res = await client.post<Ok<TOk> | Err<TErr | CommonErr>>(url, data);
+  const token = localStorage.getItem(jwtTokenKey);
+
+  const res = await client.post<Ok<TOk> | Err<TErr | CommonErr>>(url, data, {
+    headers: { Authorization: token },
+  });
   return res.data;
 }
 
