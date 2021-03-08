@@ -1,7 +1,7 @@
 import { FriendInfo, GroupInfo } from 'api';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import { useI18n } from 'i18n';
-import { useContactList } from 'models/store';
+import { useContactList, useUserInfo } from 'models/store';
 import useSearchWithText from 'models/use-search-with-text';
 import { useState } from 'react';
 import SearchWidget from 'views/search-widget';
@@ -22,8 +22,13 @@ export function buildContactDialog(close: OnClose) {
 export default function ContactDialog({ close }: Props) {
   const [queriesText, setQueriesText] = useState('');
   const { $t } = useI18n();
+  const { id: currentUserId } = useUserInfo();
   const contactList = useContactList();
-  const filteredContactInfos = useSearchWithText(contactList, (item) => item.name, queriesText);
+  const filteredContactInfos = useSearchWithText(
+    contactList.filter((item) => item.id !== currentUserId),
+    (item) => item.name,
+    queriesText
+  );
 
   return (
     <BaseDialog title={$t('dialog.title.contact')} close={() => close(null)}>

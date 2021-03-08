@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { useResize } from 'hooks';
 import ScrollViewer from './scroll-viewer';
@@ -27,7 +27,7 @@ type FixedSizeProvider = {
 
 type Props = {
   sizeProvider: UnfixedSizeProvider | FixedSizeProvider;
-  renderItems: (startIndex: number, endIndex: number) => ReadonlyArray<ReactNode>;
+  renderItems: (startIndex: number, endIndex: number) => ReadonlyArray<ReactElement>;
 
   selectedIndex?: number;
   selectable?: boolean;
@@ -77,7 +77,7 @@ export function VirtualizingListBox({
         });
         return (
           <li
-            key={offsetIndex}
+            key={item.key}
             className={itemClass}
             onClick={() => {
               if (selectable && setSelectedIndex) {

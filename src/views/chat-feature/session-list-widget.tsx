@@ -25,6 +25,7 @@ export default function SessionListWidget() {
             const actualIndex = startIndex + index;
             return (
               <SessionItem
+                key={item.contact.id}
                 sessionType={item.type}
                 contactId={item.contact.id}
                 avatar={item.contact.avatar}

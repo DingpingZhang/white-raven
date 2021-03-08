@@ -31,7 +31,7 @@ import {
 export default function WindowView() {
   const contactDialogToken = useDialog<FriendInfo | GroupInfo | null>(buildContactDialog);
   const { $t } = useI18n();
-  const { avatar } = useUserInfo();
+  const { avatar, id: currentUserId } = useUserInfo();
   const contactList = useContactList();
   const [, setSessionList] = useSessionList();
 
@@ -43,18 +43,17 @@ export default function WindowView() {
       .filter<FriendMessageEvent>('friend/message')
       .subscribe((e) => {
         setSessionList((prev) => {
+          if (e.senderId === currentUserId) return prev;
+
           const session = prev.find((item) => item.contact.id === e.senderId);
-          if (session) {
-            return produce(prev, (draft) => {
-              removeAll(draft, (item) => item.contact.id === session.contact.id);
-              draft.unshift({ ...session, unreadCount: session.unreadCount + 1 });
-            });
-          } else {
+          if (!session) {
             const contact = contactList.find((item) => item.id === e.senderId)!;
             return produce(prev, (draft) => {
               draft.unshift({ type: 'friend', contact: contact, unreadCount: 1 });
             });
           }
+
+          return prev;
         });
       });
     const strangerToken = webSocketClient
@@ -103,7 +102,7 @@ export default function WindowView() {
       strangerToken.unsubscribe();
       groupToken.unsubscribe();
     };
-  }, [contactList, setSessionList]);
+  }, [contactList, currentUserId, setSessionList]);
 
   return (
     <div className="WindowView">
