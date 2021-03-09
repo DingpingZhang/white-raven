@@ -1,8 +1,10 @@
 # API Document
 
-> `api/v1/`
->
-> Actual Response = `Ok<Response> | Err<ReasonType>`
+- Prefix: `api/v1/`
+
+- You can find types mentioned below in [basic-types.ts](../src/api/basic-types.ts) and [http-types.ts](../src/api/http-types.ts)
+
+- Actual Response = `Ok<Response> | Err<ReasonType>`
 
 ## 0. Uncategorized Api
 
@@ -56,12 +58,5 @@
 type LoginBody = {
   account: string;
   password: string;
-};
-
-export type LoginResponse = {
-  /**
-   * The token is jwt currently.
-   */
-  token: string;
 };
 ```
