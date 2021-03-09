@@ -41,7 +41,7 @@ export function getMockResult<T>(result: T): Ok<T> | Err<CommonErr> {
 export async function getUserInfo() {
   return getMockResult<PersonInfo>({
     id: '12312413412',
-    avatar: 'http://q1.qlogo.cn/g?b=qq&nk=787673395&s=640',
+    avatar: 'http://image.example.com/987654321',
     name: '卧龙岗扯淡的人',
   });
 }

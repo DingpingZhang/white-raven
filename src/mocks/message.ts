@@ -12,7 +12,7 @@ export function getMockMessages(count: number): ReadonlyArray<Message> {
 export const MESSAGE_LIST: ReadonlyArray<Message> = [
   {
     id: '',
-    senderId: '787673395',
+    senderId: '987654321',
     recipientId: 'self',
     content: [
       {
@@ -47,7 +47,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   },
   {
     id: '',
-    senderId: '1844812067',
+    senderId: '123456789',
     recipientId: 'self',
     content: [
       {
@@ -65,7 +65,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   },
   {
     id: '',
-    senderId: '1844812067',
+    senderId: '123456789',
     recipientId: 'self',
     content: [
       {
@@ -77,7 +77,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   },
   {
     id: '',
-    senderId: '787673395',
+    senderId: '987654321',
     recipientId: 'self',
     content: [
       {
