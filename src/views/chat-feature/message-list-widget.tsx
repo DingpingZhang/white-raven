@@ -2,11 +2,15 @@ import { Message } from 'api';
 import CircleButton from 'components/circle-button';
 import ScrollViewer from 'components/scroll-viewer';
 import MessageList, { ItemsChangedInfo } from 'models/message-list';
-import React from 'react';
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { ReactComponent as BottomIcon } from 'images/bottom.svg';
 import classNames from 'classnames';
+import {
+  SetCallback,
+  useSetOfSeparatedState,
+  useValueOfSeparatedState,
+} from 'hooks/use-child-state';
 
 type Props = {
   messageList: MessageList;
@@ -20,7 +24,10 @@ type ScrollIndex = {
 export default function MessageListWidget({ messageList, renderItem }: Props) {
   const scrollViewerRef = useRef<HTMLDivElement>(null);
   const scrollPointerElementRef = useRef<HTMLDivElement>(null);
-  const setIsGotoBottomButtonVisibleRef = useRef<(visible: boolean) => void | null>();
+  const [
+    setIsVisibleGotoBottom,
+    setIsVisibleGotoBottomCallback,
+  ] = useSetOfSeparatedState<boolean>();
   const [scrollPointerIndex, setScrollPointerIndex] = useState<ScrollIndex>({
     alignToTop: false,
     index: 'bottom',
@@ -108,10 +115,15 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
     const isNearBottom =
       messageList.startIndex + messageList.capacity >= messageList.storage.items.length &&
       (scrollViewer.scrollTop + scrollViewer.offsetHeight) / scrollViewer.scrollHeight > 0.8;
-    if (setIsGotoBottomButtonVisibleRef.current) {
-      setIsGotoBottomButtonVisibleRef.current(!isNearBottom);
+    if (setIsVisibleGotoBottom) {
+      setIsVisibleGotoBottom(!isNearBottom);
     }
-  }, [messageList.capacity, messageList.startIndex, messageList.storage.items.length]);
+  }, [
+    messageList.capacity,
+    messageList.startIndex,
+    messageList.storage.items.length,
+    setIsVisibleGotoBottom,
+  ]);
 
   return (
     <div className="MessageListWidget">
@@ -137,7 +149,7 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
       </ScrollViewer>
       <GotoButtomButton
         messageList={messageList}
-        setIsVisibleCallback={(set) => (setIsGotoBottomButtonVisibleRef.current = set)}
+        setIsVisibleCallback={setIsVisibleGotoBottomCallback}
       />
     </div>
   );
@@ -145,17 +157,14 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
 
 type GotoBottomButtonProps = {
   messageList: MessageList;
-  setIsVisibleCallback: (set: (visible: boolean) => void) => void;
+  setIsVisibleCallback: SetCallback<boolean>;
 };
 
 function GotoButtomButton({ messageList, setIsVisibleCallback }: GotoBottomButtonProps) {
   // NOTE: 单独将 GotoButtomButton 提取出来，以保存 isVisible state，若将 isVisible state 放置
   // 父控件 MessageList 中，则会在变化时触发整个 MessageList 重新渲染。该渲染会导致在 Safari 上严重的卡顿，
   // 但在 Chromium 内核的浏览器中还可以接受。
-  const [isVisible, setIsVisible] = useState(false);
-  useEffect(() => {
-    setIsVisibleCallback(setIsVisible);
-  }, [setIsVisibleCallback]);
+  const isVisible = useValueOfSeparatedState(setIsVisibleCallback, false);
 
   const gotoBottomClass = classNames('MessageListWidget__gotoBottom', {
     active: isVisible,

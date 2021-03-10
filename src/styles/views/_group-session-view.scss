@@ -13,7 +13,7 @@
 
 .GroupSessionView {
   display: grid;
-  grid-template-columns: 1fr 8px 256px;
+  grid-template-columns: 1fr auto;
   height: 100%;
 
   .GroupSessionView__chatArea {
@@ -28,7 +28,7 @@
 
     .GroupSessionView__titleBar {
       display: grid;
-      grid-template-columns: auto 16px 1fr;
+      grid-template-columns: auto 16px 1fr auto;
       grid-template-rows: auto 8px auto;
 
       height: 72px;
@@ -57,18 +57,30 @@
         font-size: 10px;
         align-self: flex-start;
       }
+
+      .GroupSessionView__btnGroupInfo {
+        grid-area: 1 / 4 / 4 / 5;
+
+        align-self: center;
+      }
     }
   }
 
   .GroupSessionView__infoArea {
-    grid-column: 3 / 4;
+    grid-column: 2 / 3;
 
-    display: grid;
+    display: none;
     grid-template-rows: auto 1fr;
+    margin-left: 8px;
 
+    width: 256px;
     background-color: var(--surface-color);
     border: var(--default-border);
     border-radius: 10px;
+
+    &.active {
+      display: grid;
+    }
 
     .GroupSessionView__infoCard {
       display: flex;
