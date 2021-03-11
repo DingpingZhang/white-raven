@@ -50,13 +50,7 @@
 
 ## 3. Authentication
 
-| Method | Api     | Body        | Response        |
-| ------ | ------- | ----------- | --------------- |
-| `POST` | `login` | `LoginBody` | `LoginResponse` |
-
-```ts
-type LoginBody = {
-  account: string;
-  password: string;
-};
-```
+| Method | Api        | Body           | Response        |
+| ------ | ---------- | -------------- | --------------- |
+| `POST` | `login`    | `LoginBody`    | `LoginResponse` |
+| `POST` | `register` | `RegisterBody` | `<Empty>: 200`  |

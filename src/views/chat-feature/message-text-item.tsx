@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { toDisplayTimestamp } from 'helpers';
-import { IdType, MessageContent, MessageSegment } from 'api';
+import { getImageUrl, IdType, MessageContent, MessageSegment } from 'api';
 import { DialogBuilder, useDialogBuilder } from 'components/dialog';
 import ImageExplorerDialog from 'views/dialogs/image-explorer-dialog';
 import { useCallback, useMemo } from 'react';
@@ -97,7 +97,7 @@ function convertToHtmlElement(
         </span>
       );
     case 'face': {
-      const imageUrl = `http://localhost:6900/api/v1/assets/images/${message.faceId}`;
+      const imageUrl = getImageUrl(message.faceId);
       return (
         <img
           key={`${index}-${message.faceId}`}
@@ -108,7 +108,7 @@ function convertToHtmlElement(
       );
     }
     case 'image': {
-      const imageUrl = `http://localhost:6900/api/v1/assets/images/${message.imageId}`;
+      const imageUrl = getImageUrl(message.imageId);
       return (
         // eslint-disable-next-line jsx-a11y/img-redundant-alt
         <img

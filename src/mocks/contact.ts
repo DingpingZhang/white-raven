@@ -1,100 +1,98 @@
 import { FriendInfo, GroupInfo, GroupMemberInfo, StrangerInfo } from 'api';
-import { uuidv4 } from 'helpers';
-import { getMockItems } from './common';
 
 export function getMockFriends(count: number) {
-  return getMockItems(FRIEND_LIST, count, (item) => ({
+  return FRIEND_LIST.map((item) => ({
     ...item,
-    id: `${uuidv4()}`,
+    avatar: require(`./avatar/${Math.floor(Math.random() * 10)}.jpg`).default,
   }));
 }
 
 export function getMockStrangers(count: number) {
-  return getMockItems(STRANGER_LIST, count, (item) => ({
+  return STRANGER_LIST.map((item) => ({
     ...item,
-    id: `${uuidv4()}`,
+    avatar: require(`./avatar/${Math.floor(Math.random() * 10)}.jpg`).default,
   }));
 }
 
 export function getMockGroups(count: number) {
-  return getMockItems(GROUP_LIST, count, (item) => ({
+  return GROUP_LIST.map((item) => ({
     ...item,
-    id: `${uuidv4()}`,
+    avatar: require(`./avatar/${Math.floor(Math.random() * 10)}.jpg`).default,
   }));
 }
 
 export function getMockGroupMembers(count: number) {
-  return getMockItems(GROUP_MEMBER_LIST, count, (item) => ({
+  return GROUP_MEMBER_LIST.map((item) => ({
     ...item,
-    id: `${uuidv4()}`,
+    avatar: require(`./avatar/${Math.floor(Math.random() * 10)}.jpg`).default,
   }));
 }
 
 export const FRIEND_LIST: ReadonlyArray<FriendInfo> = [
   {
-    id: '4561151515',
+    id: 'P0',
     name: '卧龙岗扯淡的人',
-    avatar: 'http://image.example.com/987654321',
+    avatar: '',
     remark: '张三',
     category: '',
   },
   {
-    id: '456154512',
+    id: 'P1',
     name: '顶级手法',
-    avatar: 'http://image.example.com/123456789',
+    avatar: '',
     remark: '李狗蛋',
   },
   {
-    id: '8654561561',
-    name: 'Fuck Man',
-    avatar: 'http://image.example.com/123456789',
+    id: 'P2',
+    name: 'Hello World!',
+    avatar: '',
   },
 ];
 
 export const STRANGER_LIST: ReadonlyArray<StrangerInfo> = [
   {
-    id: '8654561561',
-    name: 'Fuck Man',
-    avatar: 'http://image.example.com/395700145',
+    id: 'P3',
+    name: '低级手法',
+    avatar: '',
     fromGroupId: '864651561',
   },
   {
-    id: '4561151515',
-    name: '卧龙岗扯淡的人',
-    avatar: 'http://image.example.com/48615854',
+    id: 'P4',
+    name: '来骗！来偷袭！',
+    avatar: '',
     fromGroupId: '864651561',
   },
   {
-    id: '456154512',
-    name: '顶级手法',
-    avatar: 'http://image.example.com/123456789',
+    id: 'P5',
+    name: '恭喜 OG',
+    avatar: '',
     fromGroupId: '864651561',
   },
 ];
 
 export const GROUP_LIST: ReadonlyArray<GroupInfo> = [
   {
-    id: '8654561561',
+    id: 'G0',
     name: '刀塔2代练',
-    avatar: 'http://image.example.com/48615854',
+    avatar: '',
     ownerId: '123123412',
     memberCount: 200,
     memberCapacity: 2000,
   },
   {
-    id: '8654561561',
+    id: 'G1',
     name: 'Rust编程从入门到放弃',
-    avatar: 'http://image.example.com/456154552',
+    avatar: '',
     ownerId: '123123412',
     memberCount: 200,
     memberCapacity: 500,
     description:
-      '的身份缓解缓解夫人维护，返回未婚夫i我会热防护五欸。嘿嘿人法规二位好i共和五日工会；额给红日u额外忽然贵和五日u给会额，外然后贵哦二万户日。',
+      'Rust是一门系统编程语言，专注于安全，尤其是并发安全，支持函数式和命令式以及泛型等编程范式的多范式语言。',
   },
   {
-    id: '8654561561',
+    id: 'G2',
     name: '开车群',
-    avatar: 'http://image.example.com/2344415111',
+    avatar: '',
     ownerId: '123123412',
     memberCount: 200,
     memberCapacity: 200,
@@ -103,25 +101,25 @@ export const GROUP_LIST: ReadonlyArray<GroupInfo> = [
 
 export const GROUP_MEMBER_LIST: ReadonlyArray<GroupMemberInfo> = [
   {
-    id: '8654561561',
+    id: 'P6',
     name: '狗管理',
-    avatar: 'http://image.example.com/395700145',
+    avatar: '',
     groupId: '1231231412',
     joinTime: 1611762780292,
     role: 'member',
   },
   {
-    id: '431543543',
+    id: 'P7',
     name: '广告哥',
-    avatar: 'http://image.example.com/324123234',
+    avatar: '',
     groupId: '1231231412',
     joinTime: 1611762180292,
     role: 'member',
   },
   {
-    id: '211432512',
+    id: 'P8',
     name: '都是我小号',
-    avatar: 'http://image.example.com/56233451',
+    avatar: '',
     groupId: '1231414455',
     joinTime: 1611762740292,
     role: 'admin',

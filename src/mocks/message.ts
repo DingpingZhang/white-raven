@@ -12,32 +12,32 @@ export function getMockMessages(count: number): ReadonlyArray<Message> {
 export const MESSAGE_LIST: ReadonlyArray<Message> = [
   {
     id: '',
-    senderId: '987654321',
+    senderId: 'P0',
     recipientId: 'self',
     content: [
       {
         type: 'text',
         text: '闭包表现为 trait，这意味着不能直接返回',
       },
-      { type: 'face', faceId: '107' },
-      { type: 'face', faceId: '18' },
+      { type: 'face', faceId: require('mocks/face/3.gif').default },
+      { type: 'face', faceId: require('mocks/face/1.gif').default },
       {
         type: 'text',
         text: '闭包。\n\n对于大部分需要返回 trait 的',
       },
-      { type: 'at', targetId: '7474741' },
-      { type: 'face', faceId: '178' },
+      { type: 'at', targetId: 'P1' },
+      { type: 'face', faceId: require('mocks/face/0.gif').default },
       {
         type: 'text',
         text: '情况，可以使用实现了期望',
       },
-      { type: 'face', faceId: '78' },
+      { type: 'face', faceId: require('mocks/face/2.gif').default },
       {
         type: 'text',
         text:
           '返回的 trait 的具体类型来替代函数的返回值。但是这不能用于闭包，因为他们没有一个可返回的具体类型；例如',
       },
-      { type: 'at', targetId: '7474741' },
+      { type: 'at', targetId: 'P2' },
       {
         type: 'text',
         text: '不允许使用函数指针 fn 作为返回值类型。',
@@ -47,7 +47,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   },
   {
     id: '',
-    senderId: '123456789',
+    senderId: 'P1',
     recipientId: 'self',
     content: [
       {
@@ -65,7 +65,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   },
   {
     id: '',
-    senderId: '123456789',
+    senderId: 'P2',
     recipientId: 'self',
     content: [
       {
@@ -77,7 +77,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   },
   {
     id: '',
-    senderId: '987654321',
+    senderId: 'G0',
     recipientId: 'self',
     content: [
       {
@@ -90,7 +90,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   },
   {
     id: '',
-    senderId: '622811874',
+    senderId: 'G1',
     recipientId: 'self',
     content: [
       {
@@ -103,7 +103,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   },
   {
     id: '',
-    senderId: '622811874',
+    senderId: 'G2',
     recipientId: 'self',
     content: [
       {
@@ -115,7 +115,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   },
   {
     id: '',
-    senderId: '622811874',
+    senderId: 'P6',
     recipientId: 'self',
     content: [
       {
@@ -127,7 +127,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   },
   {
     id: '',
-    senderId: '622811874',
+    senderId: 'P7',
     recipientId: 'self',
     content: [
       {
@@ -140,7 +140,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
   },
   {
     id: '',
-    senderId: '622811874',
+    senderId: 'P8',
     recipientId: 'self',
     content: [
       {

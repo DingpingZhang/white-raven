@@ -7,10 +7,11 @@ import {
 } from 'mocks/contact';
 import { getMockMessages } from 'mocks/message';
 import { getMockSessions } from 'mocks/session';
-import { FriendInfo, GroupInfo, IdType, PersonInfo } from './basic-types';
-import { Ok, Err, MessageBody, MessageResponse } from './http-types';
+import { FriendInfo, GroupInfo, IdType, PersonInfo } from 'api/basic-types';
+import { Ok, Err, MessageBody, MessageResponse } from 'api/http-types';
 
-type CommonErr = 'connection-timeout';
+export type CommonErr = 'connection-timeout';
+export const jwtTokenKey = 'jwt-token';
 
 const client = axios.create({
   baseURL: 'http://localhost:9000/api/v1',
@@ -40,14 +41,18 @@ export function getMockResult<T>(result: T): Ok<T> | Err<CommonErr> {
 
 export async function getUserInfo() {
   return getMockResult<PersonInfo>({
-    id: '12312413412',
-    avatar: 'http://image.example.com/987654321',
+    id: 'self',
+    avatar: require('mocks/avatar/9.jpg').default,
     name: '卧龙岗扯淡的人',
   });
 }
 
 export async function getSessions() {
   return getMockResult(getMockSessions(20));
+}
+
+export function getImageUrl(id: string) {
+  return id;
 }
 
 // ********************************************************
@@ -120,4 +125,8 @@ export async function getGroupMessages(id: IdType, startId?: IdType) {
 
 export async function sendMessageToGroup(id: IdType, message: MessageBody) {
   return post<MessageResponse>(`group/${id}/message`, message);
+}
+
+export async function login(account: string, password: string) {
+  return getMockResult({ token: '' });
 }

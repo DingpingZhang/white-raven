@@ -59,6 +59,10 @@ export async function getSessions() {
   return get<ReadonlyArray<SessionInfo>>('sessions');
 }
 
+export function getImageUrl(id: string) {
+  return `http://localhost:6900/api/v1/assets/images/${id}`;
+}
+
 // ********************************************************
 // Person Api
 // ********************************************************
