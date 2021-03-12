@@ -20,22 +20,16 @@ import { useEffect } from 'react';
 import { webSocketClient } from 'api/websocket-client';
 import { produce } from 'immer';
 import { removeAll } from 'helpers/list-helpers';
-import {
-  useUserInfo,
-  useContactList,
-  useSessionList,
-  useTheme,
-  fallbackHttpApi,
-} from 'models/store';
+import { useUserInfo, useContactList, useSessionList, fallbackHttpApi } from 'models/store';
+import { buildSettingsDialog } from './dialogs/settings-dialog';
 
 export default function WindowView() {
   const contactDialogToken = useDialog<FriendInfo | GroupInfo | null>(buildContactDialog);
+  const settingsDialogToken = useDialog<void>(buildSettingsDialog);
   const { $t } = useI18n();
   const { avatar, id: currentUserId } = useUserInfo();
   const contactList = useContactList();
   const [, setSessionList] = useSessionList();
-
-  const [, setTheme] = useTheme();
 
   useEffect(() => {
     // Subscribe Events
@@ -150,7 +144,7 @@ export default function WindowView() {
               icon={avatar}
               diameter={36}
               onClick={() => {
-                setTheme((prev) => (prev === 'theme-light' ? 'theme-dark' : 'theme-light'));
+                settingsDialogToken.show();
               }}
             />,
           ]}

@@ -1,0 +1,64 @@
+$border-width: 1px;
+$height: 28px;
+
+.ComboBox {
+  position: relative;
+  height: $height;
+  border: $border-width solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+
+  .ComboBox__textBox {
+    color: var(--fore-primary-color);
+    font-size: 14px;
+    line-height: $height;
+    padding: 0 16px;
+    user-select: none;
+  }
+
+  .ComboBox__dropDownBox {
+    display: none;
+    position: absolute;
+    z-index: 100;
+    list-style: none;
+    top: $height + 4px;
+    left: -$border-width;
+    width: 100%;
+    height: auto;
+    overflow: hidden visible;
+    border: $border-width solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
+    background-color: var(--background-color);
+
+    span {
+      color: var(--fore-primary-color);
+      font-size: 12px;
+      line-height: 28px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    &.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ComboBox__item {
+      height: 28px;
+      padding: 0 16px;
+
+      &:hover {
+        span {
+          color: var(--fore-on-primary-primary-color);
+        }
+
+        background-color: var(--primary-color);
+      }
+
+      &.selected:not(:hover) span {
+        color: var(--primary-color);
+      }
+    }
+  }
+}

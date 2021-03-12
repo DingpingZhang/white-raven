@@ -8,6 +8,13 @@
 
   "dialog.title.contact": "Contact",
   "dialog.title.image": "Image",
+  "dialog.title.settings": "Settings",
+
+  "dialog.settings.language": "Language",
+  "dialog.settings.theme": "Theme",
+
+  "theme.light": "Light",
+  "theme.dark": "Dark",
 
   "input.placeholder.writeAMessage": "Write a message...",
   "input.placeholder.inputAccount": "Please input your account",

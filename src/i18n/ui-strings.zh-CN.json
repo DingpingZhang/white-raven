@@ -8,6 +8,13 @@
 
   "dialog.title.contact": "联系人",
   "dialog.title.image": "图片",
+  "dialog.title.settings": "设置",
+
+  "dialog.settings.language": "语言",
+  "dialog.settings.theme": "主题",
+
+  "theme.light": "浅色",
+  "theme.dark": "暗色",
 
   "input.placeholder.writeAMessage": "请输入消息...",
   "input.placeholder.inputAccount": "请输入账号",

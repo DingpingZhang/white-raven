@@ -5,7 +5,6 @@ import uiStrings_en_US from './ui-strings.en-US.json';
 import uiStrings_zh_CN from './ui-strings.zh-CN.json';
 
 export * from './language-code';
-export * from './i18n-context';
 
 export type UiStringsKeys = keyof typeof uiStrings_en_US;
 

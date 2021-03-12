@@ -1,0 +1,20 @@
+.SettingsDialog {
+  width: 300px;
+  padding: 0 20px;
+
+  .SettingItem {
+    display: grid;
+    grid-template-columns: auto 16px 200px;
+    align-items: center;
+    margin: 16px 0;
+
+    .SettingItem__text {
+      color: var(--fore-title-color);
+      font-size: 14px;
+    }
+
+    .SettingItem__editor {
+      grid-column: 3 / 4;
+    }
+  }
+}

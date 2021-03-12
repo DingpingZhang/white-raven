@@ -1,6 +1,7 @@
-import { useMemo, useContext } from 'react';
-import { LanguageCode, I18nContext } from 'i18n';
+import { useMemo } from 'react';
+import { LanguageCode } from 'i18n';
 import { stringFormat } from 'helpers';
+import { useCulture } from 'models/store';
 
 export type I18nResourcePair<T> = {
   culture: LanguageCode;
@@ -16,7 +17,7 @@ export type TranslateType<T> = {
 export function useI18nBuilder<T extends Record<string, string>>(
   resourcesProvider: () => Array<I18nResourcePair<T>>
 ): TranslateType<keyof T> {
-  const currentCulture = useContext(I18nContext);
+  const [currentCulture] = useCulture();
   return useMemo(() => {
     const provider = resourcesProvider();
     if (!provider) {
