@@ -30,11 +30,11 @@ White Raven 是一个由 [React](https://reactjs.org/) 实现的即时通讯（I
 
 ![dark-theme](./images/screenshot-dark-theme.png)
 
-![light-theme](./images/screenshot-dark-contact.png)
+![dark-contact](./images/screenshot-dark-contact.png)
 
 ![light-theme](./images/screenshot-light-theme.png)
 
-![light-theme](./images/screenshot-light-contact.png)
+![light-contact](./images/screenshot-light-contact.png)
 
 ## 运行
 
