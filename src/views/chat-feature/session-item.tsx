@@ -70,8 +70,6 @@ function convertToHtmlElement(message: MessageSegment) {
       return message.text;
     case 'at':
       return `@${message.targetId} `;
-    case 'face':
-      return `[face:${message.faceId}]`;
     case 'image':
       // TODO: I18n
       return '[image]';

@@ -46,12 +46,6 @@
           white-space: pre-line;
         }
 
-        &.msgFace {
-          width: 28px;
-          height: 28px;
-          vertical-align: text-bottom;
-        }
-
         &.msgAt {
           color: white;
           background-color: var(--secondary-color);
@@ -63,9 +57,16 @@
         }
 
         &.msgImage {
-          max-width: 240px;
-          max-height: 120px;
-          cursor: pointer;
+          max-width: 300px;
+          max-height: 300px;
+
+          &.canBrowse {
+            cursor: pointer;
+          }
+
+          &.likeText {
+            vertical-align: text-bottom;
+          }
         }
       }
     }

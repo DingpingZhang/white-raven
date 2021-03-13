@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { toDisplayTimestamp } from 'helpers';
-import { getImageUrl, IdType, MessageContent, MessageSegment } from 'api';
+import { getImageUrl, IdType, ImageBehavior, MessageContent, MessageSegment } from 'api';
 import { DialogBuilder, useDialogBuilder } from 'components/dialog';
 import ImageExplorerDialog from 'views/dialogs/image-explorer-dialog';
 import { useCallback, useMemo } from 'react';
@@ -96,35 +96,40 @@ function convertToHtmlElement(
           @{getGroupMemberName(message.targetId)}{' '}
         </span>
       );
-    case 'face': {
-      const imageUrl = getImageUrl(message.faceId);
-      return (
-        <img
-          key={`${index}-${message.faceId}`}
-          className="MessageTextItem__msgSegment msgFace"
-          src={imageUrl}
-          alt={`[face,faceId=${message.faceId}]`}
-        />
-      );
-    }
     case 'image': {
       const imageUrl = getImageUrl(message.imageId);
       return (
         // eslint-disable-next-line jsx-a11y/img-redundant-alt
         <img
           key={`${index}-${message.imageId}`}
-          className="MessageTextItem__msgSegment msgImage"
+          className={`MessageTextItem__msgSegment msgImage ${convertImageBehaviorToClassName(
+            message.behavior
+          )}`}
           src={imageUrl}
           alt={`[image,imageId=${message.imageId}]`}
-          onClick={async () =>
-            await dialogBuilder
-              .build<void>((close) => <ImageExplorerDialog close={close} imageUrl={imageUrl} />)
-              .show()
-          }
+          width={message.width}
+          height={message.height}
+          onClick={async () => {
+            if (message.behavior === 'can-browse') {
+              await dialogBuilder
+                .build<void>((close) => <ImageExplorerDialog close={close} imageUrl={imageUrl} />)
+                .show();
+            }
+          }}
         />
       );
     }
     default:
       return null;
+  }
+}
+
+// TODO: Replace with more general method.
+function convertImageBehaviorToClassName(behavior: ImageBehavior) {
+  switch (behavior) {
+    case 'can-browse':
+      return 'canBrowse';
+    case 'like-text':
+      return 'likeText';
   }
 }

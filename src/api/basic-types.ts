@@ -10,14 +10,14 @@ export type TextMessageSegment = {
   text: string;
 };
 
+export type ImageBehavior = 'can-browse' | 'like-text';
+
 export type ImageMessageSegment = {
   type: 'image';
+  behavior: ImageBehavior;
   imageId: string;
-};
-
-export type FaceMessageSegment = {
-  type: 'face';
-  faceId: string;
+  width?: number;
+  height?: number;
 };
 
 export type AtMessageSegment = {
@@ -25,11 +25,7 @@ export type AtMessageSegment = {
   targetId: IdType;
 };
 
-export type MessageSegment =
-  | TextMessageSegment
-  | ImageMessageSegment
-  | FaceMessageSegment
-  | AtMessageSegment;
+export type MessageSegment = TextMessageSegment | ImageMessageSegment | AtMessageSegment;
 
 export type MessageContent = ReadonlyArray<MessageSegment>;
 
