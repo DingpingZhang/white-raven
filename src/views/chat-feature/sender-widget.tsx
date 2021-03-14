@@ -3,9 +3,10 @@ import { ReactComponent as MoreVerticalIcon } from 'images/more-vertical.svg';
 import { ReactComponent as AttachmentIcon } from 'images/attachment.svg';
 import CircleButton from 'components/circle-button';
 import { useI18n } from 'i18n';
-import { MessageContent } from 'api';
-import { useCallback, useRef, useState } from 'react';
+import { MessageContent, MessageSegment } from 'api';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import FacePanelPopupButton from './face-panel-popup-button';
+import { FaceSet, LoggedInContext, useFacePackages } from 'models/store';
 
 type Props = {
   sendMessage: (message: MessageContent) => Promise<boolean>;
@@ -15,11 +16,37 @@ export default function SenderWidget({ sendMessage }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [canSend, setCanSend] = useState(false);
   const { $t } = useI18n();
+  const facePackages = useFacePackages();
+  const ctx = useContext(LoggedInContext);
+  const faceSetStates = useMemo(() => facePackages.map((item) => ctx.faceSetCluster.get(item.id)), [
+    ctx.faceSetCluster,
+    facePackages,
+  ]);
+  const [faceSet, setFaceSet] = useState<FaceSet>([]);
+  useEffect(() => {
+    const tokens = faceSetStates.map((item) =>
+      item.subject.subscribe((value) =>
+        setFaceSet((prev) => {
+          const result = [...prev];
+          value.forEach((face) => {
+            if (result.every((existsFace) => existsFace.imageId !== face.imageId)) {
+              result.push(face);
+            }
+          });
+
+          return result;
+        })
+      )
+    );
+
+    return () => tokens.forEach((item) => item.unsubscribe());
+  }, [faceSetStates]);
   const handleEnterClick = useCallback(async () => {
     if (inputRef.current && inputRef.current.value) {
       const text = inputRef.current.value;
       inputRef.current.value = '';
-      const success = await sendMessage([{ type: 'text', text }]);
+      const message = parseMessageText(text, faceSet);
+      const success = await sendMessage(message);
       if (success) {
         setCanSend(false);
       } else {
@@ -28,7 +55,7 @@ export default function SenderWidget({ sendMessage }: Props) {
     } else {
       // TODO: Tip: Don't send empty message.
     }
-  }, [sendMessage]);
+  }, [faceSet, sendMessage]);
   const handleEnterDown = useCallback(
     (e: React.KeyboardEvent<HTMLElement>) => {
       if (e.key === 'Enter') {
@@ -54,7 +81,31 @@ export default function SenderWidget({ sendMessage }: Props) {
           placeholder={$t('input.placeholder.writeAMessage')}
           onKeyDown={handleEnterDown}
         />
-        <FacePanelPopupButton className="SenderWidget__btnFace" />
+        <FacePanelPopupButton
+          className="SenderWidget__btnFace"
+          onSelectedFace={(item) => {
+            const input = inputRef.current;
+            const faceText = `[#${item.imageId}]`;
+            if (input) {
+              input.focus();
+              const prevText = input.value;
+              if (input.selectionStart !== null) {
+                const prevSelectionPosition = input.selectionStart + faceText.length;
+
+                input.value = `${prevText.slice(
+                  0,
+                  input.selectionStart
+                )}${faceText}${prevText.slice(input.selectionStart)}`;
+
+                input.setSelectionRange(prevSelectionPosition, prevSelectionPosition);
+              } else {
+                input.value += faceText;
+              }
+
+              setCanSend(true);
+            }
+          }}
+        />
         <CircleButton
           buttonType="default"
           className="SenderWidget__btnMore"
@@ -71,4 +122,35 @@ export default function SenderWidget({ sendMessage }: Props) {
       />
     </div>
   );
+}
+
+const matchFaceRegex = /\[#(.+?)\]/g;
+
+function parseMessageText(text: string, faceSet: FaceSet): MessageContent {
+  const faceMatches = Array.from(text.matchAll(matchFaceRegex));
+  const result: MessageSegment[] = [];
+
+  let prevIndex = 0;
+  for (let item of faceMatches) {
+    const index = item.index!;
+    const faceOriginText = item[0];
+    const faceId = item[1];
+    const textSegment = text.slice(prevIndex, index);
+    if (textSegment) {
+      result.push({ type: 'text', text: textSegment });
+    }
+
+    const face = faceSet.find((item) => item.imageId === faceId);
+    if (face) {
+      result.push(face);
+      prevIndex = index + faceOriginText.length;
+    }
+  }
+
+  if (prevIndex < text.length) {
+    const textSegment = text.slice(prevIndex, text.length);
+    result.push({ type: 'text', text: textSegment });
+  }
+
+  return result;
 }

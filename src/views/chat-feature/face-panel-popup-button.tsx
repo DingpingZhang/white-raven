@@ -1,4 +1,4 @@
-import { getImageUrl, IdType } from 'api';
+import { getImageUrl, IdType, ImageMessageSegment } from 'api';
 import { Switch } from 'components/switch';
 import { useNavigator } from 'components/switch-host';
 import { firstItemOrDefault } from 'helpers/list-helpers';
@@ -13,9 +13,11 @@ const SWITCH_NAME_BASE = 'chat/face-panel';
 
 type Props = {
   className?: string;
+
+  onSelectedFace: (face: ImageMessageSegment) => void;
 };
 
-export default function FacePanelPopupButton({ className }: Props) {
+export default function FacePanelPopupButton({ className, onSelectedFace }: Props) {
   const [toggle, setToggle] = useState(false);
   const [hover, setHover] = useState(false);
 
@@ -29,12 +31,21 @@ export default function FacePanelPopupButton({ className }: Props) {
       onBlur={() => setToggle(false)}
     >
       <FaceIcon className="FacePanelPopupButton__icon" />
-      <FacePanelPopup />
+      <FacePanelPopup
+        onSelectedFace={(item) => {
+          onSelectedFace(item);
+          setToggle(false);
+        }}
+      />
     </button>
   );
 }
 
-function FacePanelPopup() {
+type FacePanelPopupProps = {
+  onSelectedFace: (face: ImageMessageSegment) => void;
+};
+
+function FacePanelPopup({ onSelectedFace }: FacePanelPopupProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const facePackages = useFacePackages();
 
@@ -59,13 +70,16 @@ function FacePanelPopup() {
           name={switchName}
           contentProvider={{
             isValidLabel: (facePackageId) => facePackages.some((item) => item.id === facePackageId),
-            getRenderer: (facePackageId) => () => <FaceList facePackageId={facePackageId} />,
+            getRenderer: (facePackageId) => () => (
+              <FaceList facePackageId={facePackageId} onSelectedFace={onSelectedFace} />
+            ),
           }}
         />
       </div>
       <div className="FacePanelPopup__tabHeaders">
         {facePackages.map((item, index) => (
           <FaceHeader
+            key={item.id}
             selected={selectedIndex === index}
             facePackageId={item.id}
             displayFaceId={item.displayFaceId}
@@ -85,6 +99,10 @@ type FaceHeaderProps = FacesStateProps & {
   selected: boolean;
   displayFaceId?: IdType;
   onSelected: () => void;
+};
+
+type FaceListProps = FacesStateProps & {
+  onSelectedFace: (face: ImageMessageSegment) => void;
 };
 
 function FaceHeader({ facePackageId, selected, displayFaceId, onSelected }: FaceHeaderProps) {
@@ -108,7 +126,7 @@ function FaceHeader({ facePackageId, selected, displayFaceId, onSelected }: Face
   );
 }
 
-function FaceList({ facePackageId }: FacesStateProps) {
+function FaceList({ facePackageId, onSelectedFace }: FaceListProps) {
   const faceSet = useFaceSet(facePackageId);
   return (
     <div className="FacePanelPopup__faceList">
@@ -117,7 +135,11 @@ function FaceList({ facePackageId }: FacesStateProps) {
         const imageUrl = getImageUrl(imageId);
 
         return (
-          <div key={imageId} className="FacePanelPopup__faceItem">
+          <div
+            key={imageId}
+            className="FacePanelPopup__faceItem"
+            onClick={() => onSelectedFace(item)}
+          >
             <img
               className="FacePanelPopup__faceImage"
               src={imageUrl}
