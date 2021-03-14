@@ -6,6 +6,8 @@ import ImageExplorerDialog from 'views/dialogs/image-explorer-dialog';
 import { useCallback, useMemo } from 'react';
 import { useContactList, useGroupMemberList } from 'models/store';
 
+const IMAGE_MAX_SIZE = 300;
+
 type Props = {
   contactType: 'friend' | 'stranger' | 'group';
   contactId: IdType;
@@ -98,6 +100,7 @@ function convertToHtmlElement(
       );
     case 'image': {
       const imageUrl = getImageUrl(message.imageId);
+      const exceedsHeightLimit = message.height && message.height > IMAGE_MAX_SIZE;
       return (
         // eslint-disable-next-line jsx-a11y/img-redundant-alt
         <img
@@ -107,8 +110,9 @@ function convertToHtmlElement(
           )}`}
           src={imageUrl}
           alt={`[image,imageId=${message.imageId}]`}
-          width={message.width}
-          height={message.height}
+          width={exceedsHeightLimit ? undefined : message.width}
+          height={exceedsHeightLimit ? undefined : message.height}
+          style={{ maxHeight: IMAGE_MAX_SIZE }}
           onClick={async () => {
             if (message.behavior === 'can-browse') {
               await dialogBuilder

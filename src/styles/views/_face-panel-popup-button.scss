@@ -1,0 +1,109 @@
+@use '../mixins/common';
+
+$button-size: 32px;
+
+.FacePanelPopupButton {
+  @include common.circle($button-size);
+
+  position: relative;
+  display: inline-flex;
+  white-space: nowrap;
+  text-align: center;
+  background-image: none;
+  cursor: pointer;
+  user-select: none;
+  border-width: 0;
+  background-color: var(--surface-color);
+
+  &:focus {
+    outline: none;
+  }
+
+  .FacePanelPopupButton__icon {
+    fill: var(--fore-secondary-color);
+    align-self: center;
+  }
+
+  &:not([disabled]):hover,
+  &.toggle {
+    filter: brightness(120%);
+    z-index: 1;
+  }
+
+  &.toggle .FacePanelPopup {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    grid-template-columns: 1fr;
+  }
+
+  .FacePanelPopup {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    bottom: $button-size + 32px;
+    right: -132px;
+    width: 500px;
+    height: auto;
+    border: $border-width solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.8);
+    background-color: var(--background-color);
+
+    .FacePanelPopup__tabHeaders {
+      background-color: var(--surface-color);
+      height: 32px;
+      display: flex;
+      border-radius: 8px;
+      margin: 8px;
+
+      @include common.gap(0, 4px);
+
+      .FacePanelPopup__faceHeader {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 100%;
+        border-radius: 8px;
+
+        &:hover,
+        &.selected {
+          background-color: #88888888;
+        }
+
+        .FacePanelPopup__faceHeaderImage {
+          width: 24px;
+          height: 24px;
+        }
+      }
+    }
+
+    .FacePanelPopup__faceList {
+      display: flex;
+      flex-wrap: wrap;
+      overflow: hidden visible;
+      height: 200px;
+      margin: 8px 2px 0 8px;
+      cursor: default;
+
+      .FacePanelPopup__faceItem {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #88888888;
+        }
+
+        .FacePanelPopup__faceImage {
+          width: 24px;
+          height: 24px;
+        }
+      }
+    }
+  }
+}

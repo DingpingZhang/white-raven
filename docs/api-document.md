@@ -8,10 +8,12 @@
 
 ## 0. Uncategorized Api
 
-| Method | Api        | Response       |
-| ------ | ---------- | -------------- |
-| `GET`  | `user`     | `PersonInfo`   |
-| `GET`  | `sessions` | `Session[All]` |
+| Method | Api         | Response                   |
+| ------ | ----------- | -------------------------- |
+| `GET`  | `user`      | `PersonInfo`               |
+| `GET`  | `sessions`  | `Session[All]`             |
+| `GET`  | `faces`     | `FacePackage[All]`         |
+| `GET`  | `faces/:id` | `ImageMessageSegment[All]` |
 
 ## 1. Person Api
 

@@ -1,11 +1,11 @@
 import { ReactComponent as SendIcon } from 'images/send.svg';
 import { ReactComponent as MoreVerticalIcon } from 'images/more-vertical.svg';
 import { ReactComponent as AttachmentIcon } from 'images/attachment.svg';
-import { ReactComponent as FaceIcon } from 'images/face.svg';
 import CircleButton from 'components/circle-button';
 import { useI18n } from 'i18n';
 import { MessageContent } from 'api';
 import { useCallback, useRef, useState } from 'react';
+import FacePanelPopupButton from './face-panel-popup-button';
 
 type Props = {
   sendMessage: (message: MessageContent) => Promise<boolean>;
@@ -54,7 +54,7 @@ export default function SenderWidget({ sendMessage }: Props) {
           placeholder={$t('input.placeholder.writeAMessage')}
           onKeyDown={handleEnterDown}
         />
-        <CircleButton buttonType="default" className="SenderWidget__btnFace" icon={<FaceIcon />} />
+        <FacePanelPopupButton className="SenderWidget__btnFace" />
         <CircleButton
           buttonType="default"
           className="SenderWidget__btnMore"

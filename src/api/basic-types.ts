@@ -18,6 +18,7 @@ export type ImageMessageSegment = {
   imageId: string;
   width?: number;
   height?: number;
+  displayName?: string;
 };
 
 export type AtMessageSegment = {
@@ -35,6 +36,12 @@ export type Message = {
   recipientId: IdType;
   timestamp: number;
   content: MessageContent;
+};
+
+export type FacePackage = {
+  id: IdType;
+  displayName: string;
+  displayFaceId?: IdType;
 };
 
 // ***************************************************
