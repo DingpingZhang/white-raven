@@ -1,6 +1,7 @@
 import {
   CommonErr,
   Err,
+  FacePackage,
   FriendInfo,
   getFriendMessages,
   getGroupMessages,
@@ -8,6 +9,7 @@ import {
   GroupInfo,
   GroupMemberInfo,
   IdType,
+  ImageMessageSegment,
   Message,
   Ok,
   PersonInfo,
@@ -29,13 +31,17 @@ export type GlobalContextType = {
   culture: IRxState<LanguageCode>;
 };
 
+export type FaceSet = ReadonlyArray<ImageMessageSegment>;
+
 export type LoggedInContextType = {
   userInfo: IRxState<PersonInfo>;
   selectedSessionIndex: IRxState<number>;
   sessionList: IRxState<SessionInfo[]>;
   contactList: IRxState<Array<FriendInfo | GroupInfo>>;
+  facePackages: IRxState<ReadonlyArray<FacePackage>>;
   messageListCluster: Map<IdType, MessageList>;
   groupMemberListCluster: RxStateCluster<IdType, GroupMemberInfo[]>;
+  faceSetCluster: RxStateCluster<IdType, FaceSet>;
 };
 
 export const GlobalContext = createContext<GlobalContextType>(undefined as any);
@@ -50,6 +56,16 @@ export function useTheme() {
 export function useCulture() {
   const ctx = useContext(GlobalContext);
   return useRxState(ctx.culture);
+}
+
+export function useFacePackages() {
+  const ctx = useContext(LoggedInContext);
+  return useRxValue(ctx.facePackages);
+}
+
+export function useFaceSet(id: IdType) {
+  const ctx = useContext(LoggedInContext);
+  return useRxValue(ctx.faceSetCluster.get(id));
 }
 
 export function useUserInfo() {
