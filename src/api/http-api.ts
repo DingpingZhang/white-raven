@@ -1,9 +1,11 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import {
+  FacePackage,
   FriendInfo,
   GroupInfo,
   GroupMemberInfo,
   IdType,
+  ImageMessageSegment,
   Message,
   PersonInfo,
   SessionInfo,
@@ -61,6 +63,14 @@ export async function getSessions() {
 
 export function getImageUrl(id: string) {
   return `http://localhost:6900/api/v1/assets/images/${id}`;
+}
+
+export function getFacePackages() {
+  return get<ReadonlyArray<FacePackage>>('faces');
+}
+
+export function getFacePackageById(id: IdType) {
+  return get<ReadonlyArray<ImageMessageSegment>>(`faces/${id}`);
 }
 
 // ********************************************************
