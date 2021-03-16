@@ -1,12 +1,18 @@
+@use '../mixins/common';
+
 .SettingsDialog {
+  display: flex;
+  flex-direction: column;
+  @include common.gap(32px, 0);
+
   width: 300px;
   padding: 0 20px;
+  margin-bottom: 20px;
 
   .SettingItem {
     display: grid;
     grid-template-columns: auto 16px 200px;
     align-items: center;
-    margin: 16px 0;
 
     .SettingItem__text {
       color: var(--fore-title-color);

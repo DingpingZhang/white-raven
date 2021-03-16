@@ -1,3 +1,4 @@
+import { jwtTokenKey } from 'api';
 import { ComboBox, ComboBoxItem } from 'components/combo-box';
 import { LanguageCode, useI18n } from 'i18n';
 import { ThemeType, useCulture, useTheme } from 'models/store';
@@ -61,6 +62,15 @@ export default function SettingsDialog({ close }: Props) {
             setSelectedItem={(item) => setTheme(item.value)}
           />
         </SettingItem>
+        <button
+          className="SettingsDialog__btnSignOut button-darger"
+          onClick={() => {
+            localStorage.removeItem(jwtTokenKey);
+            window.location.reload();
+          }}
+        >
+          {$t('button.signOut')}
+        </button>
       </div>
     </BaseDialog>
   );

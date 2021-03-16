@@ -21,5 +21,6 @@
   "input.placeholder.inputPassword": "Please input your password",
 
   "button.confirm": "Confirm",
-  "button.cancel": "Cancel"
+  "button.cancel": "Cancel",
+  "button.signOut": "Sign Out"
 }

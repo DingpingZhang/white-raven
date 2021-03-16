@@ -21,5 +21,6 @@
   "input.placeholder.inputPassword": "请输入密码",
 
   "button.confirm": "确定",
-  "button.cancel": "取消"
+  "button.cancel": "取消",
+  "button.signOut": "注销登入"
 }
