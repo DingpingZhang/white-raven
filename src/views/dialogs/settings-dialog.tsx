@@ -31,7 +31,7 @@ export default function SettingsDialog({ close }: Props) {
   const cultrues = useMemo<ComboBoxItem<LanguageCode>[]>(
     () => [
       { label: '简体中文', value: 'zh-CN' },
-      { label: 'Engligh', value: 'en-US' },
+      { label: 'English', value: 'en-US' },
     ],
     []
   );
