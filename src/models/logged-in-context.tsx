@@ -25,13 +25,13 @@ const defaultUserInfo: PersonInfo = { id: '', name: '', avatar: AvatarDefaultIco
 
 export default function LoggedInContextRoot({ children }: { children: ReactNode }) {
   const store = useConstant<LoggedInContextType>(() => {
-    const { selectedSession, sessionList } = createSessionState();
+    const { selectedSessionId, sessionList } = createSessionState();
     return {
       userInfo: new RxState<PersonInfo>(defaultUserInfo, async (set) => {
         const value = await fallbackHttpApi(getUserInfo, defaultUserInfo);
         set(value);
       }),
-      selectedSessionId: selectedSession,
+      selectedSessionId,
       sessionList,
       contactList: new RxState<Array<FriendInfo | GroupInfo>>([], async (set) => {
         const friends = await fallbackHttpApi(getFriendInfos, []);
@@ -96,7 +96,7 @@ function createSessionState() {
     }
   });
 
-  return { selectedSession: selectedSessionId, sessionList };
+  return { selectedSessionId, sessionList };
 }
 
 async function makeMutList<T>(immutList: Promise<ReadonlyArray<T>>): Promise<T[]> {

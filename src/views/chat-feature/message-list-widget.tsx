@@ -11,7 +11,6 @@ import {
   useSetOfSeparatedState,
   useValueOfSeparatedState,
 } from 'hooks/use-child-state';
-import { lastItemOrDefault } from 'helpers/list-helpers';
 
 type Props = {
   messageList: MessageList;
@@ -130,7 +129,6 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
     setIsVisibleGotoBottom,
   ]);
 
-  console.log(lastItemOrDefault(messageList.items));
   return (
     <div className="MessageListWidget">
       <ScrollViewer
