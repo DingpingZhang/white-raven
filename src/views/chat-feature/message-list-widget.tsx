@@ -130,7 +130,6 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
     setIsVisibleGotoBottom,
   ]);
 
-  console.log(lastItemOrDefault(messageList.items));
   return (
     <div className="MessageListWidget">
       <ScrollViewer
