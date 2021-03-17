@@ -6,23 +6,18 @@ import { SWITCH_NAME } from 'views/constants';
 import GroupSessionView from './group-session-view';
 import PrivateSessionView from './private-session-view';
 import SessionListWidget from './session-list-widget';
-import { useSelectedSessionIndex, useSessionList } from 'models/store';
+import { useSelectedSessionId, useSessionList } from 'models/store';
 
 export default function ChatView() {
   const [sessionList] = useSessionList();
-  const [selectedIndex, setSelectedIndex] = useSelectedSessionIndex();
+  const [selectedId] = useSelectedSessionId();
   const chatAreaNavigator = useNavigator(SWITCH_NAME.CHAT_AREA);
   useEffect(() => {
     if (sessionList.length > 0) {
-      if (selectedIndex >= sessionList.length) {
-        setSelectedIndex(selectedIndex - 1);
-        return;
-      }
-
-      const selectedSession = sessionList[selectedIndex];
+      const selectedSession = sessionList.find((item) => item.contact.id === selectedId)!;
       chatAreaNavigator(selectedSession.contact.id, selectedSession);
     }
-  }, [chatAreaNavigator, selectedIndex, sessionList, setSelectedIndex]);
+  }, [chatAreaNavigator, selectedId, sessionList]);
 
   return (
     <div className="ChatView">

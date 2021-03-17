@@ -35,7 +35,7 @@ export type FaceSet = ReadonlyArray<ImageMessageSegment>;
 
 export type LoggedInContextType = {
   userInfo: IRxState<PersonInfo>;
-  selectedSessionIndex: IRxState<number>;
+  selectedSessionId: IRxState<IdType | null>;
   sessionList: IRxState<SessionInfo[]>;
   contactList: IRxState<Array<FriendInfo | GroupInfo>>;
   facePackages: IRxState<ReadonlyArray<FacePackage>>;
@@ -65,7 +65,7 @@ export function useFacePackages() {
 
 export function useFaceSet(id: IdType) {
   const ctx = useContext(LoggedInContext);
-  return useRxValue(ctx.faceSetCluster.get(id));
+  return useRxValue(ctx.faceSetCluster.getOrCreate(id));
 }
 
 export function useUserInfo() {
@@ -73,9 +73,9 @@ export function useUserInfo() {
   return useRxValue(ctx.userInfo);
 }
 
-export function useSelectedSessionIndex() {
+export function useSelectedSessionId() {
   const ctx = useContext(LoggedInContext);
-  return useRxState(ctx.selectedSessionIndex);
+  return useRxState(ctx.selectedSessionId);
 }
 
 export function useSessionList() {
@@ -122,7 +122,7 @@ export function useLastMessage(sessionType: SessionType, contactId: IdType) {
 
 export function useGroupMemberList(groupId: IdType) {
   const ctx = useContext(LoggedInContext);
-  return useRxValue(ctx.groupMemberListCluster.get(groupId));
+  return useRxValue(ctx.groupMemberListCluster.getOrCreate(groupId));
 }
 
 // ********************************************************************

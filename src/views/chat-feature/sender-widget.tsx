@@ -18,14 +18,14 @@ export default function SenderWidget({ sendMessage }: Props) {
   const { $t } = useI18n();
   const facePackages = useFacePackages();
   const ctx = useContext(LoggedInContext);
-  const faceSetStates = useMemo(() => facePackages.map((item) => ctx.faceSetCluster.get(item.id)), [
+  const faceSetStates = useMemo(() => facePackages.map((item) => ctx.faceSetCluster.getOrCreate(item.id)), [
     ctx.faceSetCluster,
     facePackages,
   ]);
   const [faceSet, setFaceSet] = useState<FaceSet>([]);
   useEffect(() => {
     const tokens = faceSetStates.map((item) =>
-      item.subject.subscribe((value) =>
+      item.source.subscribe((value) =>
         setFaceSet((prev) => {
           const result = [...prev];
           value.forEach((face) => {
