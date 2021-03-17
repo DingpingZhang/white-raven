@@ -11,6 +11,7 @@ import {
   useSetOfSeparatedState,
   useValueOfSeparatedState,
 } from 'hooks/use-child-state';
+import { lastItemOrDefault } from 'helpers/list-helpers';
 
 type Props = {
   messageList: MessageList;
@@ -47,35 +48,39 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
     }
   }, [inViewNextMore, messageList]);
 
-  const handleItemsChanged = useCallback(({ type, changedCount, sliceCount }: ItemsChangedInfo) => {
-    if (changedCount <= 0 || sliceCount <= 0) return;
+  const handleItemsChanged = useCallback(
+    ({ type, changedCount, sliceCount }: ItemsChangedInfo) => {
+      if (changedCount <= 0 || sliceCount <= 0) return;
 
-    switch (type) {
-      case 'push':
-        {
-          const scrollViewer = scrollViewerRef.current;
-          if (!scrollViewer) return;
-          const isNearBottom =
-            (scrollViewer.scrollTop + scrollViewer.offsetHeight) / scrollViewer.scrollHeight > 0.8;
+      switch (type) {
+        case 'push':
+          {
+            const scrollViewer = scrollViewerRef.current;
+            if (!scrollViewer) return;
+            const isNearBottom =
+              (scrollViewer.scrollTop + scrollViewer.offsetHeight) / scrollViewer.scrollHeight >
+              0.8;
 
-          if (isNearBottom) {
-            setScrollPointerIndex({ alignToTop: false, index: 'bottom' });
-          } else {
-            setScrollPointerIndex({ alignToTop: false, index: -1 });
+            if (isNearBottom) {
+              messageList.pullUntilLatest();
+            } else {
+              setScrollPointerIndex({ alignToTop: false, index: -1 });
+            }
           }
-        }
-        break;
-      case 'pull-next':
-        setScrollPointerIndex({ alignToTop: false, index: sliceCount - changedCount });
-        break;
-      case 'pull-prev':
-        setScrollPointerIndex({ alignToTop: true, index: changedCount - 1 });
-        break;
-      case 'pull-until-latest':
-        setScrollPointerIndex({ alignToTop: false, index: 'bottom' });
-        break;
-    }
-  }, []);
+          break;
+        case 'pull-next':
+          setScrollPointerIndex({ alignToTop: false, index: sliceCount - changedCount });
+          break;
+        case 'pull-prev':
+          setScrollPointerIndex({ alignToTop: true, index: changedCount - 1 });
+          break;
+        case 'pull-until-latest':
+          setScrollPointerIndex({ alignToTop: false, index: 'bottom' });
+          break;
+      }
+    },
+    [messageList]
+  );
   useEffect(() => {
     const token = messageList.itemsChanged.subscribe(handleItemsChanged);
     return () => token.unsubscribe();
@@ -125,6 +130,7 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
     setIsVisibleGotoBottom,
   ]);
 
+  console.log(lastItemOrDefault(messageList.items));
   return (
     <div className="MessageListWidget">
       <ScrollViewer
