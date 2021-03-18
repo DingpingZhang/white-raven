@@ -100,18 +100,16 @@ function convertToHtmlElement(
       );
     case 'image': {
       const imageUrl = getImageUrl(message.imageId);
-      const exceedsHeightLimit = message.height && message.height > IMAGE_MAX_SIZE;
       return (
-        // eslint-disable-next-line jsx-a11y/img-redundant-alt
         <img
           key={`${index}-${message.imageId}`}
           className={`MessageTextItem__msgSegment msgImage ${convertImageBehaviorToClassName(
             message.behavior
           )}`}
           src={imageUrl}
-          alt={`[image,imageId=${message.imageId}]`}
-          width={exceedsHeightLimit ? undefined : message.width}
-          height={exceedsHeightLimit ? undefined : message.height}
+          alt={`[#${message.imageId}]`}
+          width={message.behavior === 'like-text' ? message.width : undefined}
+          height={message.behavior === 'like-text' ? message.height : undefined}
           style={{ maxHeight: IMAGE_MAX_SIZE }}
           onClick={async () => {
             if (message.behavior === 'can-browse') {
