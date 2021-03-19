@@ -102,9 +102,9 @@ export default function HighlightSpan({
     queriesText
       .toLowerCase()
       .split(' ')
-      .filter((item) => !!item)
+      .filter(item => !!item)
   );
-  const ranges = queries.flatMap((query) => getQueryRanges(sourceText.toLowerCase(), query));
+  const ranges = queries.flatMap(query => getQueryRanges(sourceText.toLowerCase(), query));
   const mergedRanges = mergeRanges(ranges);
   const fragments = splitTextByOrderedDisjointRanges(sourceText, mergedRanges);
 

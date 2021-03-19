@@ -15,7 +15,7 @@ export class RxState<T> implements IRxState<T> {
     this.source = new BehaviorSubject(fallbackValue);
 
     if (initValue) {
-      initValue((value) => this.source.next(value));
+      initValue(value => this.source.next(value));
     }
   }
 

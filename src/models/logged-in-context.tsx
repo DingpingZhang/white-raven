@@ -27,32 +27,32 @@ export default function LoggedInContextRoot({ children }: { children: ReactNode 
   const store = useConstant<LoggedInContextType>(() => {
     const { selectedSessionId, sessionList } = createSessionState();
     return {
-      userInfo: new RxState<PersonInfo>(defaultUserInfo, async (set) => {
+      userInfo: new RxState<PersonInfo>(defaultUserInfo, async set => {
         const value = await fallbackHttpApi(getUserInfo, defaultUserInfo);
         set(value);
       }),
       selectedSessionId,
       sessionList,
-      contactList: new RxState<Array<FriendInfo | GroupInfo>>([], async (set) => {
+      contactList: new RxState<Array<FriendInfo | GroupInfo>>([], async set => {
         const friends = await fallbackHttpApi(getFriendInfos, []);
         const groups = await fallbackHttpApi(getGroupInfos, []);
         set([...friends, ...groups]);
       }),
-      facePackages: new RxState<ReadonlyArray<FacePackage>>([], async (set) => {
+      facePackages: new RxState<ReadonlyArray<FacePackage>>([], async set => {
         const value = await fallbackHttpApi(getFacePackages, []);
         set(value);
       }),
       messageListCluster: new Map<IdType, MessageList>(),
       groupMemberListCluster: new RxStateCluster<IdType, GroupMemberInfo[]>(
-        (key) =>
-          new RxState<GroupMemberInfo[]>([], async (set) => {
+        key =>
+          new RxState<GroupMemberInfo[]>([], async set => {
             const value = await makeMutList(fallbackHttpApi(() => getGroupMembers(key), []));
             set(value);
           })
       ),
       faceSetCluster: new RxStateCluster<IdType, FaceSet>(
-        (key) =>
-          new RxState<FaceSet>([], async (set) => {
+        key =>
+          new RxState<FaceSet>([], async set => {
             const value = await fallbackHttpApi(() => getFacePackageById(key), []);
             set(value);
           })
@@ -65,7 +65,7 @@ export default function LoggedInContextRoot({ children }: { children: ReactNode 
 
 function createSessionState() {
   const selectedSessionId = new RxState<IdType | null>(null);
-  const sessionList = new RxState<SessionInfo[]>([], async (set) => {
+  const sessionList = new RxState<SessionInfo[]>([], async set => {
     const value = await makeMutList(fallbackHttpApi(getSessions, []));
     set(value);
   });
@@ -73,14 +73,14 @@ function createSessionState() {
   // 闭包变量
   let prevSelectedIndex = -1;
 
-  selectedSessionId.source.subscribe((nextValue) => {
-    prevSelectedIndex = sessionList.source.value.findIndex((item) => item.contact.id === nextValue);
+  selectedSessionId.source.subscribe(nextValue => {
+    prevSelectedIndex = sessionList.source.value.findIndex(item => item.contact.id === nextValue);
   });
-  sessionList.source.subscribe((nextValue) => {
+  sessionList.source.subscribe(nextValue => {
     if (nextValue.length === 0) return;
 
     const selectedId = selectedSessionId.source.value;
-    const selectedIndex = nextValue.findIndex((item) => item.contact.id === selectedId);
+    const selectedIndex = nextValue.findIndex(item => item.contact.id === selectedId);
 
     // session 被删除，或 selectedId 为 null.
     if (selectedIndex < 0) {

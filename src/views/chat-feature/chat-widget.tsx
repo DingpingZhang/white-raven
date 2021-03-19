@@ -30,8 +30,8 @@ export default function ChatWidget({ sessionType, contactId, sendMessage }: Prop
 
     const friendToken = webSocketClient
       .filter<FriendMessageEvent>('friend/message')
-      .pipe(filter((e) => e.senderId === contactId || e.recipientId === contactId))
-      .subscribe((e) => {
+      .pipe(filter(e => e.senderId === contactId || e.recipientId === contactId))
+      .subscribe(e => {
         messageList.pushItem({
           id: e.id,
           senderId: e.senderId,
@@ -42,8 +42,8 @@ export default function ChatWidget({ sessionType, contactId, sendMessage }: Prop
       });
     const strangerToken = webSocketClient
       .filter<StrangerMessageEvent>('stranger/message')
-      .pipe(filter((e) => e.senderId === contactId || e.recipientId === contactId))
-      .subscribe((e) => {
+      .pipe(filter(e => e.senderId === contactId || e.recipientId === contactId))
+      .subscribe(e => {
         messageList.pushItem({
           id: e.id,
           senderId: e.senderId,
@@ -54,8 +54,8 @@ export default function ChatWidget({ sessionType, contactId, sendMessage }: Prop
       });
     const groupToken = webSocketClient
       .filter<GroupMessageEvent>('group/message')
-      .pipe(filter((e) => e.groupId === contactId))
-      .subscribe((e) => {
+      .pipe(filter(e => e.groupId === contactId))
+      .subscribe(e => {
         messageList.pushItem({
           id: e.id,
           senderId: e.senderId,
@@ -92,7 +92,7 @@ export default function ChatWidget({ sessionType, contactId, sendMessage }: Prop
       </div>
       <div className="ChatWidget__inputBox">
         <SenderWidget
-          sendMessage={async (content) => {
+          sendMessage={async content => {
             const message = await sendMessage(content);
             if (message) {
               // TODO: Add message to message list.

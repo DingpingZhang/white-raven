@@ -1,7 +1,7 @@
 export function stringFormat(format: string, ...args: Array<Object>) {
   return format && args
     ? args
-        .map((item) => item?.toString())
+        .map(item => item?.toString())
         .reduce((acc, item, index) => acc.replace(`{${index}}`, item), format)
     : format;
 }

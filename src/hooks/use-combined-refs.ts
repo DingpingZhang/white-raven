@@ -6,7 +6,7 @@ export function useCombinedRefs<T extends Element>(...refs: Ref<T>[]) {
   const targetRef = useRef<T>(null);
 
   React.useEffect(() => {
-    refs.forEach((ref) => {
+    refs.forEach(ref => {
       if (!ref) return;
 
       if (typeof ref === 'function') {

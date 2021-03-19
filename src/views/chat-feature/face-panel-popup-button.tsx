@@ -25,14 +25,14 @@ export default function FacePanelPopupButton({ className, onSelectedFace }: Prop
   return (
     <button
       className={buttonClass}
-      onClick={() => setToggle((prev) => !prev)}
+      onClick={() => setToggle(prev => !prev)}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       onBlur={() => setToggle(false)}
     >
       <FaceIcon className="FacePanelPopupButton__icon" />
       <FacePanelPopup
-        onSelectedFace={(item) => {
+        onSelectedFace={item => {
           onSelectedFace(item);
           setToggle(false);
         }}
@@ -61,16 +61,16 @@ function FacePanelPopup({ onSelectedFace }: FacePanelPopupProps) {
   return (
     <div
       className="FacePanelPopup"
-      onClick={(e) => e.stopPropagation()}
-      onMouseEnter={(e) => e.stopPropagation()}
-      onMouseLeave={(e) => e.stopPropagation()}
+      onClick={e => e.stopPropagation()}
+      onMouseEnter={e => e.stopPropagation()}
+      onMouseLeave={e => e.stopPropagation()}
     >
       <div className="FacePanelPopup__content">
         <Switch
           name={switchName}
           contentProvider={{
-            isValidLabel: (facePackageId) => facePackages.some((item) => item.id === facePackageId),
-            getRenderer: (facePackageId) => () => (
+            isValidLabel: facePackageId => facePackages.some(item => item.id === facePackageId),
+            getRenderer: facePackageId => () => (
               <FaceList facePackageId={facePackageId} onSelectedFace={onSelectedFace} />
             ),
           }}
@@ -109,7 +109,7 @@ function FaceHeader({ facePackageId, selected, displayFaceId, onSelected }: Face
   const faceSet = useFaceSet(facePackageId);
   const iconId = useMemo(() => {
     if (displayFaceId) {
-      let result = faceSet.find((item) => item.imageId === displayFaceId);
+      let result = faceSet.find(item => item.imageId === displayFaceId);
       return result ? result.imageId : displayFaceId;
     }
 
@@ -130,7 +130,7 @@ function FaceList({ facePackageId, onSelectedFace }: FaceListProps) {
   const faceSet = useFaceSet(facePackageId);
   return (
     <div className="FacePanelPopup__faceList">
-      {faceSet.map((item) => {
+      {faceSet.map(item => {
         const { imageId, displayName } = item;
         const imageUrl = getImageUrl(imageId);
 

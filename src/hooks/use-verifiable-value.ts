@@ -59,7 +59,7 @@ export function useVerifiableValue<T>(
   const [error, setError] = useState(EMPTY_TEXT);
   const checkValue = useCallback(
     (value: T) => {
-      const index = ruleCollection.findIndex((rule) => !rule.assert(value));
+      const index = ruleCollection.findIndex(rule => !rule.assert(value));
       setError(ruleCollection[index].getError());
       // The last rule must be the clear logic, so it means that the value is valid.
       return index === ruleCollection.length - 1;

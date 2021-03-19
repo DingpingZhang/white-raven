@@ -4,7 +4,7 @@ import { IRxState } from './rx-state';
 export function useRxValue<T>(state: IRxState<T>): T {
   const [innerValue, setInnerValue] = useState<T>(state.source.value);
   useEffect(() => {
-    const token = state.source.subscribe((next) => setInnerValue(next));
+    const token = state.source.subscribe(next => setInnerValue(next));
     return () => token.unsubscribe();
   }, [state]);
 

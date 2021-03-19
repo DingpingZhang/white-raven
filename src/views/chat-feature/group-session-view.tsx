@@ -37,13 +37,13 @@ export default function GroupSessionView({
             className="GroupSessionView__btnGroupInfo"
             buttonType="default"
             icon={isVisibleGroupInfo ? <RightIcon /> : <LeftIcon />}
-            onClick={() => setIsVisibleGroupInfo((prev) => !prev)}
+            onClick={() => setIsVisibleGroupInfo(prev => !prev)}
           />
         </div>
         <ChatWidget
           sessionType="group"
           contactId={contactId}
-          sendMessage={async (message) => {
+          sendMessage={async message => {
             const response = await sendMessageToGroup(contactId, { content: message });
             if (response.code === 200) {
               const { id: messageId, timestamp } = response.content;
@@ -110,7 +110,7 @@ function GroupInfoPanel({
             renderItems={(startIndex, endIndex) =>
               groupMemberList
                 .slice(startIndex, endIndex)
-                .map((item) => (
+                .map(item => (
                   <GroupMemberItem
                     key={item.id}
                     avatar={item.avatar}

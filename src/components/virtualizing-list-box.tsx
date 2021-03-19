@@ -46,7 +46,7 @@ export function VirtualizingListBox({
   const [startIndex, setStartIndex] = useState(0);
   const [endIndex, setEndIndex] = useState(0);
   useEffect(() => {
-    setViewSize((prev) => (equalNumber(prev, wrapperHeight) ? prev : wrapperHeight));
+    setViewSize(prev => (equalNumber(prev, wrapperHeight) ? prev : wrapperHeight));
   }, [wrapperHeight]);
 
   const recalculate = useCallback(() => {

@@ -46,7 +46,7 @@ export function ComboBox<T>({
       selectedElementRef.current.scrollIntoView();
     }
   }, [active]);
-  const selectedIndex = itemsSource.findIndex((item) => item.label === selectedItem.label);
+  const selectedIndex = itemsSource.findIndex(item => item.label === selectedItem.label);
 
   const comboBoxClass = classNames('ComboBox', { active });
   const dropDownBoxClass = classNames('ComboBox__dropDownBox', { active });
@@ -68,7 +68,7 @@ export function ComboBox<T>({
             <div
               key={`${item.label}-${index}`}
               className={itemClass}
-              onClick={(e) => {
+              onClick={e => {
                 e.stopPropagation();
                 setSelectedItem(item);
                 setActive(false);

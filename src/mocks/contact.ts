@@ -1,28 +1,28 @@
 import { FriendInfo, GroupInfo, GroupMemberInfo, StrangerInfo } from 'api';
 
 export function getMockFriends(count: number) {
-  return FRIEND_LIST.map((item) => ({
+  return FRIEND_LIST.map(item => ({
     ...item,
     avatar: require(`./avatar/${Math.floor(Math.random() * 10)}.jpg`).default,
   }));
 }
 
 export function getMockStrangers(count: number) {
-  return STRANGER_LIST.map((item) => ({
+  return STRANGER_LIST.map(item => ({
     ...item,
     avatar: require(`./avatar/${Math.floor(Math.random() * 10)}.jpg`).default,
   }));
 }
 
 export function getMockGroups(count: number) {
-  return GROUP_LIST.map((item) => ({
+  return GROUP_LIST.map(item => ({
     ...item,
     avatar: require(`./avatar/${Math.floor(Math.random() * 10)}.jpg`).default,
   }));
 }
 
 export function getMockGroupMembers(count: number) {
-  return GROUP_MEMBER_LIST.map((item) => ({
+  return GROUP_MEMBER_LIST.map(item => ({
     ...item,
     avatar: require(`./avatar/${Math.floor(Math.random() * 10)}.jpg`).default,
   }));

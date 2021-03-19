@@ -18,18 +18,18 @@ export default function SenderWidget({ sendMessage }: Props) {
   const { $t } = useI18n();
   const facePackages = useFacePackages();
   const ctx = useContext(LoggedInContext);
-  const faceSetStates = useMemo(() => facePackages.map((item) => ctx.faceSetCluster.getOrCreate(item.id)), [
-    ctx.faceSetCluster,
-    facePackages,
-  ]);
+  const faceSetStates = useMemo(
+    () => facePackages.map(item => ctx.faceSetCluster.getOrCreate(item.id)),
+    [ctx.faceSetCluster, facePackages]
+  );
   const [faceSet, setFaceSet] = useState<FaceSet>([]);
   useEffect(() => {
-    const tokens = faceSetStates.map((item) =>
-      item.source.subscribe((value) =>
-        setFaceSet((prev) => {
+    const tokens = faceSetStates.map(item =>
+      item.source.subscribe(value =>
+        setFaceSet(prev => {
           const result = [...prev];
-          value.forEach((face) => {
-            if (result.every((existsFace) => existsFace.imageId !== face.imageId)) {
+          value.forEach(face => {
+            if (result.every(existsFace => existsFace.imageId !== face.imageId)) {
               result.push(face);
             }
           });
@@ -39,7 +39,7 @@ export default function SenderWidget({ sendMessage }: Props) {
       )
     );
 
-    return () => tokens.forEach((item) => item.unsubscribe());
+    return () => tokens.forEach(item => item.unsubscribe());
   }, [faceSetStates]);
   const handleEnterClick = useCallback(async () => {
     if (inputRef.current && inputRef.current.value) {
@@ -75,7 +75,7 @@ export default function SenderWidget({ sendMessage }: Props) {
       <div className="SenderWidget__editArea">
         <input
           ref={inputRef}
-          onChange={(e) => setCanSend(!!e.target.value)}
+          onChange={e => setCanSend(!!e.target.value)}
           type="text"
           className="SenderWidget__input"
           placeholder={$t('input.placeholder.writeAMessage')}
@@ -83,7 +83,7 @@ export default function SenderWidget({ sendMessage }: Props) {
         />
         <FacePanelPopupButton
           className="SenderWidget__btnFace"
-          onSelectedFace={(item) => {
+          onSelectedFace={item => {
             const input = inputRef.current;
             const faceText = `[#${item.imageId}]`;
             if (input) {
@@ -140,7 +140,7 @@ function parseMessageText(text: string, faceSet: FaceSet): MessageContent {
       result.push({ type: 'text', text: textSegment });
     }
 
-    const face = faceSet.find((item) => item.imageId === faceId);
+    const face = faceSet.find(item => item.imageId === faceId);
     if (face) {
       result.push(face);
       prevIndex = index + faceOriginText.length;

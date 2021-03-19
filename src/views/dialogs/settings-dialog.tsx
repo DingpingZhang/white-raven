@@ -51,15 +51,15 @@ export default function SettingsDialog({ close }: Props) {
         <SettingItem text={$t('dialog.settings.language')}>
           <ComboBox
             itemsSource={cultrues}
-            selectedItem={cultrues.find((item) => item.value === culture)!}
-            setSelectedItem={(item) => setCulture(item.value)}
+            selectedItem={cultrues.find(item => item.value === culture)!}
+            setSelectedItem={item => setCulture(item.value)}
           />
         </SettingItem>
         <SettingItem text={$t('dialog.settings.theme')}>
           <ComboBox
             itemsSource={themes}
-            selectedItem={themes.find((item) => item.value === theme)!}
-            setSelectedItem={(item) => setTheme(item.value)}
+            selectedItem={themes.find(item => item.value === theme)!}
+            setSelectedItem={item => setTheme(item.value)}
           />
         </SettingItem>
         <button

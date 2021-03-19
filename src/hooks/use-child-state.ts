@@ -25,7 +25,7 @@ export function useValueOfSeparatedState<T>(setCallback: SetCallback<T>, initial
 
 /**
  * 使用一个 `setValue`，其可以改变子组件中的状态值。与 `useValueOfSeparatedState` 配合使用。
- * 
+ *
  * 详细备注请看 `useValueOfSeparatedState` 的注释。
  * @returns 返回子组件中状态值的 `setValue` 方法，和用于回传子组件中 `steValue` 方法的回调函数。
  */

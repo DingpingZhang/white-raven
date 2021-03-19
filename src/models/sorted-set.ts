@@ -19,7 +19,7 @@ export default class SortedSet<T> {
     const itemId = this.getId(item);
     if (this.ids.has(itemId)) return false;
 
-    const insertIndex = this.storage.findIndex((existItem) => this.compare(existItem, item) < 0);
+    const insertIndex = this.storage.findIndex(existItem => this.compare(existItem, item) < 0);
     if (insertIndex < 0 || insertIndex >= this.storage.length) {
       this.storage.push(item);
     } else if (insertIndex === 0) {
@@ -33,6 +33,6 @@ export default class SortedSet<T> {
   }
 
   addRange(items: ReadonlyArray<T>): number {
-    return items.map((item) => this.add(item)).filter((item) => item).length;
+    return items.map(item => this.add(item)).filter(item => item).length;
   }
 }

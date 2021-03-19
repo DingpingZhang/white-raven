@@ -88,7 +88,7 @@ class AsyncConfigureValue<T> extends ConfigureValueBase<T> {
       this.isBusy = false;
       return result;
     };
-    this.setter = async (value) => {
+    this.setter = async value => {
       this.isBusy = true;
       await setter(value);
       this.isBusy = false;

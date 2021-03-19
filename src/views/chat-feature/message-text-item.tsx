@@ -34,11 +34,11 @@ export default function MessageTextItem({
   const contactList = useContactList();
   const getContactById = useCallback(
     (id: IdType) => {
-      const contact = contactList.find((item) => item.id === id);
+      const contact = contactList.find(item => item.id === id);
       if (contact) {
         return contact;
       } else {
-        const groupMember = groupMemberList.find((item) => item.id === id);
+        const groupMember = groupMemberList.find(item => item.id === id);
         return groupMember;
       }
     },
@@ -114,7 +114,7 @@ function convertToHtmlElement(
           onClick={async () => {
             if (message.behavior === 'can-browse') {
               await dialogBuilder
-                .build<void>((close) => <ImageExplorerDialog close={close} imageUrl={imageUrl} />)
+                .build<void>(close => <ImageExplorerDialog close={close} imageUrl={imageUrl} />)
                 .show();
             }
           }}

@@ -14,7 +14,7 @@ export default function ChatView() {
   const chatAreaNavigator = useNavigator(SWITCH_NAME.CHAT_AREA);
   useEffect(() => {
     if (sessionList.length > 0) {
-      const selectedSession = sessionList.find((item) => item.contact.id === selectedId)!;
+      const selectedSession = sessionList.find(item => item.contact.id === selectedId)!;
       chatAreaNavigator(selectedSession.contact.id, selectedSession);
     }
   }, [chatAreaNavigator, selectedId, sessionList]);
@@ -28,8 +28,8 @@ export default function ChatView() {
         <Switch<IdType>
           name={SWITCH_NAME.CHAT_AREA}
           contentProvider={{
-            isValidLabel: (id) => sessionList.some((item) => item.contact.id === id),
-            getRenderer: () => (props) => {
+            isValidLabel: id => sessionList.some(item => item.contact.id === id),
+            getRenderer: () => props => {
               const session = props as SessionInfo;
               switch (session.type) {
                 case 'friend':

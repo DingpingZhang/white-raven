@@ -25,8 +25,8 @@ export default function ContactDialog({ close }: Props) {
   const { id: currentUserId } = useUserInfo();
   const contactList = useContactList();
   const filteredContactInfos = useSearchWithText(
-    contactList.filter((item) => item.id !== currentUserId),
-    (item) => item.name,
+    contactList.filter(item => item.id !== currentUserId),
+    item => item.name,
     queriesText
   );
 
@@ -39,7 +39,7 @@ export default function ContactDialog({ close }: Props) {
           renderItems={(startIndex, endIndex) =>
             filteredContactInfos
               .slice(startIndex, endIndex)
-              .map((item) => (
+              .map(item => (
                 <ContactItem
                   key={item.id}
                   item={item}

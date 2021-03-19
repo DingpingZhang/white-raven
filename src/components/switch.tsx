@@ -20,9 +20,8 @@ export function convertToContentProvider<T extends string>(
   cases: ReadonlyArray<CaseItem<T>>
 ): ContentProvider<T> {
   return {
-    isValidLabel: (label) => cases.some((item) => item.label === label),
-    getRenderer: (label) => (props: any) =>
-      cases.find((item) => item.label === label)!.renderer(props),
+    isValidLabel: label => cases.some(item => item.label === label),
+    getRenderer: label => (props: any) => cases.find(item => item.label === label)!.renderer(props),
   };
 }
 
@@ -60,10 +59,10 @@ export function Switch<T extends string>({ name, contentProvider, animation }: S
   // Clear loaded view cache
   useEffect(() => {
     const toRemovedKeys = Array.from(loadedViewCache.keys()).filter(
-      (label) => !contentProvider.isValidLabel(label)
+      label => !contentProvider.isValidLabel(label)
     );
     if (toRemovedKeys) {
-      toRemovedKeys.forEach((label) => loadedViewCache.delete(label));
+      toRemovedKeys.forEach(label => loadedViewCache.delete(label));
     }
   }, [contentProvider, loadedViewCache]);
 
@@ -80,7 +79,7 @@ export function Switch<T extends string>({ name, contentProvider, animation }: S
         // Update the cache of the selected view.
         viewCache.set(actualViewName, newNextView);
 
-        setSelectedLabel((oldValue) => {
+        setSelectedLabel(oldValue => {
           if (oldValue === actualViewName && requireForceUpdate) {
             forceUpdate();
           }

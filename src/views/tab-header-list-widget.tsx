@@ -5,10 +5,7 @@ type Props = {
   bottomHeaders?: ReadonlyArray<ReactNode>;
 };
 
-export default function TabHeaderListWidget({
-  topHeaders,
-  bottomHeaders,
-}: Props) {
+export default function TabHeaderListWidget({ topHeaders, bottomHeaders }: Props) {
   return (
     <div className="TabHeaderListWidget">
       <div className="TabHeaderListWidget__tabHeaderContainer top">{topHeaders}</div>

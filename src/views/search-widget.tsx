@@ -13,7 +13,7 @@ export default function SearchWidget({ text, setText }: Props) {
         type="text"
         className="SearchWidget__input"
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={e => setText(e.target.value)}
       />
     </div>
   );

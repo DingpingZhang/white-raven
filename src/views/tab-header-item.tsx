@@ -10,13 +10,7 @@ type Props = {
   onClick?: () => void;
 };
 
-export default function TabHeaderItem({
-  icon,
-  title,
-  selected,
-  messageCount,
-  onClick,
-}: Props) {
+export default function TabHeaderItem({ icon, title, selected, messageCount, onClick }: Props) {
   const TabHeaderItemClass = classNames('TabHeaderItem', {
     selected,
     hasMessage: messageCount,

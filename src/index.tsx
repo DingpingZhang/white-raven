@@ -9,7 +9,7 @@ import './styles/normalize.css';
 import './styles/index.scss';
 
 // Disable the context menu of browser.
-document.addEventListener('contextmenu', (e) => e.preventDefault());
+document.addEventListener('contextmenu', e => e.preventDefault());
 
 ReactDOM.render(
   <React.StrictMode>

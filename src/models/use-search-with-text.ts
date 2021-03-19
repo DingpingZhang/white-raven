@@ -10,11 +10,11 @@ export default function useSearchWithText<T>(
 
     const queries = queriesText
       .split(' ')
-      .filter((item) => !!item)
-      .map((item) => item.toLowerCase());
-    return list.filter((item) => {
+      .filter(item => !!item)
+      .map(item => item.toLowerCase());
+    return list.filter(item => {
       const originText = getText(item).toLowerCase();
-      return queries.some((query) => originText.includes(query));
+      return queries.some(query => originText.includes(query));
     });
   }, [getText, list, queriesText]);
 }

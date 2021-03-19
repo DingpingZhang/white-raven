@@ -37,7 +37,7 @@ export default class MessageList {
 
   constructor(getItems: GetItems) {
     this.storage = new SortedSet<Message>(
-      (item) => item.id,
+      item => item.id,
       (x, y) => y.timestamp - x.timestamp
     );
     this.getItems = getItems;

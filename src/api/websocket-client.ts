@@ -32,8 +32,8 @@ export class WebSocketClient {
 
   filter<T extends EventBase>(type: GetEventType<T>): Observable<T> {
     return this.observable!.pipe(
-      filter((item) => item.type === type),
-      map((item) => item as T)
+      filter(item => item.type === type),
+      map(item => item as T)
     );
   }
 
@@ -47,15 +47,15 @@ export class WebSocketClient {
     this.observable = fromEvent<MessageEvent<any>>(this.websocket, 'message').pipe(
       publish(),
       refCount(),
-      filter((item) => !!item.data && item.data !== PONG_MESSAGE),
-      tap((item) => {
+      filter(item => !!item.data && item.data !== PONG_MESSAGE),
+      tap(item => {
         if (item.data === PING_MESSAGE) {
           this.websocket?.send(PONG_MESSAGE);
         }
       }),
-      filter((item) => item.data !== PING_MESSAGE),
-      map((item) => JSON.parse(item.data) as EventBase),
-      filter((item) => !!item)
+      filter(item => item.data !== PING_MESSAGE),
+      map(item => JSON.parse(item.data) as EventBase),
+      filter(item => !!item)
     );
     this.websocket.addEventListener('error', this.handleError);
     this.websocket.addEventListener('close', this.handleClose);

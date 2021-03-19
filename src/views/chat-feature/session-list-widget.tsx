@@ -11,7 +11,7 @@ export default function SessionListWidget() {
   const [selectedId, setSelectedId] = useSelectedSessionId();
   const filteredSessionList = useSearchWithText(
     sessionList,
-    (item) => item.contact.name,
+    item => item.contact.name,
     queriesText
   );
 
@@ -34,8 +34,8 @@ export default function SessionListWidget() {
                 selected={selectedId === item.contact.id}
                 onSelected={() => setSelectedId(item.contact.id)}
                 onRemoved={() => {
-                  setSessionList((prev) => [
-                    ...prev.filter((element) => element.contact.id !== item.contact.id),
+                  setSessionList(prev => [
+                    ...prev.filter(element => element.contact.id !== item.contact.id),
                   ]);
                 }}
               />

@@ -81,11 +81,11 @@ export function useThrottle<T>(
 ): (value: T) => void {
   const [throttle, setThrottle] = useState(() => new Throttle(callback, delay));
   useEffect(() => {
-    setThrottle((oldValue) => {
+    setThrottle(oldValue => {
       oldValue.dispose();
       return new Throttle(callback, delay);
     });
   }, [callback, delay]);
 
-  return useCallback((value) => throttle.invoke(value), [throttle]);
+  return useCallback(value => throttle.invoke(value), [throttle]);
 }

@@ -47,7 +47,7 @@ export default function SessionItem({
       />
       <button
         className="SessionItem__btnClose"
-        onClick={(e) => {
+        onClick={e => {
           e.stopPropagation();
           onRemoved && onRemoved();
         }}

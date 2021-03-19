@@ -24,7 +24,7 @@ export function useI18nBuilder<T extends Record<string, string>>(
       throw new Error(`The resources provider can not return null or empty array.`);
     }
 
-    const resource = provider.find((item) => item.culture === currentCulture);
+    const resource = provider.find(item => item.culture === currentCulture);
 
     const finalResource = resource?.resource ?? provider[0].resource;
     return {

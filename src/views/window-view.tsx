@@ -35,14 +35,14 @@ export default function WindowView() {
     // Subscribe Events
     const friendToken = webSocketClient
       .filter<FriendMessageEvent>('friend/message')
-      .subscribe((e) => {
-        setSessionList((prev) => {
+      .subscribe(e => {
+        setSessionList(prev => {
           if (e.senderId === currentUserId) return prev;
 
-          const session = prev.find((item) => item.contact.id === e.senderId);
+          const session = prev.find(item => item.contact.id === e.senderId);
           if (!session) {
-            const contact = contactList.find((item) => item.id === e.senderId)!;
-            return produce(prev, (draft) => {
+            const contact = contactList.find(item => item.id === e.senderId)!;
+            return produce(prev, draft => {
               draft.unshift({ type: 'friend', contact: contact, unreadCount: 1 });
             });
           }
@@ -52,19 +52,19 @@ export default function WindowView() {
       });
     const strangerToken = webSocketClient
       .filter<StrangerMessageEvent>('stranger/message')
-      .subscribe(async (e) => {
+      .subscribe(async e => {
         const stranger = await fallbackHttpApi(() => getStrangerInfo(e.senderId), null);
         if (!stranger) return;
 
-        setSessionList((prev) => {
-          const session = prev.find((item) => item.contact.id === e.senderId);
+        setSessionList(prev => {
+          const session = prev.find(item => item.contact.id === e.senderId);
           if (session) {
-            return produce(prev, (draft) => {
-              removeAll(draft, (item) => item.contact.id === session.contact.id);
+            return produce(prev, draft => {
+              removeAll(draft, item => item.contact.id === session.contact.id);
               draft.unshift({ ...session, unreadCount: session.unreadCount + 1 });
             });
           } else {
-            return produce(prev, (draft) => {
+            return produce(prev, draft => {
               draft.unshift({
                 type: 'stranger',
                 contact: stranger,
@@ -74,15 +74,15 @@ export default function WindowView() {
           }
         });
       });
-    const groupToken = webSocketClient.filter<GroupMessageEvent>('group/message').subscribe((e) => {
-      setSessionList((prev) => {
-        const session = prev.find((item) => item.contact.id === e.groupId);
+    const groupToken = webSocketClient.filter<GroupMessageEvent>('group/message').subscribe(e => {
+      setSessionList(prev => {
+        const session = prev.find(item => item.contact.id === e.groupId);
         if (!session) {
-          const contact = contactList.find((item) => item.id === e.groupId)!;
+          const contact = contactList.find(item => item.id === e.groupId)!;
           if (!isGroupInfo(contact))
             throw new Error('The type of "group/message" argument must be GroupInfo.');
 
-          return produce(prev, (draft) => {
+          return produce(prev, draft => {
             draft.unshift({ type: 'group', contact: contact, unreadCount: 1 });
           });
         }
@@ -116,8 +116,8 @@ export default function WindowView() {
               onClick={async () => {
                 const result = await contactDialogToken.show();
                 if (result) {
-                  setSessionList((prev) => {
-                    if (prev.some((item) => item.contact.id === result.id)) return prev;
+                  setSessionList(prev => {
+                    if (prev.some(item => item.contact.id === result.id)) return prev;
 
                     return [
                       isGroupInfo(result)

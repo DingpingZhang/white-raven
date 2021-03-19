@@ -30,7 +30,7 @@ export default class DialogManager {
       this.setCurrentDialogEntity(this.dialogEntities.pop());
     } else {
       // 2. Close the dialog in the stack:
-      const index = this.dialogEntities.findIndex((entity) => entity.id === id);
+      const index = this.dialogEntities.findIndex(entity => entity.id === id);
       if (index !== -1) {
         this.dialogEntities.splice(index, 1);
       }

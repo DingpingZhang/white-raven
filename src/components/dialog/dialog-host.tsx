@@ -32,9 +32,9 @@ class DialogBuilderInternal implements DialogBuilder {
     let id: string;
     const close = () => this._manager.close(id);
     const show = () =>
-      new Promise<T>((resolve) => {
+      new Promise<T>(resolve => {
         id = uuidv4();
-        const dialog = factory((value) => {
+        const dialog = factory(value => {
           resolve(value);
           close();
         });
