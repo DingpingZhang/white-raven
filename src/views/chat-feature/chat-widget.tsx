@@ -15,6 +15,7 @@ import { filter, mergeAll } from 'rxjs/operators';
 import MessageListWidget from './message-list-widget';
 import { useMessageList, useUserInfo } from 'models/logged-in-context';
 import { asyncScheduler, scheduled } from 'rxjs';
+import { MessagesContextRoot } from 'models/context-components';
 
 type Props = {
   sessionType: SessionType;
@@ -22,8 +23,8 @@ type Props = {
   sendMessage: (message: MessageContent) => Promise<Message | null>;
 };
 
-export default function ChatWidget({ sessionType, contactId, sendMessage }: Props) {
-  const { id: currentUserId } = useUserInfo();
+export default function ChatWidget(props: Props) {
+  const { sessionType, contactId } = props;
   const messageList = useMessageList(sessionType, contactId);
 
   useEffect(() => {
@@ -42,13 +43,24 @@ export default function ChatWidget({ sessionType, contactId, sendMessage }: Prop
         messageList.pushItem({
           id: e.id,
           senderId: e.senderId,
-          recipientId: currentUserId,
+          recipientId: e.recipientId,
           content: [...e.content],
           timestamp: e.timestamp,
         });
       });
     return () => token.unsubscribe();
-  }, [contactId, currentUserId, messageList]);
+  }, [contactId, messageList]);
+
+  return (
+    <MessagesContextRoot>
+      <InnerChatWidget {...props} />
+    </MessagesContextRoot>
+  );
+}
+
+function InnerChatWidget({ sessionType, contactId, sendMessage }: Props) {
+  const { id: currentUserId } = useUserInfo();
+  const messageList = useMessageList(sessionType, contactId);
 
   return (
     <div className="ChatWidget">
@@ -72,12 +84,9 @@ export default function ChatWidget({ sessionType, contactId, sendMessage }: Prop
         <SenderWidget
           sendMessage={async content => {
             const message = await sendMessage(content);
-            if (message) {
-              // TODO: Add message to message list.
-              return true;
-            } else {
-              return false;
-            }
+            // NOTE: 不需要储存该 message，自己发送的消息，也会有 WebSocket 通知，
+            // 除非以后有需求，要求先显示发送出的消息，等发送失败再撤回来。
+            return !!message;
           }}
         />
       </div>

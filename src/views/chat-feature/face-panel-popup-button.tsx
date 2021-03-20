@@ -14,10 +14,10 @@ const SWITCH_NAME_BASE = 'chat/face-panel';
 type Props = {
   className?: string;
 
-  onSelectedFace: (face: ImageMessageSegment) => void;
+  onFaceSelected: (face: ImageMessageSegment) => void;
 };
 
-export default function FacePanelPopupButton({ className, onSelectedFace }: Props) {
+export default function FacePanelPopupButton({ className, onFaceSelected }: Props) {
   const [toggle, setToggle] = useState(false);
   const [hover, setHover] = useState(false);
 
@@ -32,8 +32,8 @@ export default function FacePanelPopupButton({ className, onSelectedFace }: Prop
     >
       <FaceIcon className="FacePanelPopupButton__icon" />
       <FacePanelPopup
-        onSelectedFace={item => {
-          onSelectedFace(item);
+        onFaceSelected={item => {
+          onFaceSelected(item);
           setToggle(false);
         }}
       />
@@ -42,10 +42,10 @@ export default function FacePanelPopupButton({ className, onSelectedFace }: Prop
 }
 
 type FacePanelPopupProps = {
-  onSelectedFace: (face: ImageMessageSegment) => void;
+  onFaceSelected: (face: ImageMessageSegment) => void;
 };
 
-function FacePanelPopup({ onSelectedFace }: FacePanelPopupProps) {
+function FacePanelPopup({ onFaceSelected }: FacePanelPopupProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const facePackages = useFacePackages();
 
@@ -71,7 +71,7 @@ function FacePanelPopup({ onSelectedFace }: FacePanelPopupProps) {
           contentProvider={{
             isValidLabel: facePackageId => facePackages.some(item => item.id === facePackageId),
             getRenderer: facePackageId => () => (
-              <FaceList facePackageId={facePackageId} onSelectedFace={onSelectedFace} />
+              <FaceList facePackageId={facePackageId} onFaceSelected={onFaceSelected} />
             ),
           }}
         />
@@ -102,7 +102,7 @@ type FaceHeaderProps = FacesStateProps & {
 };
 
 type FaceListProps = FacesStateProps & {
-  onSelectedFace: (face: ImageMessageSegment) => void;
+  onFaceSelected: (face: ImageMessageSegment) => void;
 };
 
 function FaceHeader({ facePackageId, selected, displayFaceId, onSelected }: FaceHeaderProps) {
@@ -126,7 +126,7 @@ function FaceHeader({ facePackageId, selected, displayFaceId, onSelected }: Face
   );
 }
 
-function FaceList({ facePackageId, onSelectedFace }: FaceListProps) {
+function FaceList({ facePackageId, onFaceSelected }: FaceListProps) {
   const faceSet = useFaceSet(facePackageId);
   return (
     <div className="FacePanelPopup__faceList">
@@ -138,7 +138,7 @@ function FaceList({ facePackageId, onSelectedFace }: FaceListProps) {
           <div
             key={imageId}
             className="FacePanelPopup__faceItem"
-            onClick={() => onSelectedFace(item)}
+            onClick={() => onFaceSelected(item)}
           >
             <img
               className="FacePanelPopup__faceImage"

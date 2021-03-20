@@ -111,23 +111,26 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
     messageList.startIndex,
     messageList.capacity,
     messageList.storage.items.length,
+    messageList,
   ]);
-  const handleGotoBottomVisible = useCallback(() => {
-    const scrollViewer = scrollViewerRef.current;
-    if (!scrollViewer) return;
 
-    const isNearBottom =
+  const isNearBottom = useCallback(() => {
+    const scrollViewer = scrollViewerRef.current;
+    if (!scrollViewer) return undefined;
+
+    return (
       messageList.startIndex + messageList.capacity >= messageList.storage.items.length &&
-      (scrollViewer.scrollTop + scrollViewer.offsetHeight) / scrollViewer.scrollHeight > 0.8;
+      (scrollViewer.scrollTop + scrollViewer.offsetHeight) / scrollViewer.scrollHeight > 0.8
+    );
+  }, [messageList.capacity, messageList.startIndex, messageList.storage.items.length]);
+  const handleGotoBottomVisible = useCallback(() => {
+    const isNearBottomValue = isNearBottom();
+    if (isNearBottomValue === undefined) return;
+
     if (setIsVisibleGotoBottom) {
-      setIsVisibleGotoBottom(!isNearBottom);
+      setIsVisibleGotoBottom(!isNearBottomValue);
     }
-  }, [
-    messageList.capacity,
-    messageList.startIndex,
-    messageList.storage.items.length,
-    setIsVisibleGotoBottom,
-  ]);
+  }, [isNearBottom, setIsVisibleGotoBottom]);
 
   return (
     <div className="MessageListWidget">
@@ -168,6 +171,7 @@ function GotoButtomButton({ messageList, setIsVisibleCallback }: GotoBottomButto
   // NOTE: 单独将 GotoButtomButton 提取出来，以保存 isVisible state，若将 isVisible state 放置
   // 父控件 MessageList 中，则会在变化时触发整个 MessageList 重新渲染。该渲染会导致在 Safari 上严重的卡顿，
   // 但在 Chromium 内核的浏览器中还可以接受。
+  // NOTE: 上面的注释是错的！这里真正导致性能问题的，是 css 布局，不要用 grid，直接用相对定位，屁事没有。
   const isVisible = useValueOfSeparatedState(setIsVisibleCallback, false);
 
   const gotoBottomClass = classNames('MessageListWidget__gotoBottom', {

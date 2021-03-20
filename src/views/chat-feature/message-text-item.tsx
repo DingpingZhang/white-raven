@@ -1,10 +1,19 @@
 import classNames from 'classnames';
 import { toDisplayTimestamp } from 'helpers';
-import { getImageUrl, IdType, ImageBehavior, MessageContent, MessageSegment } from 'api';
-import { DialogBuilder, useDialogBuilder } from 'components/dialog';
+import {
+  AtMessageSegment,
+  getImageUrl,
+  IdType,
+  ImageBehavior,
+  ImageMessageSegment,
+  MessageContent,
+  TextMessageSegment,
+} from 'api';
+import { useDialogBuilder } from 'components/dialog';
 import ImageExplorerDialog from 'views/dialogs/image-explorer-dialog';
 import { useCallback, useMemo } from 'react';
 import { useContactList, useGroupMemberList } from 'models/logged-in-context';
+import { useAtClicked, useImageLoaded } from 'models/messages-context';
 
 const IMAGE_MAX_SIZE = 300;
 
@@ -18,6 +27,10 @@ type Props = {
   ref?: (element: HTMLElement | null) => void;
 };
 
+type AtSegmentProps = AtMessageSegment & {
+  getContactName: (id: IdType) => string;
+};
+
 export default function MessageTextItem({
   ref,
   contactType,
@@ -27,11 +40,11 @@ export default function MessageTextItem({
   timestamp,
   highlight,
 }: Props) {
-  const dialogBuilder = useDialogBuilder();
   const messageBoxClass = classNames('MessageTextItem__messageArea', { highlight });
 
   const groupMemberList = useGroupMemberList(contactId);
   const contactList = useContactList();
+
   const getContactById = useCallback(
     (id: IdType) => {
       const contact = contactList.find(item => item.id === id);
@@ -44,10 +57,6 @@ export default function MessageTextItem({
     },
     [contactList, groupMemberList]
   );
-  const avatar = useMemo(() => {
-    const contact = getContactById(senderId);
-    return contact ? contact.avatar : undefined;
-  }, [getContactById, senderId]);
   const getContactName = useCallback(
     (id: IdType) => {
       const contact = getContactById(id);
@@ -56,6 +65,10 @@ export default function MessageTextItem({
     },
     [getContactById]
   );
+  const avatar = useMemo(() => {
+    const contact = getContactById(senderId);
+    return contact ? contact.avatar : undefined;
+  }, [getContactById, senderId]);
   const senderName = useMemo(
     () => (contactType === 'group' ? getContactName(senderId) : undefined),
     [contactType, getContactName, senderId]
@@ -69,9 +82,24 @@ export default function MessageTextItem({
       <img className="MessageTextItem__avatar" src={avatar} alt="avatar" />
       <div className={messageBoxClass}>
         <div className="MessageTextItem__messageContent">
-          {content.map((message, index) =>
-            convertToHtmlElement(message, index, dialogBuilder, getContactName)
-          )}
+          {content.map((message, index) => {
+            switch (message.type) {
+              case 'text':
+                return <TextSegment key={`${index}-${message.text}`} {...message} />;
+              case 'at':
+                return (
+                  <AtSegment
+                    key={`${index}-${message.targetId}`}
+                    {...message}
+                    getContactName={getContactName}
+                  />
+                );
+              case 'image':
+                return <ImageSegment key={`${index}-${message.imageId}`} {...message} />;
+              default:
+                return null;
+            }
+          })}
         </div>
       </div>
       <span className="MessageTextItem__timestamp">{toDisplayTimestamp(timestamp)}</span>
@@ -79,51 +107,48 @@ export default function MessageTextItem({
   );
 }
 
-function convertToHtmlElement(
-  message: MessageSegment,
-  index: number,
-  dialogBuilder: DialogBuilder,
-  getGroupMemberName: (id: IdType) => string
-) {
-  switch (message.type) {
-    case 'text':
-      return (
-        <span key={`${index}-${message.text}`} className="MessageTextItem__msgSegment msgText">
-          {message.text}
-        </span>
-      );
-    case 'at':
-      return (
-        <span key={`${index}-${message.targetId}`} className="MessageTextItem__msgSegment msgAt">
-          @{getGroupMemberName(message.targetId)}{' '}
-        </span>
-      );
-    case 'image': {
-      const imageUrl = getImageUrl(message.imageId);
-      return (
-        <img
-          key={`${index}-${message.imageId}`}
-          className={`MessageTextItem__msgSegment msgImage ${convertImageBehaviorToClassName(
-            message.behavior
-          )}`}
-          src={imageUrl}
-          alt={`[#${message.imageId}]`}
-          width={message.behavior === 'like-text' ? message.width : undefined}
-          height={message.behavior === 'like-text' ? message.height : undefined}
-          style={{ maxHeight: IMAGE_MAX_SIZE }}
-          onClick={async () => {
-            if (message.behavior === 'can-browse') {
-              await dialogBuilder
-                .build<void>(close => <ImageExplorerDialog close={close} imageUrl={imageUrl} />)
-                .show();
-            }
-          }}
-        />
-      );
-    }
-    default:
-      return null;
-  }
+function TextSegment({ text }: TextMessageSegment) {
+  return <span className="MessageTextItem__msgSegment msgText">{text}</span>;
+}
+
+function AtSegment({ targetId, getContactName }: AtSegmentProps) {
+  const atClicked = useAtClicked();
+
+  return (
+    <span
+      className="MessageTextItem__msgSegment msgAt"
+      onClick={() => {
+        atClicked.next({ targetId });
+      }}
+    >{`@${getContactName(targetId)}`}</span>
+  );
+}
+
+function ImageSegment({ imageId, behavior, width, height }: ImageMessageSegment) {
+  const dialogBuilder = useDialogBuilder();
+  const imageLoaded = useImageLoaded();
+  const imageUrl = getImageUrl(imageId);
+
+  return (
+    <img
+      className={`MessageTextItem__msgSegment msgImage ${convertImageBehaviorToClassName(
+        behavior
+      )}`}
+      src={imageUrl}
+      alt={`[#${imageId}]`}
+      width={behavior === 'like-text' ? width : undefined}
+      height={behavior === 'like-text' ? height : undefined}
+      style={{ maxHeight: IMAGE_MAX_SIZE }}
+      onClick={async () => {
+        if (behavior === 'can-browse') {
+          await dialogBuilder
+            .build<void>(close => <ImageExplorerDialog close={close} imageUrl={imageUrl} />)
+            .show();
+        }
+      }}
+      onLoad={() => imageLoaded.next({ imageId })}
+    />
+  );
 }
 
 // TODO: Replace with more general method.

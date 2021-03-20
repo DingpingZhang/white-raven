@@ -3,10 +3,11 @@ import { ReactComponent as MoreVerticalIcon } from 'images/more-vertical.svg';
 import { ReactComponent as AttachmentIcon } from 'images/attachment.svg';
 import CircleButton from 'components/circle-button';
 import { useI18n } from 'i18n';
-import { MessageContent, MessageSegment } from 'api';
+import { ImageMessageSegment, MessageContent, MessageSegment } from 'api';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import FacePanelPopupButton from './face-panel-popup-button';
 import { FaceSet, LoggedInContext, useFacePackages } from 'models/logged-in-context';
+import { useAtClicked } from 'models/messages-context';
 
 type Props = {
   sendMessage: (message: MessageContent) => Promise<boolean>;
@@ -41,6 +42,36 @@ export default function SenderWidget({ sendMessage }: Props) {
 
     return () => tokens.forEach(item => item.unsubscribe());
   }, [faceSetStates]);
+
+  const atClicked = useAtClicked();
+  useEffect(() => {
+    // TODO: 下面这段代码和 handleFaceSelected() 里的基本一样，应该提取出可复用的部分。
+    const token = atClicked.subscribe(item => {
+      const input = inputRef.current;
+      // @Xxx 的前后都应该有空格。
+      const atText = ` @${item.targetId} `;
+      if (input) {
+        input.focus();
+        const prevText = input.value;
+        if (input.selectionStart !== null) {
+          const prevSelectionPosition = input.selectionStart + atText.length;
+
+          input.value = `${prevText.slice(0, input.selectionStart)}${atText}${prevText.slice(
+            input.selectionStart
+          )}`;
+
+          input.setSelectionRange(prevSelectionPosition, prevSelectionPosition);
+        } else {
+          input.value += atText;
+        }
+
+        setCanSend(true);
+      }
+
+      return () => token.unsubscribe();
+    });
+  }, [atClicked]);
+
   const handleEnterClick = useCallback(async () => {
     if (inputRef.current && inputRef.current.value) {
       const text = inputRef.current.value;
@@ -64,6 +95,27 @@ export default function SenderWidget({ sendMessage }: Props) {
     },
     [handleEnterClick]
   );
+  const handleFaceSelected = useCallback((item: ImageMessageSegment) => {
+    const input = inputRef.current;
+    const faceText = `[#${item.imageId}]`;
+    if (input) {
+      input.focus();
+      const prevText = input.value;
+      if (input.selectionStart !== null) {
+        const prevSelectionPosition = input.selectionStart + faceText.length;
+
+        input.value = `${prevText.slice(0, input.selectionStart)}${faceText}${prevText.slice(
+          input.selectionStart
+        )}`;
+
+        input.setSelectionRange(prevSelectionPosition, prevSelectionPosition);
+      } else {
+        input.value += faceText;
+      }
+
+      setCanSend(true);
+    }
+  }, []);
 
   return (
     <div className="SenderWidget">
@@ -83,28 +135,7 @@ export default function SenderWidget({ sendMessage }: Props) {
         />
         <FacePanelPopupButton
           className="SenderWidget__btnFace"
-          onSelectedFace={item => {
-            const input = inputRef.current;
-            const faceText = `[#${item.imageId}]`;
-            if (input) {
-              input.focus();
-              const prevText = input.value;
-              if (input.selectionStart !== null) {
-                const prevSelectionPosition = input.selectionStart + faceText.length;
-
-                input.value = `${prevText.slice(
-                  0,
-                  input.selectionStart
-                )}${faceText}${prevText.slice(input.selectionStart)}`;
-
-                input.setSelectionRange(prevSelectionPosition, prevSelectionPosition);
-              } else {
-                input.value += faceText;
-              }
-
-              setCanSend(true);
-            }
-          }}
+          onFaceSelected={handleFaceSelected}
         />
         <CircleButton
           buttonType="default"
