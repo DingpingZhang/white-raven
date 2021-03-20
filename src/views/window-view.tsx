@@ -20,7 +20,7 @@ import { useEffect } from 'react';
 import { webSocketClient } from 'api/websocket-client';
 import { produce } from 'immer';
 import { removeAll } from 'helpers/list-helpers';
-import { useUserInfo, useContactList, useSessionList, fallbackHttpApi } from 'models/store';
+import { useUserInfo, useContactList, useSessionList, fallbackHttpApi } from 'models/logged-in-context';
 import { buildSettingsDialog } from './dialogs/settings-dialog';
 
 export default function WindowView() {

@@ -4,7 +4,7 @@ import { toDisplayTimestamp } from 'helpers';
 import ChatWidget from './chat-widget';
 import GroupMemberItem from './group-member-item';
 import { useI18n } from 'i18n';
-import { useGroupMemberList, useLastMessage, useUserInfo } from 'models/store';
+import { useGroupMemberList, useLastMessage, useUserInfo } from 'models/logged-in-context';
 import CircleButton from 'components/circle-button';
 import { ReactComponent as LeftIcon } from 'images/left-arrow.svg';
 import { ReactComponent as RightIcon } from 'images/right-arrow.svg';

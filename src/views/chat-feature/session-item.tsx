@@ -3,7 +3,7 @@ import { toDisplayTimestamp } from 'helpers';
 import { IdType, MessageSegment, SessionType } from 'api';
 import { ReactComponent as CloseIcon } from 'images/close.svg';
 import HighlightSpan from 'components/highlight-span';
-import { useLastMessage } from 'models/store';
+import { useLastMessage } from 'models/logged-in-context';
 
 export type Props = {
   sessionType: SessionType;

@@ -3,7 +3,7 @@ import { Switch } from 'components/switch';
 import { useNavigator } from 'components/switch-host';
 import { firstItemOrDefault } from 'helpers/list-helpers';
 import { useConstant } from 'hooks';
-import { useFacePackages, useFaceSet } from 'models/store';
+import { useFacePackages, useFaceSet } from 'models/logged-in-context';
 import { useEffect, useMemo, useState } from 'react';
 import { ReactComponent as FaceIcon } from 'images/face.svg';
 import classNames from 'classnames';

@@ -6,7 +6,7 @@ import { useI18n } from 'i18n';
 import { MessageContent, MessageSegment } from 'api';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import FacePanelPopupButton from './face-panel-popup-button';
-import { FaceSet, LoggedInContext, useFacePackages } from 'models/store';
+import { FaceSet, LoggedInContext, useFacePackages } from 'models/logged-in-context';
 
 type Props = {
   sendMessage: (message: MessageContent) => Promise<boolean>;

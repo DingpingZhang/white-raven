@@ -3,7 +3,7 @@ import SessionItem from './session-item';
 import SearchWidget from 'views/search-widget';
 import { useState } from 'react';
 import useSearchWithText from 'models/use-search-with-text';
-import { useSelectedSessionId, useSessionList } from 'models/store';
+import { useSelectedSessionId, useSessionList } from 'models/logged-in-context';
 
 export default function SessionListWidget() {
   const [queriesText, setQueriesText] = useState('');

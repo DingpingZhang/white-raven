@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { SwitchHost } from 'components/switch-host';
-import GlobalContextRoot from 'models/global-context';
+import { GlobalContextRoot } from 'models/context-components';
 
 import './styles/normalize.css';
 import './styles/index.scss';

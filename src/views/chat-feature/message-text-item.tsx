@@ -4,7 +4,7 @@ import { getImageUrl, IdType, ImageBehavior, MessageContent, MessageSegment } fr
 import { DialogBuilder, useDialogBuilder } from 'components/dialog';
 import ImageExplorerDialog from 'views/dialogs/image-explorer-dialog';
 import { useCallback, useMemo } from 'react';
-import { useContactList, useGroupMemberList } from 'models/store';
+import { useContactList, useGroupMemberList } from 'models/logged-in-context';
 
 const IMAGE_MAX_SIZE = 300;
 

@@ -1,7 +1,7 @@
 import { jwtTokenKey } from 'api';
 import { ComboBox, ComboBoxItem } from 'components/combo-box';
 import { LanguageCode, useI18n } from 'i18n';
-import { ThemeType, useCulture, useTheme } from 'models/store';
+import { ThemeType, useCulture, useTheme } from 'models/global-context';
 import { ReactElement, useMemo } from 'react';
 import BaseDialog from './base-dialog';
 

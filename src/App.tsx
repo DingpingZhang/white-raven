@@ -1,8 +1,8 @@
 import { jwtTokenKey } from 'api';
 import { DialogHost } from 'components/dialog';
-import LoggedInContextRoot from 'models/logged-in-context';
-import { ThemeType, useTheme } from 'models/store';
+import { ThemeType, useTheme } from 'models/global-context';
 import { useEffect, useState } from 'react';
+import { LoggedInContextRoot } from 'models/context-components';
 import LoginView from 'views/login-view';
 import WindowView from './views/window-view';
 

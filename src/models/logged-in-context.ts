@@ -3,9 +3,16 @@ import {
   Err,
   FacePackage,
   FriendInfo,
+  getFacePackageById,
+  getFacePackages,
+  getFriendInfos,
   getFriendMessages,
+  getGroupInfos,
+  getGroupMembers,
   getGroupMessages,
+  getSessions,
   getStrangerMessages,
+  getUserInfo,
   GroupInfo,
   GroupMemberInfo,
   IdType,
@@ -21,15 +28,8 @@ import MessageList from './message-list';
 import { useRxState, useRxValue } from 'hooks/use-rx';
 import { lastItemOrDefault } from 'helpers/list-helpers';
 import { useState } from 'react';
-import { LanguageCode } from 'i18n';
-import { IRxState, RxStateCluster } from 'hooks/rx-state';
-
-export type ThemeType = 'theme-light' | 'theme-dark';
-
-export type GlobalContextType = {
-  theme: IRxState<ThemeType>;
-  culture: IRxState<LanguageCode>;
-};
+import { IRxState, RxState, RxStateCluster } from 'hooks/rx-state';
+import { useConstant } from 'hooks';
 
 export type FaceSet = ReadonlyArray<ImageMessageSegment>;
 
@@ -44,19 +44,91 @@ export type LoggedInContextType = {
   faceSetCluster: RxStateCluster<IdType, FaceSet>;
 };
 
-export const GlobalContext = createContext<GlobalContextType>(undefined as any);
-
 export const LoggedInContext = createContext<LoggedInContextType>(undefined as any);
 
-export function useTheme() {
-  const ctx = useContext(GlobalContext);
-  return useRxState(ctx.theme);
+// ********************************************************************
+// Store
+// ********************************************************************
+
+const defaultUserInfo: PersonInfo = { id: '', name: '', avatar: '' };
+
+export function useLoggedInContextStore() {
+  return useConstant<LoggedInContextType>(() => {
+    const { selectedSessionId, sessionList } = createSessionState();
+    return {
+      userInfo: new RxState<PersonInfo>(defaultUserInfo, async set => {
+        const value = await fallbackHttpApi(getUserInfo, defaultUserInfo);
+        set(value);
+      }),
+      selectedSessionId,
+      sessionList,
+      contactList: new RxState<Array<FriendInfo | GroupInfo>>([], async set => {
+        const friends = await fallbackHttpApi(getFriendInfos, []);
+        const groups = await fallbackHttpApi(getGroupInfos, []);
+        set([...friends, ...groups]);
+      }),
+      facePackages: new RxState<ReadonlyArray<FacePackage>>([], async set => {
+        const value = await fallbackHttpApi(getFacePackages, []);
+        set(value);
+      }),
+      messageListCluster: new Map<IdType, MessageList>(),
+      groupMemberListCluster: new RxStateCluster<IdType, GroupMemberInfo[]>(
+        key =>
+          new RxState<GroupMemberInfo[]>([], async set => {
+            const value = await makeMutList(fallbackHttpApi(() => getGroupMembers(key), []));
+            set(value);
+          })
+      ),
+      faceSetCluster: new RxStateCluster<IdType, FaceSet>(
+        key =>
+          new RxState<FaceSet>([], async set => {
+            const value = await fallbackHttpApi(() => getFacePackageById(key), []);
+            set(value);
+          })
+      ),
+    };
+  });
 }
 
-export function useCulture() {
-  const ctx = useContext(GlobalContext);
-  return useRxState(ctx.culture);
+function createSessionState() {
+  const selectedSessionId = new RxState<IdType | null>(null);
+  const sessionList = new RxState<SessionInfo[]>([], async set => {
+    const value = await makeMutList(fallbackHttpApi(getSessions, []));
+    set(value);
+  });
+
+  // 闭包变量
+  let prevSelectedIndex = -1;
+
+  selectedSessionId.source.subscribe(nextValue => {
+    prevSelectedIndex = sessionList.source.value.findIndex(item => item.contact.id === nextValue);
+  });
+  sessionList.source.subscribe(nextValue => {
+    if (nextValue.length === 0) return;
+
+    const selectedId = selectedSessionId.source.value;
+    const selectedIndex = nextValue.findIndex(item => item.contact.id === selectedId);
+
+    // session 被删除，或 selectedId 为 null.
+    if (selectedIndex < 0) {
+      if (prevSelectedIndex < 0) {
+        prevSelectedIndex = 0;
+      } else if (prevSelectedIndex >= nextValue.length) {
+        prevSelectedIndex = nextValue.length - 1;
+      }
+
+      selectedSessionId.set(nextValue[prevSelectedIndex].contact.id);
+    } else {
+      prevSelectedIndex = selectedIndex;
+    }
+  });
+
+  return { selectedSessionId, sessionList };
 }
+
+// ********************************************************************
+// Hooks
+// ********************************************************************
 
 export function useFacePackages() {
   const ctx = useContext(LoggedInContext);
@@ -128,6 +200,11 @@ export function useGroupMemberList(groupId: IdType) {
 // ********************************************************************
 // Helper functions
 // ********************************************************************
+
+async function makeMutList<T>(immutList: Promise<ReadonlyArray<T>>): Promise<T[]> {
+  const result = await immutList;
+  return [...result];
+}
 
 function getGetMessages(type: 'friend' | 'stranger' | 'group') {
   switch (type) {

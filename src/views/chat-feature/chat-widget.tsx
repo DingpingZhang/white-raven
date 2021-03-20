@@ -13,7 +13,7 @@ import {
 import { webSocketClient } from 'api/websocket-client';
 import { filter, mergeAll } from 'rxjs/operators';
 import MessageListWidget from './message-list-widget';
-import { useMessageList, useUserInfo } from 'models/store';
+import { useMessageList, useUserInfo } from 'models/logged-in-context';
 import { asyncScheduler, scheduled } from 'rxjs';
 
 type Props = {

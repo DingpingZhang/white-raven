@@ -1,7 +1,7 @@
 import { FriendInfo, GroupInfo } from 'api';
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import { useI18n } from 'i18n';
-import { useContactList, useUserInfo } from 'models/store';
+import { useContactList, useUserInfo } from 'models/logged-in-context';
 import useSearchWithText from 'models/use-search-with-text';
 import { useState } from 'react';
 import SearchWidget from 'views/search-widget';
