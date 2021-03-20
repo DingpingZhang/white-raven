@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import MessageTextItem from './message-text-item';
 import SenderWidget from './sender-widget';
 import {
@@ -11,9 +11,10 @@ import {
   StrangerMessageEvent,
 } from 'api';
 import { webSocketClient } from 'api/websocket-client';
-import { filter } from 'rxjs/operators';
+import { filter, mergeAll } from 'rxjs/operators';
 import MessageListWidget from './message-list-widget';
 import { useMessageList, useUserInfo } from 'models/store';
+import { asyncScheduler, scheduled } from 'rxjs';
 
 type Props = {
   sessionType: SessionType;
@@ -28,9 +29,15 @@ export default function ChatWidget({ sessionType, contactId, sendMessage }: Prop
   useEffect(() => {
     if (!messageList) return;
 
-    const friendToken = webSocketClient
-      .filter<FriendMessageEvent>('friend/message')
-      .pipe(filter(e => e.senderId === contactId || e.recipientId === contactId))
+    const token = scheduled(
+      [
+        webSocketClient.event<FriendMessageEvent>('friend/message'),
+        webSocketClient.event<StrangerMessageEvent>('stranger/message'),
+        webSocketClient.event<GroupMessageEvent>('group/message'),
+      ],
+      asyncScheduler
+    )
+      .pipe(mergeAll(), filter(filterCurrentContact(contactId)))
       .subscribe(e => {
         messageList.pushItem({
           id: e.id,
@@ -40,36 +47,7 @@ export default function ChatWidget({ sessionType, contactId, sendMessage }: Prop
           timestamp: e.timestamp,
         });
       });
-    const strangerToken = webSocketClient
-      .filter<StrangerMessageEvent>('stranger/message')
-      .pipe(filter(e => e.senderId === contactId || e.recipientId === contactId))
-      .subscribe(e => {
-        messageList.pushItem({
-          id: e.id,
-          senderId: e.senderId,
-          recipientId: currentUserId,
-          content: [...e.content],
-          timestamp: e.timestamp,
-        });
-      });
-    const groupToken = webSocketClient
-      .filter<GroupMessageEvent>('group/message')
-      .pipe(filter(e => e.groupId === contactId))
-      .subscribe(e => {
-        messageList.pushItem({
-          id: e.id,
-          senderId: e.senderId,
-          recipientId: currentUserId,
-          content: [...e.content],
-          timestamp: e.timestamp,
-        });
-      });
-
-    return () => {
-      friendToken.unsubscribe();
-      strangerToken.unsubscribe();
-      groupToken.unsubscribe();
-    };
+    return () => token.unsubscribe();
   }, [contactId, currentUserId, messageList]);
 
   return (
@@ -105,4 +83,11 @@ export default function ChatWidget({ sessionType, contactId, sendMessage }: Prop
       </div>
     </div>
   );
+}
+
+function filterCurrentContact(contactId: IdType) {
+  return (e: FriendMessageEvent | StrangerMessageEvent | GroupMessageEvent) =>
+    e.type === 'group/message'
+      ? e.groupId === contactId
+      : e.senderId === contactId || e.recipientId === contactId;
 }

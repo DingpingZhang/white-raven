@@ -21,7 +21,7 @@ export class WebSocketClient {
     this.url = url;
     this.pingInterval = pingInterval;
 
-    this.filter = this.filter.bind(this);
+    this.event = this.event.bind(this);
     this.close = this.close.bind(this);
 
     this.handleError = this.handleError.bind(this);
@@ -30,7 +30,7 @@ export class WebSocketClient {
     this.initialize();
   }
 
-  filter<T extends EventBase>(type: GetEventType<T>): Observable<T> {
+  event<T extends EventBase>(type: GetEventType<T>): Observable<T> {
     return this.observable!.pipe(
       filter(item => item.type === type),
       map(item => item as T)

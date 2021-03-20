@@ -34,7 +34,7 @@ export default function WindowView() {
   useEffect(() => {
     // Subscribe Events
     const friendToken = webSocketClient
-      .filter<FriendMessageEvent>('friend/message')
+      .event<FriendMessageEvent>('friend/message')
       .subscribe(e => {
         setSessionList(prev => {
           if (e.senderId === currentUserId) return prev;
@@ -51,7 +51,7 @@ export default function WindowView() {
         });
       });
     const strangerToken = webSocketClient
-      .filter<StrangerMessageEvent>('stranger/message')
+      .event<StrangerMessageEvent>('stranger/message')
       .subscribe(async e => {
         const stranger = await fallbackHttpApi(() => getStrangerInfo(e.senderId), null);
         if (!stranger) return;
@@ -74,7 +74,7 @@ export default function WindowView() {
           }
         });
       });
-    const groupToken = webSocketClient.filter<GroupMessageEvent>('group/message').subscribe(e => {
+    const groupToken = webSocketClient.event<GroupMessageEvent>('group/message').subscribe(e => {
       setSessionList(prev => {
         const session = prev.find(item => item.contact.id === e.groupId);
         if (!session) {
