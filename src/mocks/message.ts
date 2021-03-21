@@ -32,7 +32,7 @@ const content: MessageContent = [
     type: 'text',
     text: '闭包。\n\n对于大部分需要返回 trait 的',
   },
-  { type: 'at', targetId: 'P1' },
+  { type: 'at', targetId: 'self' },
   {
     type: 'image',
     behavior: 'like-text',

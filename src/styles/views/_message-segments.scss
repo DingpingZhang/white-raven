@@ -1,31 +1,37 @@
 .MessageSegments {
-  user-select: text;
-  max-width: 100%;
+  .MessageSegments__item {
+    user-select: text;
+    max-width: 100%;
 
-  &__msgText {
-    white-space: pre-line;
-  }
-
-  &__msgAt {
-    display: inline-flex;
-    height: 16px;
-    align-items: center;
-    color: white;
-    background-color: var(--secondary-color);
-    border-radius: 8px;
-    padding: 0 8px;
-    margin: 0 4px;
-    user-select: all;
-    cursor: pointer;
-  }
-
-  &__msgImage {
-    &.canBrowse {
-      cursor: pointer;
+    &.msgText {
+      white-space: pre-line;
     }
 
-    &.likeText {
-      vertical-align: text-bottom;
+    &.msgAt {
+      display: inline-flex;
+      height: 16px;
+      align-items: center;
+      color: white;
+      background-color: var(--primary-color);
+      border-radius: 8px;
+      padding: 0 8px;
+      margin: 0 4px;
+      user-select: all;
+      cursor: pointer;
+
+      &.atMySelf {
+        background-color: var(--secondary-color);
+      }
+    }
+
+    &.msgImage {
+      &.canBrowse {
+        cursor: pointer;
+      }
+
+      &.likeText {
+        vertical-align: text-bottom;
+      }
     }
   }
 }

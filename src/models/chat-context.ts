@@ -1,6 +1,6 @@
 import { FriendInfo, GroupInfo, GroupMemberInfo, IdType, SessionType } from 'api';
 import { useConstant } from 'hooks';
-import { createContext, useCallback, useContext } from 'react';
+import { createContext, useCallback, useContext, useMemo } from 'react';
 import { Subject } from 'rxjs';
 
 type ImageEventType = {
@@ -65,4 +65,25 @@ export function useGetContactName() {
     },
     [getContactById]
   );
+}
+
+export function useSenderInfo(senderId: IdType | undefined) {
+  const { sessionType } = useContext(ChatContext);
+  const { getContactById } = useContext(ChatContext);
+  const getContactName = useGetContactName();
+
+  const avatar = useMemo(() => {
+    if (!senderId) {
+      return undefined;
+    }
+
+    const contact = getContactById(senderId);
+    return contact ? contact.avatar : undefined;
+  }, [getContactById, senderId]);
+  const name = useMemo(
+    () => (sessionType === 'group' && senderId ? getContactName(senderId) : undefined),
+    [sessionType, getContactName, senderId]
+  );
+
+  return { avatar, name };
 }

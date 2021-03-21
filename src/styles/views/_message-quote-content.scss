@@ -1,0 +1,32 @@
+$quote-avatar-size: 18px;
+
+.MessageQuoteContent {
+  .MessageQuoteContent__quoteArea {
+    background-color: var(--surface-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    padding: 8px;
+    margin-bottom: 12px;
+
+    .MessageQuoteContent__quoteTitleBar {
+      display: grid;
+      grid-template-columns: auto 12px 1fr auto;
+      align-items: center;
+
+      .MessageQuoteContent__avatar {
+        width: $quote-avatar-size;
+        height: $quote-avatar-size;
+        border-radius: $quote-avatar-size / 2;
+      }
+
+      .MessageQuoteContent__name {
+        grid-column: 3 / 4;
+      }
+
+      .MessageQuoteContent__timestamp {
+        font-size: 10px;
+        color: var(--fore-secondary-color);
+      }
+    }
+  }
+}

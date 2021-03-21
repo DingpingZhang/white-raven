@@ -6,8 +6,10 @@ import {
   AtMessageSegment,
   MessageContent,
 } from 'api';
+import classNames from 'classnames';
 import { useDialogBuilder } from 'components/dialog';
 import { useAtClicked, useGetContactName, useImageLoaded } from 'models/chat-context';
+import { useUserInfo } from 'models/logged-in-context';
 import ImageExplorerDialog from 'views/dialogs/image-explorer-dialog';
 
 const IMAGE_MAX_SIZE = 300;
@@ -36,16 +38,20 @@ export function MessageSegments({ segments }: Props) {
 }
 
 function TextSegment({ text }: TextMessageSegment) {
-  return <span className="MessageSegments__msgText">{text}</span>;
+  return <span className="MessageSegments__item msgText">{text}</span>;
 }
 
 function AtSegment({ targetId }: AtMessageSegment) {
   const atClicked = useAtClicked();
   const getContactName = useGetContactName();
+  const { id: currentUserId } = useUserInfo();
 
+  const atClass = classNames('MessageSegments__item', 'msgAt', {
+    atMySelf: targetId === currentUserId,
+  });
   return (
     <span
-      className="MessageSegments__msgAt"
+      className={atClass}
       onClick={() => {
         atClicked.next({ targetId });
       }}
@@ -60,7 +66,7 @@ function ImageSegment({ imageId, behavior, width, height }: ImageMessageSegment)
 
   return (
     <img
-      className={`MessageSegments__msgImage ${convertImageBehaviorToClassName(behavior)}`}
+      className={`MessageSegments__item msgImage ${convertImageBehaviorToClassName(behavior)}`}
       src={imageUrl}
       alt={`[#${imageId}]`}
       width={behavior === 'like-text' ? width : undefined}
