@@ -7,7 +7,14 @@ import {
 } from 'mocks/contact';
 import { getMockMessages } from 'mocks/message';
 import { getMockSessions } from 'mocks/session';
-import { FriendInfo, GroupInfo, IdType, PersonInfo } from 'api/basic-types';
+import {
+  FacePackage,
+  FriendInfo,
+  GroupInfo,
+  IdType,
+  ImageMessageSegment,
+  PersonInfo,
+} from 'api/basic-types';
 import { Ok, Err, MessageBody, MessageResponse } from 'api/http-types';
 
 export type CommonErr = 'connection-timeout';
@@ -33,6 +40,43 @@ export function getMockResult<T>(result: T): Ok<T> | Err<CommonErr> {
     code: 200,
     content: result,
   };
+}
+
+export async function getFacePackages() {
+  return getMockResult<ReadonlyArray<FacePackage>>([{ displayName: 'basic-face', id: '123' }]);
+}
+
+export async function getFacePackageById(id: IdType) {
+  return getMockResult<ReadonlyArray<ImageMessageSegment>>([
+    {
+      type: 'image',
+      imageId: require('mocks/face/0.gif').default,
+      behavior: 'like-text',
+      width: 24,
+      height: 24,
+    },
+    {
+      type: 'image',
+      imageId: require('mocks/face/1.gif').default,
+      behavior: 'like-text',
+      width: 24,
+      height: 24,
+    },
+    {
+      type: 'image',
+      imageId: require('mocks/face/2.gif').default,
+      behavior: 'like-text',
+      width: 24,
+      height: 24,
+    },
+    {
+      type: 'image',
+      imageId: require('mocks/face/3.gif').default,
+      behavior: 'like-text',
+      width: 24,
+      height: 24,
+    },
+  ]);
 }
 
 // ********************************************************

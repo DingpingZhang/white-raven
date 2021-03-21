@@ -39,40 +39,6 @@
       color: var(--fore-on-primary-primary-color);
       background-color: var(--primary-color);
     }
-
-    .MessageItem__messageContent {
-      .MessageItem__msgSegment {
-        user-select: text;
-        max-width: 100%;
-
-        &.msgText {
-          white-space: pre-line;
-        }
-
-        &.msgAt {
-          display: inline-flex;
-          height: 16px;
-          align-items: center;
-          color: white;
-          background-color: var(--secondary-color);
-          border-radius: 8px;
-          padding: 0 8px;
-          margin: 0 4px;
-          user-select: all;
-          cursor: pointer;
-        }
-
-        &.msgImage {
-          &.canBrowse {
-            cursor: pointer;
-          }
-
-          &.likeText {
-            vertical-align: text-bottom;
-          }
-        }
-      }
-    }
   }
 
   .MessageItem__timestamp {

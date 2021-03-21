@@ -1,60 +1,27 @@
 import classNames from 'classnames';
 import { toDisplayTimestamp } from 'helpers';
-import {
-  AtMessageSegment,
-  getImageUrl,
-  IdType,
-  ImageBehavior,
-  ImageMessageSegment,
-  MessageContent,
-  TextMessageSegment,
-} from 'api';
-import { useDialogBuilder } from 'components/dialog';
-import ImageExplorerDialog from 'views/dialogs/image-explorer-dialog';
-import { useCallback, useContext, useMemo } from 'react';
-import { useContactList, useGroupMemberList } from 'models/logged-in-context';
-import { ChatContext, useAtClicked, useImageLoaded } from 'models/chat-context';
-
-const IMAGE_MAX_SIZE = 300;
+import { Message } from 'api';
+import { useContext, useMemo } from 'react';
+import { useUserInfo } from 'models/logged-in-context';
+import { ChatContext, useAtClicked, useGetContactName } from 'models/chat-context';
+import MessageNormalContent from './message-normal-content';
+import MessageQuoteContent from './message-quote-content';
 
 type Props = {
-  senderId: IdType;
-  content: MessageContent;
-  timestamp: number;
-  highlight?: boolean;
+  message: Message;
   ref?: (element: HTMLElement | null) => void;
 };
 
-type AtSegmentProps = AtMessageSegment & {
-  getContactName: (id: IdType) => string;
-};
+export default function MessageItem({ message, ref }: Props) {
+  const { sessionType } = useContext(ChatContext);
 
-export default function MessageItem({ ref, senderId, content, timestamp, highlight }: Props) {
-  const { sessionType, contactId } = useContext(ChatContext);
-  const groupMemberList = useGroupMemberList(contactId);
-  const contactList = useContactList();
   const atClicked = useAtClicked();
 
-  const getContactById = useCallback(
-    (id: IdType) => {
-      const contact = contactList.find(item => item.id === id);
-      if (contact) {
-        return contact;
-      } else {
-        const groupMember = groupMemberList.find(item => item.id === id);
-        return groupMember;
-      }
-    },
-    [contactList, groupMemberList]
-  );
-  const getContactName = useCallback(
-    (id: IdType) => {
-      const contact = getContactById(id);
-      // FIXME: Don't use any.
-      return contact ? ((contact as any).remark as string) || contact.name : id;
-    },
-    [getContactById]
-  );
+  const { getContactById } = useContext(ChatContext);
+  const getContactName = useGetContactName();
+
+  const { senderId, timestamp } = message;
+  const { id: currentUserId } = useUserInfo();
   const avatar = useMemo(() => {
     const contact = getContactById(senderId);
     return contact ? contact.avatar : undefined;
@@ -63,8 +30,21 @@ export default function MessageItem({ ref, senderId, content, timestamp, highlig
     () => (sessionType === 'group' ? getContactName(senderId) : undefined),
     [sessionType, getContactName, senderId]
   );
+  const messageContent = useMemo(() => {
+    switch (message.type) {
+      case 'normal':
+        return <MessageNormalContent message={message} />;
+      case 'quote':
+        return <MessageQuoteContent message={message} />;
+      default:
+        // TODO: 写一个更好看的控件来处理不支持的消息类型。
+        return <div>Not Supported Message: {message}</div>;
+    }
+  }, [message]);
 
-  const messageBoxClass = classNames('MessageItem__messageArea', { highlight });
+  const messageBoxClass = classNames('MessageItem__messageArea', {
+    highlight: senderId === currentUserId,
+  });
 
   return (
     <div ref={ref} className="MessageItem">
@@ -80,80 +60,9 @@ export default function MessageItem({ ref, senderId, content, timestamp, highlig
         }}
       />
       <div className={messageBoxClass}>
-        <div className="MessageItem__messageContent">
-          {content.map((message, index) => {
-            switch (message.type) {
-              case 'text':
-                return <TextSegment key={`${index}-${message.text}`} {...message} />;
-              case 'at':
-                return (
-                  <AtSegment
-                    key={`${index}-${message.targetId}`}
-                    {...message}
-                    getContactName={getContactName}
-                  />
-                );
-              case 'image':
-                return <ImageSegment key={`${index}-${message.imageId}`} {...message} />;
-              default:
-                return null;
-            }
-          })}
-        </div>
+        <div className="MessageItem__messageContent">{messageContent}</div>
       </div>
       <span className="MessageItem__timestamp">{toDisplayTimestamp(timestamp)}</span>
     </div>
   );
-}
-
-function TextSegment({ text }: TextMessageSegment) {
-  return <span className="MessageItem__msgSegment msgText">{text}</span>;
-}
-
-function AtSegment({ targetId, getContactName }: AtSegmentProps) {
-  const atClicked = useAtClicked();
-
-  return (
-    <span
-      className="MessageItem__msgSegment msgAt"
-      onClick={() => {
-        atClicked.next({ targetId });
-      }}
-    >{`@${getContactName(targetId)}`}</span>
-  );
-}
-
-function ImageSegment({ imageId, behavior, width, height }: ImageMessageSegment) {
-  const dialogBuilder = useDialogBuilder();
-  const imageLoaded = useImageLoaded();
-  const imageUrl = getImageUrl(imageId);
-
-  return (
-    <img
-      className={`MessageItem__msgSegment msgImage ${convertImageBehaviorToClassName(behavior)}`}
-      src={imageUrl}
-      alt={`[#${imageId}]`}
-      width={behavior === 'like-text' ? width : undefined}
-      height={behavior === 'like-text' ? height : undefined}
-      style={{ maxHeight: IMAGE_MAX_SIZE }}
-      onClick={async () => {
-        if (behavior === 'can-browse') {
-          await dialogBuilder
-            .build<void>(close => <ImageExplorerDialog close={close} imageUrl={imageUrl} />)
-            .show();
-        }
-      }}
-      onLoad={() => imageLoaded.next({ imageId })}
-    />
-  );
-}
-
-// TODO: Replace with more general method.
-function convertImageBehaviorToClassName(behavior: ImageBehavior) {
-  switch (behavior) {
-    case 'can-browse':
-      return 'canBrowse';
-    case 'like-text':
-      return 'likeText';
-  }
 }

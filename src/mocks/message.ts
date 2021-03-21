@@ -1,4 +1,4 @@
-import { Message } from 'api';
+import { Message, MessageContent } from 'api';
 import { uuidv4 } from 'helpers';
 import { getMockItems } from './common';
 
@@ -9,41 +9,77 @@ export function getMockMessages(count: number): ReadonlyArray<Message> {
   }));
 }
 
+const content: MessageContent = [
+  {
+    type: 'text',
+    text: '闭包表现为 trait，这意味着不能直接返回',
+  },
+  {
+    type: 'image',
+    behavior: 'like-text',
+    imageId: require('mocks/face/3.gif').default,
+    width: 24,
+    height: 24,
+  },
+  {
+    type: 'image',
+    behavior: 'like-text',
+    imageId: require('mocks/face/1.gif').default,
+    width: 24,
+    height: 24,
+  },
+  {
+    type: 'text',
+    text: '闭包。\n\n对于大部分需要返回 trait 的',
+  },
+  { type: 'at', targetId: 'P1' },
+  {
+    type: 'image',
+    behavior: 'like-text',
+    imageId: require('mocks/face/0.gif').default,
+    width: 24,
+    height: 24,
+  },
+  {
+    type: 'text',
+    text: '情况，可以使用实现了期望',
+  },
+  {
+    type: 'image',
+    behavior: 'like-text',
+    imageId: require('mocks/face/2.gif').default,
+    width: 24,
+    height: 24,
+  },
+  {
+    type: 'text',
+    text:
+      '返回的 trait 的具体类型来替代函数的返回值。但是这不能用于闭包，因为他们没有一个可返回的具体类型；例如',
+  },
+  { type: 'at', targetId: 'P2' },
+  {
+    type: 'text',
+    text: '不允许使用函数指针 fn 作为返回值类型。',
+  },
+];
+
 export const MESSAGE_LIST: ReadonlyArray<Message> = [
+  {
+    type: 'quote',
+    id: '',
+    senderId: 'P1',
+    recipientId: 'self',
+    content: [{ type: 'text', text: 'Rust 是世界上最好的语言。' }],
+    prevId: '',
+    quote: content,
+    timestamp: 1610977530419,
+  },
   {
     type: 'normal',
     id: '',
     senderId: 'P0',
     recipientId: 'self',
-    content: [
-      {
-        type: 'text',
-        text: '闭包表现为 trait，这意味着不能直接返回',
-      },
-      { type: 'image', behavior: 'like-text', imageId: require('mocks/face/3.gif').default },
-      { type: 'image', behavior: 'like-text', imageId: require('mocks/face/1.gif').default },
-      {
-        type: 'text',
-        text: '闭包。\n\n对于大部分需要返回 trait 的',
-      },
-      { type: 'at', targetId: 'P1' },
-      { type: 'image', behavior: 'like-text', imageId: require('mocks/face/0.gif').default },
-      {
-        type: 'text',
-        text: '情况，可以使用实现了期望',
-      },
-      { type: 'image', behavior: 'like-text', imageId: require('mocks/face/2.gif').default },
-      {
-        type: 'text',
-        text:
-          '返回的 trait 的具体类型来替代函数的返回值。但是这不能用于闭包，因为他们没有一个可返回的具体类型；例如',
-      },
-      { type: 'at', targetId: 'P2' },
-      {
-        type: 'text',
-        text: '不允许使用函数指针 fn 作为返回值类型。',
-      },
-    ],
+    content,
     timestamp: 1610977530419,
   },
   {

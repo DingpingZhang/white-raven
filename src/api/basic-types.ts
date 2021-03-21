@@ -107,7 +107,8 @@ export type GroupMemberInfo = PersonInfo & {
 };
 
 export function isGroupInfo(info: FriendInfo | GroupInfo): info is GroupInfo {
-  return (info as GroupInfo).memberCapacity !== undefined;
+  const groupInfo = info as GroupInfo;
+  return groupInfo && groupInfo.memberCapacity !== undefined;
 }
 
 // ***************************************************

@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { GlobalContext, useGlobalContextStore } from './global-context';
 import { LoggedInContext, useLoggedInContextStore } from './logged-in-context';
-import { ChatContext, useChatContextStore } from './chat-context';
+import { ChatContext, GetContactById, useChatContextStore } from './chat-context';
 import { SessionType, IdType } from 'api';
 
 type ChildrenProps = {
@@ -10,6 +10,7 @@ type ChildrenProps = {
 type ChatContextRootProps = ChildrenProps & {
   sessionType: SessionType;
   contactId: IdType;
+  getContactById: GetContactById;
 };
 
 export function GlobalContextRoot({ children }: ChildrenProps) {
@@ -24,8 +25,13 @@ export function LoggedInContextRoot({ children }: ChildrenProps) {
   return <LoggedInContext.Provider value={store}>{children}</LoggedInContext.Provider>;
 }
 
-export function ChatContextRoot({ children, sessionType, contactId }: ChatContextRootProps) {
-  const store = useChatContextStore(sessionType, contactId);
+export function ChatContextRoot({
+  children,
+  sessionType,
+  contactId,
+  getContactById,
+}: ChatContextRootProps) {
+  const store = useChatContextStore(sessionType, contactId, getContactById);
 
   return <ChatContext.Provider value={store}>{children}</ChatContext.Provider>;
 }
