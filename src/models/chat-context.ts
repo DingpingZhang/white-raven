@@ -1,4 +1,4 @@
-import { IdType } from 'api';
+import { IdType, SessionType } from 'api';
 import { useConstant } from 'hooks';
 import { createContext, useContext } from 'react';
 import { Subject } from 'rxjs';
@@ -12,6 +12,8 @@ type AtEventType = {
 };
 
 export type ChatContextType = {
+  sessionType: SessionType;
+  contactId: IdType;
   imageLoaded: Subject<ImageEventType>;
   atClicked: Subject<AtEventType>;
 };
@@ -22,8 +24,10 @@ export const ChatContext = createContext<ChatContextType>(undefined as any);
 // Store
 // ********************************************************************
 
-export function useChatContextStore() {
+export function useChatContextStore(sessionType: SessionType, contactId: IdType) {
   return useConstant<ChatContextType>(() => ({
+    sessionType,
+    contactId,
     imageLoaded: new Subject<ImageEventType>(),
     atClicked: new Subject<AtEventType>(),
   }));

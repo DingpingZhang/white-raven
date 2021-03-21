@@ -19,6 +19,8 @@
 
     @include common.circle(24px);
     align-self: start;
+
+    cursor: pointer;
   }
 
   .MessageTextItem__messageArea {

@@ -52,7 +52,7 @@ export default function ChatWidget(props: Props) {
   }, [contactId, messageList]);
 
   return (
-    <ChatContextRoot>
+    <ChatContextRoot sessionType={sessionType} contactId={contactId}>
       <InnerChatWidget {...props} />
     </ChatContextRoot>
   );
@@ -70,8 +70,6 @@ function InnerChatWidget({ sessionType, contactId, sendMessage }: Props) {
           renderItem={({ id, senderId, content, timestamp }) => (
             <MessageTextItem
               key={id}
-              contactType={sessionType}
-              contactId={contactId}
               senderId={senderId}
               content={content}
               timestamp={timestamp}

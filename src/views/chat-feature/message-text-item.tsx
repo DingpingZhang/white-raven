@@ -11,15 +11,13 @@ import {
 } from 'api';
 import { useDialogBuilder } from 'components/dialog';
 import ImageExplorerDialog from 'views/dialogs/image-explorer-dialog';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 import { useContactList, useGroupMemberList } from 'models/logged-in-context';
-import { useAtClicked, useImageLoaded } from 'models/chat-context';
+import { ChatContext, useAtClicked, useImageLoaded } from 'models/chat-context';
 
 const IMAGE_MAX_SIZE = 300;
 
 type Props = {
-  contactType: 'friend' | 'stranger' | 'group';
-  contactId: IdType;
   senderId: IdType;
   content: MessageContent;
   timestamp: number;
@@ -31,19 +29,11 @@ type AtSegmentProps = AtMessageSegment & {
   getContactName: (id: IdType) => string;
 };
 
-export default function MessageTextItem({
-  ref,
-  contactType,
-  contactId,
-  senderId,
-  content,
-  timestamp,
-  highlight,
-}: Props) {
-  const messageBoxClass = classNames('MessageTextItem__messageArea', { highlight });
-
+export default function MessageTextItem({ ref, senderId, content, timestamp, highlight }: Props) {
+  const { sessionType, contactId } = useContext(ChatContext);
   const groupMemberList = useGroupMemberList(contactId);
   const contactList = useContactList();
+  const atClicked = useAtClicked();
 
   const getContactById = useCallback(
     (id: IdType) => {
@@ -70,16 +60,25 @@ export default function MessageTextItem({
     return contact ? contact.avatar : undefined;
   }, [getContactById, senderId]);
   const senderName = useMemo(
-    () => (contactType === 'group' ? getContactName(senderId) : undefined),
-    [contactType, getContactName, senderId]
+    () => (sessionType === 'group' ? getContactName(senderId) : undefined),
+    [sessionType, getContactName, senderId]
   );
+
+  const messageBoxClass = classNames('MessageTextItem__messageArea', { highlight });
 
   return (
     <div ref={ref} className="MessageTextItem">
       {senderName ? (
         <span className="MessageTextItem__senderName text tip-secondary">{senderName}</span>
       ) : null}
-      <img className="MessageTextItem__avatar" src={avatar} alt="avatar" />
+      <img
+        className="MessageTextItem__avatar"
+        src={avatar}
+        alt="avatar"
+        onClick={() => {
+          atClicked.next({ targetId: senderId });
+        }}
+      />
       <div className={messageBoxClass}>
         <div className="MessageTextItem__messageContent">
           {content.map((message, index) => {
