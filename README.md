@@ -1,10 +1,10 @@
-# White Raven ![version](https://img.shields.io/badge/White%20Raven-0.1.0-yellow) ![build state](https://img.shields.io/badge/build-passing-brightgreen)
+# White Raven ![version](https://img.shields.io/badge/White%20Raven-0.1.0-yellow) ![build state](https://img.shields.io/badge/build-passing-brightgreen) ![license](https://img.shields.io/badge/license-AGPL--3.0-orange)
 
 White Raven 是一个由 [React](https://reactjs.org/) 实现的即时通讯（IM）应用，其名取自[《冰与火之歌》](https://awoiaf.westeros.org/index.php/White_raven)。
 
 目前，后端仍处于开发中，本项目运行后将使用 Mock Data 提供预览效果。
 
-## （~~画饼~~）路线
+## （~~画饼~~）TODO
 
 - [ ] 文档
   - [x] 提供初步可用的[即时通讯 API 文档](./docs/api-document.md)，用户可以根据该 API 自行提供后端程序，包括适配一些现有的即时通讯平台。
@@ -17,11 +17,13 @@ White Raven 是一个由 [React](https://reactjs.org/) 实现的即时通讯（I
   - [x] 私聊、群聊相关界面；
   - [ ] 富文本输入框；
   - [x] 设置窗口（已完成国际化、主题切换的支持，但 UI 上未提供良好的入口点）；
-  - [ ] 表情包管理，图片、文件的发送与接受；
+  - [x] 表情包管理;
+  - [ ] 图片、文件的发送与接受；
 - [ ] 提供独立的后端支持
-  - [ ] 实现注册、登录等鉴权接口；
-  - [ ] 实现私聊、群聊通讯；
-  - [ ] 实现表情包上传、下载与发送；
+  - [x] 实现注册、登录等鉴权接口；
+  - [x] 实现私聊、群聊通讯；
+  - [ ] 实现表情包上传;
+  - [x] 实现表情包下载与发送；
   - [ ] 实现文件传输；
   - [ ] 实现语音、视频发送；
   - [ ] 实现语音、视频通话；
