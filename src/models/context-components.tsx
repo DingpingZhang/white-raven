@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { GlobalContext, useGlobalContextStore } from './global-context';
 import { LoggedInContext, useLoggedInContextStore } from './logged-in-context';
-import { MessagesContext, useMessagesContextStore } from './messages-context';
+import { ChatContext, useChatContextStore } from './chat-context';
 
 export function GlobalContextRoot({ children }: { children: ReactNode }) {
   const store = useGlobalContextStore();
@@ -15,8 +15,8 @@ export function LoggedInContextRoot({ children }: { children: ReactNode }) {
   return <LoggedInContext.Provider value={store}>{children}</LoggedInContext.Provider>;
 }
 
-export function MessagesContextRoot({ children }: { children: ReactNode }) {
-  const store = useMessagesContextStore();
+export function ChatContextRoot({ children }: { children: ReactNode }) {
+  const store = useChatContextStore();
 
-  return <MessagesContext.Provider value={store}>{children}</MessagesContext.Provider>;
+  return <ChatContext.Provider value={store}>{children}</ChatContext.Provider>;
 }

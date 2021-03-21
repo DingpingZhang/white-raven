@@ -7,7 +7,7 @@ import { ImageMessageSegment, MessageContent, MessageSegment } from 'api';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import FacePanelPopupButton from './face-panel-popup-button';
 import { FaceSet, LoggedInContext, useFacePackages } from 'models/logged-in-context';
-import { useAtClicked } from 'models/messages-context';
+import { useAtClicked } from 'models/chat-context';
 
 const atMarkup = '@';
 const imageMarkup = '#';

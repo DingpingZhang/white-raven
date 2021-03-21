@@ -15,7 +15,7 @@ import { filter, mergeAll } from 'rxjs/operators';
 import MessageListWidget from './message-list-widget';
 import { useMessageList, useUserInfo } from 'models/logged-in-context';
 import { asyncScheduler, scheduled } from 'rxjs';
-import { MessagesContextRoot } from 'models/context-components';
+import { ChatContextRoot } from 'models/context-components';
 
 type Props = {
   sessionType: SessionType;
@@ -52,9 +52,9 @@ export default function ChatWidget(props: Props) {
   }, [contactId, messageList]);
 
   return (
-    <MessagesContextRoot>
+    <ChatContextRoot>
       <InnerChatWidget {...props} />
-    </MessagesContextRoot>
+    </ChatContextRoot>
   );
 }
 

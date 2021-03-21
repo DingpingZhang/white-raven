@@ -11,19 +11,19 @@ type AtEventType = {
   targetId: IdType;
 };
 
-export type MessagesContextType = {
+export type ChatContextType = {
   imageLoaded: Subject<ImageEventType>;
   atClicked: Subject<AtEventType>;
 };
 
-export const MessagesContext = createContext<MessagesContextType>(undefined as any);
+export const ChatContext = createContext<ChatContextType>(undefined as any);
 
 // ********************************************************************
 // Store
 // ********************************************************************
 
-export function useMessagesContextStore() {
-  return useConstant<MessagesContextType>(() => ({
+export function useChatContextStore() {
+  return useConstant<ChatContextType>(() => ({
     imageLoaded: new Subject<ImageEventType>(),
     atClicked: new Subject<AtEventType>(),
   }));
@@ -34,11 +34,11 @@ export function useMessagesContextStore() {
 // ********************************************************************
 
 export function useImageLoaded() {
-  const ctx = useContext(MessagesContext);
+  const ctx = useContext(ChatContext);
   return ctx.imageLoaded;
 }
 
 export function useAtClicked() {
-  const ctx = useContext(MessagesContext);
+  const ctx = useContext(ChatContext);
   return ctx.atClicked;
 }

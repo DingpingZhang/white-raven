@@ -13,7 +13,7 @@ import { useDialogBuilder } from 'components/dialog';
 import ImageExplorerDialog from 'views/dialogs/image-explorer-dialog';
 import { useCallback, useMemo } from 'react';
 import { useContactList, useGroupMemberList } from 'models/logged-in-context';
-import { useAtClicked, useImageLoaded } from 'models/messages-context';
+import { useAtClicked, useImageLoaded } from 'models/chat-context';
 
 const IMAGE_MAX_SIZE = 300;
 
