@@ -20,7 +20,12 @@ import { useEffect } from 'react';
 import { webSocketClient } from 'api/websocket-client';
 import { produce } from 'immer';
 import { removeAll } from 'helpers/list-helpers';
-import { useUserInfo, useContactList, useSessionList, fallbackHttpApi } from 'models/logged-in-context';
+import {
+  useUserInfo,
+  useContactList,
+  useSessionList,
+  fallbackHttpApi,
+} from 'models/logged-in-context';
 import { buildSettingsDialog } from './dialogs/settings-dialog';
 
 export default function WindowView() {
@@ -33,31 +38,31 @@ export default function WindowView() {
 
   useEffect(() => {
     // Subscribe Events
-    const friendToken = webSocketClient
-      .event<FriendMessageEvent>('friend/message')
-      .subscribe(e => {
-        setSessionList(prev => {
-          if (e.senderId === currentUserId) return prev;
+    const friendToken = webSocketClient.event<FriendMessageEvent>('friend/message').subscribe(e => {
+      setSessionList(prev => {
+        const { senderId } = e.message;
+        if (senderId === currentUserId) return prev;
 
-          const session = prev.find(item => item.contact.id === e.senderId);
-          if (!session) {
-            const contact = contactList.find(item => item.id === e.senderId)!;
-            return produce(prev, draft => {
-              draft.unshift({ type: 'friend', contact: contact, unreadCount: 1 });
-            });
-          }
+        const session = prev.find(item => item.contact.id === senderId);
+        if (!session) {
+          const contact = contactList.find(item => item.id === senderId)!;
+          return produce(prev, draft => {
+            draft.unshift({ type: 'friend', contact: contact, unreadCount: 1 });
+          });
+        }
 
-          return prev;
-        });
+        return prev;
       });
+    });
     const strangerToken = webSocketClient
       .event<StrangerMessageEvent>('stranger/message')
       .subscribe(async e => {
-        const stranger = await fallbackHttpApi(() => getStrangerInfo(e.senderId), null);
+        const { senderId } = e.message;
+        const stranger = await fallbackHttpApi(() => getStrangerInfo(senderId), null);
         if (!stranger) return;
 
         setSessionList(prev => {
-          const session = prev.find(item => item.contact.id === e.senderId);
+          const session = prev.find(item => item.contact.id === senderId);
           if (session) {
             return produce(prev, draft => {
               removeAll(draft, item => item.contact.id === session.contact.id);

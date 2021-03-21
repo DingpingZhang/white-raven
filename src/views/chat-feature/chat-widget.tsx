@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import MessageTextItem from './message-text-item';
+import MessageItem from './message-item';
 import SenderWidget from './sender-widget';
 import {
   FriendMessageEvent,
@@ -39,15 +39,7 @@ export default function ChatWidget(props: Props) {
       asyncScheduler
     )
       .pipe(mergeAll(), filter(filterCurrentContact(contactId)))
-      .subscribe(e => {
-        messageList.pushItem({
-          id: e.id,
-          senderId: e.senderId,
-          recipientId: e.recipientId,
-          content: [...e.content],
-          timestamp: e.timestamp,
-        });
-      });
+      .subscribe(e => messageList.pushItem(e.message));
     return () => token.unsubscribe();
   }, [contactId, messageList]);
 
@@ -68,7 +60,7 @@ function InnerChatWidget({ sessionType, contactId, sendMessage }: Props) {
         <MessageListWidget
           messageList={messageList}
           renderItem={({ id, senderId, content, timestamp }) => (
-            <MessageTextItem
+            <MessageItem
               key={id}
               senderId={senderId}
               content={content}
@@ -93,8 +85,10 @@ function InnerChatWidget({ sessionType, contactId, sendMessage }: Props) {
 }
 
 function filterCurrentContact(contactId: IdType) {
-  return (e: FriendMessageEvent | StrangerMessageEvent | GroupMessageEvent) =>
-    e.type === 'group/message'
+  return (e: FriendMessageEvent | StrangerMessageEvent | GroupMessageEvent) => {
+    const { senderId, recipientId } = e.message;
+    return e.type === 'group/message'
       ? e.groupId === contactId
-      : e.senderId === contactId || e.recipientId === contactId;
+      : senderId === contactId || recipientId === contactId;
+  };
 }

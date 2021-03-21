@@ -1,6 +1,6 @@
 @use '../mixins/common';
 
-.MessageTextItem {
+.MessageItem {
   display: grid;
   grid-template-columns: auto 12px auto 1fr;
   grid-template-rows: auto auto 4px auto;
@@ -8,13 +8,13 @@
   padding: 10px 0;
   box-sizing: border-box;
 
-  .MessageTextItem__senderName {
+  .MessageItem__senderName {
     grid-area: 1 / 3 / 2 / 4;
 
     margin-bottom: 4px;
   }
 
-  .MessageTextItem__avatar {
+  .MessageItem__avatar {
     grid-area: 1 / 1 / 5 / 2;
 
     @include common.circle(24px);
@@ -23,7 +23,7 @@
     cursor: pointer;
   }
 
-  .MessageTextItem__messageArea {
+  .MessageItem__messageArea {
     grid-area: 2 / 3 / 3 / 4;
 
     border-radius: 4px 16px 16px 16px;
@@ -40,8 +40,8 @@
       background-color: var(--primary-color);
     }
 
-    .MessageTextItem__messageContent {
-      .MessageTextItem__msgSegment {
+    .MessageItem__messageContent {
+      .MessageItem__msgSegment {
         user-select: text;
         max-width: 100%;
 
@@ -75,7 +75,7 @@
     }
   }
 
-  .MessageTextItem__timestamp {
+  .MessageItem__timestamp {
     grid-area: 4 / 3 / 5 / 4;
 
     font-size: 10px;

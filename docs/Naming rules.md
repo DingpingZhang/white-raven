@@ -17,7 +17,7 @@
       2. 正确例子：`GroupSessionView__memberTitle`、`GroupSessionView__chatTitle`。
 3. `modifier`：修饰符，表示元素的状态或类型，如：`selected`、`highlight`，采用 **小驼峰命名法**。可以独立存在，不限个数。由于其不与元素主题名连接，为了清晰表达其所属类别，可以加上类别前缀，也采用 **小驼峰命名法**，类别前缀与修饰符名之间用单个短线分隔开，如：`msgType-text`、`msgType-at`、`text-tipSecondary`、`text-ellipsis`。不采用原 BEM 建议的双短线 `--` 隔开法。理由是：
    1. 不好看；
-   2. 修饰符可能有多个，如果用 `--` 与元素主体名连接在一起，那不还得考虑排序问题？而单独的 class name 是具有无序性的。比如：`MessageTextItem__msgSegment--msgType-at--selected` 和 `MessageTextItem__msgSegment--selected--msgType-at`，是两个不同的 class name，但说它们的含义不一样，这好吗？这不好。
+   2. 修饰符可能有多个，如果用 `--` 与元素主体名连接在一起，那不还得考虑排序问题？而单独的 class name 是具有无序性的。比如：`MessageItem__msgSegment--msgType-at--selected` 和 `MessageItem__msgSegment--selected--msgType-at`，是两个不同的 class name，但说它们的含义不一样，这好吗？这不好。
    3. 有些修饰符是比较通用的，应当提取出来复用，比如：`text-ellipsis`，可以单独提取出来随意组合，岂不美哉？
 
 综上，在 class list 中，**有且仅有一个**以大写字母开头的名称主体，若该名词主体不含 `__` 则必为一个独立的 React Component；而以小写字母开头的 class name 必为 `modifier`。

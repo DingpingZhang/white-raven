@@ -23,17 +23,20 @@ export default function PrivateSessionView({ session }: Props) {
       <ChatWidget
         sessionType={session.type}
         contactId={session.contact.id}
-        sendMessage={async content => {
+        sendMessage={async messageContent => {
           const send = session.type === 'friend' ? sendMessageToFriend : sendMessageToStranger;
 
-          const response = await send(session.contact.id, { content });
+          const response = await send(session.contact.id, {
+            content: { type: 'normal', content: messageContent },
+          });
           if (response.code === 200) {
             const { id: messageId, timestamp } = response.content;
             return {
+              type: 'normal',
               id: messageId,
               senderId: id,
               recipientId: session.contact.id,
-              content,
+              content: messageContent,
               timestamp,
             };
           } else {

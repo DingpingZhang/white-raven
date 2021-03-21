@@ -1,4 +1,4 @@
-import { Message, IdType } from './basic-types';
+import { IdType, Message } from './basic-types';
 
 // Base Types:
 
@@ -19,25 +19,29 @@ type GroupDualEventBase = GroupUnaryEventBase & {
 
 // 1. Message Add (Push)
 
-export type FriendMessageEvent = Message & {
+export type FriendMessageEvent = {
   type: 'friend/message';
+  message: Message;
 };
 
-export type StrangerMessageEvent = Message & {
+export type StrangerMessageEvent = {
   type: 'stranger/message';
   fromGroupId: IdType;
+  message: Message;
 };
 
-export type GroupMessageEvent = Message & {
+export type GroupMessageEvent = {
   type: 'group/message';
   groupId: IdType;
+  message: Message;
 };
 
-export type GroupAnonymousMessageEvent = Message & {
+export type GroupAnonymousMessageEvent = {
   type: 'group/message/anonymous';
   groupId: IdType;
   nickname: string;
   flag: string;
+  message: Message;
 };
 
 // 2. Message Remove (Recall)

@@ -30,13 +30,38 @@ export type MessageSegment = TextMessageSegment | ImageMessageSegment | AtMessag
 
 export type MessageContent = ReadonlyArray<MessageSegment>;
 
-export type Message = {
+export type MessageBase = {
+  content: MessageContent;
+};
+
+type SentMessageFields = {
   id: IdType;
   senderId: IdType;
   recipientId: IdType;
   timestamp: number;
-  content: MessageContent;
 };
+
+export type UnsentNormalMessage = MessageBase & {
+  type: 'normal';
+};
+
+export type UnsentQuoteMessage = MessageBase & {
+  type: 'quote';
+  prevId: IdType;
+  quote: MessageContent;
+};
+
+export type UnsentMessage = UnsentNormalMessage | UnsentQuoteMessage;
+
+export type NormalMessage = SentMessageFields & UnsentNormalMessage;
+
+export type QuoteMessage = SentMessageFields & UnsentQuoteMessage;
+
+export type Message = NormalMessage | QuoteMessage;
+
+// ***************************************************
+// Other
+// ***************************************************
 
 export type FacePackage = {
   id: IdType;

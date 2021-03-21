@@ -43,15 +43,18 @@ export default function GroupSessionView({
         <ChatWidget
           sessionType="group"
           contactId={contactId}
-          sendMessage={async message => {
-            const response = await sendMessageToGroup(contactId, { content: message });
+          sendMessage={async messageContent => {
+            const response = await sendMessageToGroup(contactId, {
+              content: { type: 'normal', content: messageContent },
+            });
             if (response.code === 200) {
               const { id: messageId, timestamp } = response.content;
               return {
+                type: 'normal',
                 id: messageId,
                 senderId: id,
                 recipientId: contactId,
-                content: message,
+                content: messageContent,
                 timestamp,
               };
             } else {

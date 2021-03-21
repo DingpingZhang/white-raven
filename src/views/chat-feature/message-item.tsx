@@ -29,7 +29,7 @@ type AtSegmentProps = AtMessageSegment & {
   getContactName: (id: IdType) => string;
 };
 
-export default function MessageTextItem({ ref, senderId, content, timestamp, highlight }: Props) {
+export default function MessageItem({ ref, senderId, content, timestamp, highlight }: Props) {
   const { sessionType, contactId } = useContext(ChatContext);
   const groupMemberList = useGroupMemberList(contactId);
   const contactList = useContactList();
@@ -64,15 +64,15 @@ export default function MessageTextItem({ ref, senderId, content, timestamp, hig
     [sessionType, getContactName, senderId]
   );
 
-  const messageBoxClass = classNames('MessageTextItem__messageArea', { highlight });
+  const messageBoxClass = classNames('MessageItem__messageArea', { highlight });
 
   return (
-    <div ref={ref} className="MessageTextItem">
+    <div ref={ref} className="MessageItem">
       {senderName ? (
-        <span className="MessageTextItem__senderName text tip-secondary">{senderName}</span>
+        <span className="MessageItem__senderName text tip-secondary">{senderName}</span>
       ) : null}
       <img
-        className="MessageTextItem__avatar"
+        className="MessageItem__avatar"
         src={avatar}
         alt="avatar"
         onClick={() => {
@@ -80,7 +80,7 @@ export default function MessageTextItem({ ref, senderId, content, timestamp, hig
         }}
       />
       <div className={messageBoxClass}>
-        <div className="MessageTextItem__messageContent">
+        <div className="MessageItem__messageContent">
           {content.map((message, index) => {
             switch (message.type) {
               case 'text':
@@ -101,13 +101,13 @@ export default function MessageTextItem({ ref, senderId, content, timestamp, hig
           })}
         </div>
       </div>
-      <span className="MessageTextItem__timestamp">{toDisplayTimestamp(timestamp)}</span>
+      <span className="MessageItem__timestamp">{toDisplayTimestamp(timestamp)}</span>
     </div>
   );
 }
 
 function TextSegment({ text }: TextMessageSegment) {
-  return <span className="MessageTextItem__msgSegment msgText">{text}</span>;
+  return <span className="MessageItem__msgSegment msgText">{text}</span>;
 }
 
 function AtSegment({ targetId, getContactName }: AtSegmentProps) {
@@ -115,7 +115,7 @@ function AtSegment({ targetId, getContactName }: AtSegmentProps) {
 
   return (
     <span
-      className="MessageTextItem__msgSegment msgAt"
+      className="MessageItem__msgSegment msgAt"
       onClick={() => {
         atClicked.next({ targetId });
       }}
@@ -130,9 +130,7 @@ function ImageSegment({ imageId, behavior, width, height }: ImageMessageSegment)
 
   return (
     <img
-      className={`MessageTextItem__msgSegment msgImage ${convertImageBehaviorToClassName(
-        behavior
-      )}`}
+      className={`MessageItem__msgSegment msgImage ${convertImageBehaviorToClassName(behavior)}`}
       src={imageUrl}
       alt={`[#${imageId}]`}
       width={behavior === 'like-text' ? width : undefined}

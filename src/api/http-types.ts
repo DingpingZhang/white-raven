@@ -1,11 +1,11 @@
-import { MessageContent, IdType } from './basic-types';
+import { UnsentMessage, IdType } from './basic-types';
 
 // ***************************************************
 // Request
 // ***************************************************
 
 export type MessageBody = {
-  content: MessageContent;
+  content: UnsentMessage;
 };
 
 export type ReadedMessageIdBody = {

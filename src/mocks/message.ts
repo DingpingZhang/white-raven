@@ -11,6 +11,7 @@ export function getMockMessages(count: number): ReadonlyArray<Message> {
 
 export const MESSAGE_LIST: ReadonlyArray<Message> = [
   {
+    type: 'normal',
     id: '',
     senderId: 'P0',
     recipientId: 'self',
@@ -46,6 +47,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
     timestamp: 1610977530419,
   },
   {
+    type: 'normal',
     id: '',
     senderId: 'P1',
     recipientId: 'self',
@@ -65,6 +67,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
     timestamp: 1610977530419,
   },
   {
+    type: 'normal',
     id: '',
     senderId: 'P2',
     recipientId: 'self',
@@ -77,6 +80,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
     timestamp: 1610977530419,
   },
   {
+    type: 'normal',
     id: '',
     senderId: 'G0',
     recipientId: 'self',
@@ -90,6 +94,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
     timestamp: 1610977530419,
   },
   {
+    type: 'normal',
     id: '',
     senderId: 'G1',
     recipientId: 'self',
@@ -103,6 +108,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
     timestamp: 1610977530419,
   },
   {
+    type: 'normal',
     id: '',
     senderId: 'G2',
     recipientId: 'self',
@@ -115,6 +121,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
     timestamp: 1610977530419,
   },
   {
+    type: 'normal',
     id: '',
     senderId: 'P6',
     recipientId: 'self',
@@ -127,6 +134,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
     timestamp: 1610977530419,
   },
   {
+    type: 'normal',
     id: '',
     senderId: 'P7',
     recipientId: 'self',
@@ -140,6 +148,7 @@ export const MESSAGE_LIST: ReadonlyArray<Message> = [
     timestamp: 1610977530419,
   },
   {
+    type: 'normal',
     id: '',
     senderId: 'P8',
     recipientId: 'self',
