@@ -44,7 +44,6 @@ export default function SenderWidget({ sendMessage }: Props) {
       const text = inputRef.current.value;
       inputRef.current.value = '';
       const message = parseMessageText(text, faceSet);
-      console.log(message);
       const success = await sendMessage(message);
       if (success) {
         setCanSend(false);
