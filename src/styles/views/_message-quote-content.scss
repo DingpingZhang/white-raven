@@ -1,3 +1,5 @@
+@use '../mixins/button';
+
 $quote-avatar-size: 18px;
 
 .MessageQuoteContent {
@@ -10,8 +12,9 @@ $quote-avatar-size: 18px;
 
     .MessageQuoteContent__quoteTitleBar {
       display: grid;
-      grid-template-columns: auto 12px 1fr auto;
+      grid-template-columns: auto 12px auto 12px auto 1fr auto;
       align-items: center;
+      margin-bottom: 12px;
 
       .MessageQuoteContent__avatar {
         width: $quote-avatar-size;
@@ -24,8 +27,26 @@ $quote-avatar-size: 18px;
       }
 
       .MessageQuoteContent__timestamp {
+        grid-column: 5 / 6;
+
         font-size: 10px;
         color: var(--fore-secondary-color);
+      }
+
+      .MessageQuoteContent__btnGoto {
+        grid-column: 7 / 8;
+
+        @include button.non-style-button();
+
+        > .MessageQuoteContent__btnGotoIcon {
+          fill: var(--fore-secondary-color);
+          width: 14px;
+          height: 14px;
+        }
+
+        &:hover > .MessageQuoteContent__btnGotoIcon {
+          fill: var(--fore-primary-color);
+        }
       }
     }
   }

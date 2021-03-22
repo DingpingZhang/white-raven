@@ -13,6 +13,7 @@ import { ChatContext, useSenderInfo } from 'models/chat-context';
 import { fallbackHttpApi } from 'models/logged-in-context';
 import { useCallback, useContext, useMemo } from 'react';
 import { MessageSegments } from 'views/chat-feature/message-segments';
+import { ReactComponent as TopArrowIcon } from 'images/top-arrow.svg';
 
 type Props = {
   message: QuoteMessage;
@@ -37,6 +38,9 @@ export default function MessageQuoteContent({ message }: Props) {
           <span className="MessageQuoteContent__timestamp">
             {prevMessage ? toDisplayTimestamp(prevMessage.timestamp) : null}
           </span>
+          <button className="MessageQuoteContent__btnGoto">
+            <TopArrowIcon className="MessageQuoteContent__btnGotoIcon" />
+          </button>
         </div>
         <MessageSegments segments={quote} />
       </div>
