@@ -1,5 +1,4 @@
 import { FriendInfo, GroupInfo, GroupMemberInfo, IdType, SessionType } from 'api';
-import { useConstant } from 'hooks';
 import { createContext, useCallback, useContext, useMemo } from 'react';
 import { Subject } from 'rxjs';
 
@@ -32,13 +31,16 @@ export function useChatContextStore(
   contactId: IdType,
   getContactById: GetContactById
 ) {
-  return useConstant<ChatContextType>(() => ({
-    sessionType,
-    contactId,
-    imageLoaded: new Subject<ImageEventType>(),
-    atClicked: new Subject<AtEventType>(),
-    getContactById,
-  }));
+  return useMemo<ChatContextType>(() => {
+    console.log('update chat context.');
+    return {
+      sessionType,
+      contactId,
+      imageLoaded: new Subject<ImageEventType>(),
+      atClicked: new Subject<AtEventType>(),
+      getContactById,
+    };
+  }, [contactId, getContactById, sessionType]);
 }
 
 // ********************************************************************
