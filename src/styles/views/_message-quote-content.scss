@@ -12,7 +12,7 @@ $quote-avatar-size: 18px;
 
     .MessageQuoteContent__quoteTitleBar {
       display: grid;
-      grid-template-columns: auto 12px auto 12px auto 1fr auto;
+      grid-template-columns: auto 12px auto 12px auto 1fr 12px auto;
       align-items: center;
       margin-bottom: 12px;
 
@@ -34,7 +34,7 @@ $quote-avatar-size: 18px;
       }
 
       .MessageQuoteContent__btnGoto {
-        grid-column: 7 / 8;
+        grid-column: 9 / 10;
 
         @include button.non-style-button();
 
