@@ -185,7 +185,7 @@ export function useLastMessage(sessionType: SessionType, contactId: IdType) {
   );
   useEffect(() => {
     const handler = () => setLastMessage(lastItemOrDefault(messageList.storage.items));
-    const token = messageList.itemsChanged.subscribe(handler);
+    const token = messageList.action.subscribe(handler);
     return () => token.unsubscribe();
   }, [messageList]);
 

@@ -8,17 +8,35 @@ type GetItems = (
   count: number,
   previous: boolean
 ) => Promise<ReadonlyArray<Message>>;
-export type ItemsChangedInfo = {
-  type: 'push' | 'pull-prev' | 'pull-next' | 'pull-until-latest';
-  changedCount: number;
-  sliceCount: number;
+
+type AddedAction = {
+  type: 'add';
+
+  /**
+   * 代表被成功添加的元素的个数。
+   */
+  addedCount: number;
 };
 
-const BATCH_COUNT = 20;
+type ScrollAction = {
+  type: 'scroll/forward' | 'scroll/back';
+
+  /**
+   * 代表滚动所至的目标元素在整个集合中的索引，根据 `type` 的不同，有以下含义：
+   *
+   * 1. `scroll/forward`：该索引对应的元素，是滚动后的 window 视图中的第一个元素；
+   * 2. `scroll/back`：该索引对应的元素，是滚动后 window 视图中的最后一个元素。
+   */
+  targetIndex: number;
+};
+
+export type MessageListAction = AddedAction | ScrollAction;
+
+export const BATCH_COUNT = 20;
 
 export default class MessageList {
   private readonly getItems: GetItems;
-  private readonly innerItemsChanged: Subject<ItemsChangedInfo> = new Subject<ItemsChangedInfo>();
+  private readonly messageListAction: Subject<MessageListAction> = new Subject<MessageListAction>();
 
   private isBusy: boolean = false;
 
@@ -27,12 +45,15 @@ export default class MessageList {
 
   startIndex: number = 0;
 
-  get items() {
+  /**
+   * 滑动窗口（Sliding window），本上下文中出现的 window，指的均是滑动窗口，表示全集的一段可滑动的切片。
+   */
+  get window() {
     return this.storage.items.slice(this.startIndex, this.startIndex + this.capacity);
   }
 
-  get itemsChanged(): Observable<ItemsChangedInfo> {
-    return this.innerItemsChanged;
+  get action(): Observable<MessageListAction> {
+    return this.messageListAction;
   }
 
   constructor(getItems: GetItems) {
@@ -47,51 +68,36 @@ export default class MessageList {
     return this.lock(async () => {
       if (this.startIndex >= BATCH_COUNT) {
         this.startIndex -= BATCH_COUNT;
-        this.raiseItemsChanged({
-          type: 'pull-prev',
-          changedCount: BATCH_COUNT,
-          sliceCount: this.getSliceCount(),
-        });
       } else {
         const start = firstItemOrDefault(this.storage.items);
         const prevItems = await this.getItems(start?.id, BATCH_COUNT, true);
         const count = this.storage.addRange(prevItems);
         if (count > 0) {
           this.startIndex = 0;
-          this.raiseItemsChanged({
-            type: 'pull-prev',
-            changedCount: count,
-            sliceCount: this.getSliceCount(),
-          });
         }
       }
+
+      this.raiseAction({ type: 'scroll/forward', targetIndex: this.startIndex });
     });
   }
 
   pullNext(): Promise<void> {
     return this.lock(async () => {
       if (this.startIndex + BATCH_COUNT < this.storage.items.length) {
-        const prevStartIndex = this.startIndex;
-        this.startIndex =
-          this.startIndex + this.capacity < this.storage.items.length
-            ? this.startIndex + BATCH_COUNT
-            : this.startIndex;
-        this.raiseItemsChanged({
-          type: 'pull-next',
-          changedCount: this.startIndex - prevStartIndex,
-          sliceCount: this.getSliceCount(),
-        });
+        const canScrollBack = this.startIndex + this.capacity < this.storage.items.length;
+        if (canScrollBack) {
+          const remainingCount = this.storage.items.length - this.startIndex - this.capacity;
+          this.startIndex += Math.min(BATCH_COUNT, remainingCount);
+        }
+
+        this.raiseAction({ type: 'scroll/back', targetIndex: this.startIndex + this.capacity });
       } else {
         const end = lastItemOrDefault(this.storage.items);
         const nextItems = await this.getItems(end?.id, BATCH_COUNT, false);
         const count = this.storage.addRange(nextItems);
         if (count > 0) {
           this.startIndex = Math.max(this.storage.items.length - this.capacity, 0);
-          this.raiseItemsChanged({
-            type: 'pull-next',
-            changedCount: count,
-            sliceCount: this.getSliceCount(),
-          });
+          this.raiseAction({ type: 'scroll/back', targetIndex: this.storage.items.length - 1 });
         }
       }
     });
@@ -99,38 +105,33 @@ export default class MessageList {
 
   pullUntilLatest() {
     this.startIndex = Math.max(this.storage.items.length - this.capacity, 0);
-    this.raiseItemsChanged({
-      type: 'pull-until-latest',
-      changedCount: Number.MAX_SAFE_INTEGER,
-      sliceCount: this.getSliceCount(),
-    });
+    this.raiseAction({ type: 'scroll/back', targetIndex: this.storage.items.length - 1 });
   }
 
   pushItem(item: Message) {
     if (this.storage.add(item)) {
-      this.raiseItemsChanged({ type: 'push', changedCount: 1, sliceCount: this.getSliceCount() });
+      this.raiseAction({ type: 'add', addedCount: 1 });
     }
   }
 
   pushItems(items: ReadonlyArray<Message>) {
     const count = this.storage.addRange(items);
     if (count > 0) {
-      this.raiseItemsChanged({
-        type: 'push',
-        changedCount: count,
-        sliceCount: this.getSliceCount(),
-      });
+      this.raiseAction({ type: 'add', addedCount: count });
     }
   }
 
-  private raiseItemsChanged(e: ItemsChangedInfo) {
-    this.innerItemsChanged.next(e);
+  isWindowAtLatest() {
+    return this.startIndex + this.capacity >= this.storage.items.length;
+  }
+
+  private raiseAction(action: MessageListAction) {
+    this.messageListAction.next(action);
   }
 
   private getSliceCount() {
-    return this.startIndex + this.capacity < this.storage.items.length
-      ? this.capacity
-      : this.storage.items.length - this.startIndex;
+    const count = this.storage.items.length - this.startIndex;
+    return Math.min(count, this.capacity);
   }
 
   private async lock(callback: () => Promise<void>): Promise<void> {

@@ -32,7 +32,6 @@ export function useChatContextStore(
   getContactById: GetContactById
 ) {
   return useMemo<ChatContextType>(() => {
-    console.log('update chat context.');
     return {
       sessionType,
       contactId,
