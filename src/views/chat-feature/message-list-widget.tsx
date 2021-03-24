@@ -1,7 +1,7 @@
 import { Message } from 'api';
 import CircleButton from 'components/circle-button';
 import ScrollViewer from 'components/scroll-viewer';
-import MessageList, { BATCH_COUNT, MessageListAction } from 'models/message-list';
+import MessageList, { MessageListAction } from 'models/message-list';
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { ReactComponent as BottomIcon } from 'images/bottom.svg';
@@ -78,7 +78,7 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
         case 'scroll/forward':
           setScrollPointerIndex({
             alignToTop: true,
-            index: action.targetIndex - messageList.startIndex + BATCH_COUNT - 1,
+            index: action.targetIndex - messageList.startIndex,
           });
           break;
       }

@@ -32,7 +32,7 @@ type ScrollAction = {
 
 export type MessageListAction = AddedAction | ScrollAction;
 
-export const BATCH_COUNT = 20;
+const BATCH_COUNT = 20;
 
 export default class MessageList {
   private readonly getItems: GetItems;
@@ -66,38 +66,39 @@ export default class MessageList {
 
   pullPrev(): Promise<void> {
     return this.lock(async () => {
+      const prevStartIndex = this.startIndex;
       if (this.startIndex >= BATCH_COUNT) {
         this.startIndex -= BATCH_COUNT;
+        this.raiseAction({ type: 'scroll/forward', targetIndex: prevStartIndex - 1 });
       } else {
         const start = firstItemOrDefault(this.storage.items);
         const prevItems = await this.getItems(start?.id, BATCH_COUNT, true);
         const count = this.storage.addRange(prevItems);
         if (count > 0) {
           this.startIndex = 0;
+          this.raiseAction({ type: 'scroll/forward', targetIndex: prevStartIndex + count - 1 });
         }
       }
-
-      this.raiseAction({ type: 'scroll/forward', targetIndex: this.startIndex });
     });
   }
 
   pullNext(): Promise<void> {
     return this.lock(async () => {
+      const prevEndIndex = this.getEndIndex();
       if (this.startIndex + BATCH_COUNT < this.storage.items.length) {
         const canScrollBack = this.startIndex + this.capacity < this.storage.items.length;
         if (canScrollBack) {
           const remainingCount = this.storage.items.length - this.startIndex - this.capacity;
           this.startIndex += Math.min(BATCH_COUNT, remainingCount);
+          this.raiseAction({ type: 'scroll/back', targetIndex: prevEndIndex + 1 });
         }
-
-        this.raiseAction({ type: 'scroll/back', targetIndex: this.startIndex + this.capacity });
       } else {
         const end = lastItemOrDefault(this.storage.items);
         const nextItems = await this.getItems(end?.id, BATCH_COUNT, false);
         const count = this.storage.addRange(nextItems);
         if (count > 0) {
           this.startIndex = Math.max(this.storage.items.length - this.capacity, 0);
-          this.raiseAction({ type: 'scroll/back', targetIndex: this.storage.items.length - 1 });
+          this.raiseAction({ type: 'scroll/back', targetIndex: prevEndIndex + 1 });
         }
       }
     });
@@ -110,6 +111,7 @@ export default class MessageList {
 
   pushItem(item: Message) {
     if (this.storage.add(item)) {
+      this.startIndex = Math.max(this.storage.items.length - this.capacity, this.startIndex);
       this.raiseAction({ type: 'add', addedCount: 1 });
     }
   }
@@ -117,6 +119,7 @@ export default class MessageList {
   pushItems(items: ReadonlyArray<Message>) {
     const count = this.storage.addRange(items);
     if (count > 0) {
+      this.startIndex = Math.max(this.storage.items.length - this.capacity, this.startIndex);
       this.raiseAction({ type: 'add', addedCount: count });
     }
   }
@@ -129,9 +132,10 @@ export default class MessageList {
     this.messageListAction.next(action);
   }
 
-  private getSliceCount() {
+  private getEndIndex() {
     const count = this.storage.items.length - this.startIndex;
-    return Math.min(count, this.capacity);
+    const actualCount = Math.min(count, this.capacity);
+    return this.startIndex + actualCount;
   }
 
   private async lock(callback: () => Promise<void>): Promise<void> {
