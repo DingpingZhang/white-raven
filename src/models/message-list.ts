@@ -19,13 +19,13 @@ type AddedAction = {
 };
 
 type ScrollAction = {
-  type: 'scroll/forward' | 'scroll/back';
+  type: 'scroll/previous' | 'scroll/next';
 
   /**
    * 代表滚动所至的目标元素在整个集合中的索引，根据 `type` 的不同，有以下含义：
    *
-   * 1. `scroll/forward`：该索引对应的元素，是滚动后的 window 视图中的第一个元素；
-   * 2. `scroll/back`：该索引对应的元素，是滚动后 window 视图中的最后一个元素。
+   * 1. `scroll/previous`：该索引对应的元素，是滚动后的 window 视图中的第一个元素；
+   * 2. `scroll/next`：该索引对应的元素，是滚动后 window 视图中的最后一个元素。
    */
   targetIndex: number;
 };
@@ -33,6 +33,7 @@ type ScrollAction = {
 export type MessageListAction = AddedAction | ScrollAction;
 
 const BATCH_COUNT = 20;
+const SCROLL_PULL_COUNT_LIMIT = 5;
 
 export default class MessageList {
   private readonly getItems: GetItems;
@@ -69,14 +70,12 @@ export default class MessageList {
       const prevStartIndex = this.startIndex;
       if (this.startIndex >= BATCH_COUNT) {
         this.startIndex -= BATCH_COUNT;
-        this.raiseAction({ type: 'scroll/forward', targetIndex: prevStartIndex - 1 });
+        this.raiseAction({ type: 'scroll/previous', targetIndex: prevStartIndex - 1 });
       } else {
-        const start = firstItemOrDefault(this.storage.items);
-        const prevItems = await this.getItems(start?.id, BATCH_COUNT, true);
-        const count = this.storage.addRange(prevItems);
+        const count = await this.pullPrevItemsFromRemote();
         if (count > 0) {
           this.startIndex = 0;
-          this.raiseAction({ type: 'scroll/forward', targetIndex: prevStartIndex + count - 1 });
+          this.raiseAction({ type: 'scroll/previous', targetIndex: prevStartIndex + count - 1 });
         }
       }
     });
@@ -90,7 +89,7 @@ export default class MessageList {
         if (canScrollBack) {
           const remainingCount = this.storage.items.length - this.startIndex - this.capacity;
           this.startIndex += Math.min(BATCH_COUNT, remainingCount);
-          this.raiseAction({ type: 'scroll/back', targetIndex: prevEndIndex + 1 });
+          this.raiseAction({ type: 'scroll/next', targetIndex: prevEndIndex + 1 });
         }
       } else {
         const end = lastItemOrDefault(this.storage.items);
@@ -98,15 +97,37 @@ export default class MessageList {
         const count = this.storage.addRange(nextItems);
         if (count > 0) {
           this.startIndex = Math.max(this.storage.items.length - this.capacity, 0);
-          this.raiseAction({ type: 'scroll/back', targetIndex: prevEndIndex + 1 });
+          this.raiseAction({ type: 'scroll/next', targetIndex: prevEndIndex + 1 });
         }
       }
     });
   }
 
-  pullUntilLatest() {
-    this.startIndex = Math.max(this.storage.items.length - this.capacity, 0);
-    this.raiseAction({ type: 'scroll/back', targetIndex: this.storage.items.length - 1 });
+  scrollTo(predicate: ((item: Message) => boolean) | 'latest'): Promise<void> {
+    return this.lock(async () => {
+      if (predicate === 'latest') {
+        this.startIndex = Math.max(this.storage.items.length - this.capacity, 0);
+        this.raiseAction({ type: 'scroll/next', targetIndex: this.storage.items.length - 1 });
+      } else {
+        for (let pullCount = 0; pullCount < SCROLL_PULL_COUNT_LIMIT; pullCount++) {
+          const targetIndex = this.storage.items.findIndex(predicate);
+          if (targetIndex < 0) {
+            // TODO: 目前默认就是向前（previous）搜索，以后酌情添加向后（next）查询跳转功能。
+            await this.pullPrevItemsFromRemote();
+          } else {
+            if (targetIndex < this.startIndex) {
+              this.startIndex = targetIndex;
+              this.raiseAction({ type: 'scroll/previous', targetIndex });
+            } else if (targetIndex >= this.startIndex + this.capacity) {
+              this.startIndex = targetIndex - this.capacity;
+              this.raiseAction({ type: 'scroll/next', targetIndex });
+            } else {
+              this.raiseAction({ type: 'scroll/previous', targetIndex });
+            }
+          }
+        }
+      }
+    });
   }
 
   pushItem(item: Message) {
@@ -126,6 +147,12 @@ export default class MessageList {
 
   isWindowAtLatest() {
     return this.startIndex + this.capacity >= this.storage.items.length;
+  }
+
+  private async pullPrevItemsFromRemote() {
+    const start = firstItemOrDefault(this.storage.items);
+    const prevItems = await this.getItems(start?.id, BATCH_COUNT, true);
+    return this.storage.addRange(prevItems);
   }
 
   private raiseAction(action: MessageListAction) {

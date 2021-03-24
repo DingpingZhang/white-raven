@@ -63,19 +63,19 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
             const isNearBottom = calculateScrollRadio(scrollViewer) > NEAR_BOTTOM_SCROLL_RADIO;
 
             if (isNearBottom) {
-              messageList.pullUntilLatest();
+              messageList.scrollTo('latest');
             } else {
               setScrollPointerIndex(INVALID_SCROLL_INDEX);
             }
           }
           break;
-        case 'scroll/back':
+        case 'scroll/next':
           setScrollPointerIndex({
             alignToTop: false,
             index: action.targetIndex - messageList.startIndex,
           });
           break;
-        case 'scroll/forward':
+        case 'scroll/previous':
           setScrollPointerIndex({
             alignToTop: true,
             index: action.targetIndex - messageList.startIndex,
@@ -181,7 +181,7 @@ function GotoButtomButton({ messageList, setIsVisibleCallback }: GotoBottomButto
       className={gotoBottomClass}
       buttonType="default"
       icon={<BottomIcon />}
-      onClick={() => messageList.pullUntilLatest()}
+      onClick={() => messageList.scrollTo('latest')}
     />
   );
 }
