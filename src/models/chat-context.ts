@@ -6,8 +6,9 @@ type ImageEventType = {
   imageId: IdType;
 };
 
-type AtEventType = {
-  targetId: IdType;
+type MarkupEventType = {
+  markup: string;
+  content: string;
 };
 
 export type GetContactById = (id: IdType) => GroupMemberInfo | FriendInfo | GroupInfo | undefined;
@@ -16,7 +17,7 @@ export type ChatContextType = {
   sessionType: SessionType;
   contactId: IdType;
   imageLoaded: Subject<ImageEventType>;
-  atClicked: Subject<AtEventType>;
+  markupAdded: Subject<MarkupEventType>;
   getContactById: GetContactById;
 };
 
@@ -36,7 +37,7 @@ export function useChatContextStore(
       sessionType,
       contactId,
       imageLoaded: new Subject<ImageEventType>(),
-      atClicked: new Subject<AtEventType>(),
+      markupAdded: new Subject<MarkupEventType>(),
       getContactById,
     };
   }, [contactId, getContactById, sessionType]);
@@ -49,11 +50,6 @@ export function useChatContextStore(
 export function useImageLoaded() {
   const ctx = useContext(ChatContext);
   return ctx.imageLoaded;
-}
-
-export function useAtClicked() {
-  const ctx = useContext(ChatContext);
-  return ctx.atClicked;
 }
 
 export function useGetContactName() {

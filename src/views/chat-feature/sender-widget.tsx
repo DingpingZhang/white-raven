@@ -3,11 +3,13 @@ import { ReactComponent as MoreVerticalIcon } from 'images/more-vertical.svg';
 import { ReactComponent as AttachmentIcon } from 'images/attachment.svg';
 import CircleButton from 'components/circle-button';
 import { useI18n } from 'i18n';
-import { ImageMessageSegment, MessageContent, MessageSegment } from 'api';
+import { MessageContent, MessageSegment, uploadFile } from 'api';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import FacePanelPopupButton from './face-panel-popup-button';
 import { FaceSet, LoggedInContext, useFacePackages } from 'models/logged-in-context';
-import { useAtClicked } from 'models/chat-context';
+import { ChatContext } from 'models/chat-context';
+import { useConstant } from 'hooks';
+import { uuidv4 } from 'helpers';
 
 const atMarkup = '@';
 const imageMarkup = '#';
@@ -33,11 +35,13 @@ export default function SenderWidget({ sendMessage }: Props) {
       setCanSend(true);
     }
   }, []);
-  const atClicked = useAtClicked();
+  const { markupAdded } = useContext(ChatContext);
   useEffect(() => {
-    const token = atClicked.subscribe(item => insertText(` ${atMarkup}${item.targetId} `));
+    const token = markupAdded.subscribe(({ markup, content }) => {
+      insertText(` ${markup}${content} `);
+    });
     return () => token.unsubscribe();
-  }, [atClicked, insertText]);
+  }, [markupAdded, insertText]);
 
   const handleEnterClick = useCallback(async () => {
     if (inputRef.current && inputRef.current.value) {
@@ -60,18 +64,10 @@ export default function SenderWidget({ sendMessage }: Props) {
     },
     [handleEnterClick]
   );
-  const handleFaceSelected = useCallback(
-    (item: ImageMessageSegment) => insertText(` ${imageMarkup}${item.imageId} `),
-    [insertText]
-  );
 
   return (
     <div className="SenderWidget">
-      <CircleButton
-        buttonType="secondary"
-        className="SenderWidget__btnUpload"
-        icon={<AttachmentIcon />}
-      />
+      <UploadFileButton />
       <div className="SenderWidget__editArea">
         <input
           ref={inputRef}
@@ -81,10 +77,7 @@ export default function SenderWidget({ sendMessage }: Props) {
           placeholder={$t('input.placeholder.writeAMessage')}
           onKeyDown={handleEnterDown}
         />
-        <FacePanelPopupButton
-          className="SenderWidget__btnFace"
-          onFaceSelected={handleFaceSelected}
-        />
+        <FacePanelPopupButton className="SenderWidget__btnFace" />
         <CircleButton
           buttonType="default"
           className="SenderWidget__btnMore"
@@ -98,6 +91,37 @@ export default function SenderWidget({ sendMessage }: Props) {
         icon={<SendIcon />}
         disabled={!canSend}
         onClick={handleEnterClick}
+      />
+    </div>
+  );
+}
+
+function UploadFileButton() {
+  const { markupAdded } = useContext(ChatContext);
+  const inputFileId = useConstant(() => `input-${uuidv4()}`);
+
+  return (
+    <div className="SenderWidget__btnUpload">
+      {/* Custom input-file, ref to: https://stackoverflow.com/a/25825731 */}
+      <label className="SenderWidget__inputFile" htmlFor={inputFileId}>
+        <AttachmentIcon />
+      </label>
+      <input
+        id={inputFileId}
+        type="file"
+        accept="image/*"
+        onChange={async e => {
+          const file = e.target.files?.item(0);
+          if (file) {
+            const response = await uploadFile(file);
+            if (response.code === 200) {
+              markupAdded.next({ markup: '#', content: response.content.fileId });
+            }
+          }
+
+          e.target.value = '';
+          console.log(e.target.selectionStart);
+        }}
       />
     </div>
   );
@@ -140,6 +164,7 @@ function useAllFaceSet() {
  */
 function insertTextToInput(input: HTMLInputElement, newText: string) {
   input.focus();
+  console.log(input.selectionStart);
   const prevText = input.value;
   if (input.selectionStart !== null) {
     const prevSelectionPosition = input.selectionStart + newText.length;
@@ -172,9 +197,14 @@ function parseMessageText(text: string, faceSet: FaceSet): MessageContent {
 
     switch (code) {
       case imageMarkup:
-        const face = faceSet.find(item => item.imageId === content);
-        if (face) {
-          result.push(face);
+        const image = faceSet.find(item => item.imageId === content) || {
+          type: 'image',
+          imageId: content,
+          behavior: 'can-browse',
+        };
+
+        if (image) {
+          result.push(image);
           prevIndex = index + fullText.length;
         }
         break;

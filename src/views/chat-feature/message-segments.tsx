@@ -1,15 +1,16 @@
 import {
   TextMessageSegment,
   ImageMessageSegment,
-  getImageUrl,
+  getFileUrl,
   ImageBehavior,
   AtMessageSegment,
   MessageContent,
 } from 'api';
 import classNames from 'classnames';
 import { useDialogBuilder } from 'components/dialog';
-import { useAtClicked, useGetContactName, useImageLoaded } from 'models/chat-context';
+import { ChatContext, useGetContactName, useImageLoaded } from 'models/chat-context';
 import { useUserInfo } from 'models/logged-in-context';
+import { useContext } from 'react';
 import ImageExplorerDialog from 'views/dialogs/image-explorer-dialog';
 
 const IMAGE_MAX_SIZE = 300;
@@ -42,7 +43,7 @@ function TextSegment({ text }: TextMessageSegment) {
 }
 
 function AtSegment({ targetId }: AtMessageSegment) {
-  const atClicked = useAtClicked();
+  const { markupAdded } = useContext(ChatContext);
   const getContactName = useGetContactName();
   const { id: currentUserId } = useUserInfo();
 
@@ -53,7 +54,7 @@ function AtSegment({ targetId }: AtMessageSegment) {
     <span
       className={atClass}
       onClick={() => {
-        atClicked.next({ targetId });
+        markupAdded.next({ markup: '@', content: targetId });
       }}
     >{`@${getContactName(targetId)}`}</span>
   );
@@ -62,7 +63,7 @@ function AtSegment({ targetId }: AtMessageSegment) {
 function ImageSegment({ imageId, behavior, width, height }: ImageMessageSegment) {
   const dialogBuilder = useDialogBuilder();
   const imageLoaded = useImageLoaded();
-  const imageUrl = getImageUrl(imageId);
+  const imageUrl = getFileUrl(imageId);
 
   return (
     <img

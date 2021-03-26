@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import { toDisplayTimestamp } from 'helpers';
 import { Message } from 'api';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { useUserInfo } from 'models/logged-in-context';
-import { useAtClicked, useSenderInfo } from 'models/chat-context';
+import { ChatContext, useSenderInfo } from 'models/chat-context';
 import MessageNormalContent from './message-normal-content';
 import MessageQuoteContent from './message-quote-content';
 
@@ -14,7 +14,7 @@ type Props = {
 
 export default function MessageItem({ message, ref }: Props) {
   const { senderId, timestamp } = message;
-  const atClicked = useAtClicked();
+  const { markupAdded } = useContext(ChatContext);
   const { id: currentUserId } = useUserInfo();
   const { avatar, name } = useSenderInfo(senderId);
 
@@ -43,7 +43,7 @@ export default function MessageItem({ message, ref }: Props) {
         alt="avatar"
         onClick={e => {
           e.stopPropagation();
-          atClicked.next({ targetId: senderId });
+          markupAdded.next({ markup: '@', content: senderId });
         }}
       />
       <div className={messageBoxClass}>{messageContent}</div>
