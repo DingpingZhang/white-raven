@@ -69,7 +69,7 @@ function ImageSegment({ imageId, behavior, width, height }: ImageMessageSegment)
     <img
       className={`MessageSegments__item msgImage ${convertImageBehaviorToClassName(behavior)}`}
       src={imageUrl}
-      alt={`[#${imageId}]`}
+      alt={` #${imageId} `}
       width={behavior === 'like-text' ? width : undefined}
       height={behavior === 'like-text' ? height : undefined}
       style={{ maxHeight: IMAGE_MAX_SIZE }}

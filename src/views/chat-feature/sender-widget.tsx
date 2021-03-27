@@ -56,13 +56,31 @@ export default function SenderWidget({ sendMessage }: Props) {
       }
     }
   }, [faceSet, sendMessage]);
-  const handleEnterDown = useCallback(
-    (e: React.KeyboardEvent<HTMLElement>) => {
-      if (e.key === 'Enter') {
+  const handleInputKeyDown = useCallback(
+    async (e: React.KeyboardEvent<HTMLElement>) => {
+      if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
         handleEnterClick();
+      } else if (e.key === 'v' && e.ctrlKey) {
+        const result = await navigator.permissions.query({
+          // Ref to: https://github.com/microsoft/TypeScript/issues/33923#issuecomment-743062954
+          name: 'clipboard-read' as PermissionName,
+        });
+        if (result.state === 'granted' || result.state === 'prompt') {
+          const data = await ((navigator.clipboard as any).read() as Promise<any>);
+          if (data.length <= 0) return;
+
+          const dataType = data[0].types.find((item: string) => item.startsWith('image/'));
+          if (dataType) {
+            const imageBlob = await data[0].getType(dataType);
+            const response = await uploadFile(imageBlob);
+            if (response.code === 200) {
+              markupAdded.next({ markup: '#', content: response.content.fileId });
+            }
+          }
+        }
       }
     },
-    [handleEnterClick]
+    [handleEnterClick, markupAdded]
   );
 
   return (
@@ -75,7 +93,7 @@ export default function SenderWidget({ sendMessage }: Props) {
           type="text"
           className="SenderWidget__input"
           placeholder={$t('input.placeholder.writeAMessage')}
-          onKeyDown={handleEnterDown}
+          onKeyDown={handleInputKeyDown}
         />
         <FacePanelPopupButton className="SenderWidget__btnFace" />
         <CircleButton
@@ -164,7 +182,6 @@ function useAllFaceSet() {
  */
 function insertTextToInput(input: HTMLInputElement, newText: string) {
   input.focus();
-  console.log(input.selectionStart);
   const prevText = input.value;
   if (input.selectionStart !== null) {
     const prevSelectionPosition = input.selectionStart + newText.length;
