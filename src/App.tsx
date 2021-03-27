@@ -1,12 +1,12 @@
-import { jwtTokenKey } from 'api';
 import { DialogHost } from 'components/dialog';
 import { ThemeType, useTheme } from 'models/global-context';
 import { useEffect, useState } from 'react';
 import { LoggedInContextRoot } from 'models/context-components';
 import LoginView from 'views/login-view';
 import WindowView from './views/window-view';
+import { LOCAL_STORAGE_KEY } from 'api/local-storage';
 
-const hasBeenLoggedIn = !!localStorage.getItem(jwtTokenKey);
+const hasBeenLoggedIn = !!localStorage.getItem(LOCAL_STORAGE_KEY.JWT_TOKEN);
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(hasBeenLoggedIn);

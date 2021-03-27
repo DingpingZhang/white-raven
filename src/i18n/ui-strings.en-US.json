@@ -12,6 +12,8 @@
 
   "dialog.settings.language": "Language",
   "dialog.settings.theme": "Theme",
+  "dialog.settings.httpPort": "HTTP Port",
+  "dialog.settings.wsPort": "WebSocket Port",
 
   "theme.light": "Light",
   "theme.dark": "Dark",

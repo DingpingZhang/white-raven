@@ -1,8 +1,8 @@
-import { jwtTokenKey } from 'api';
+import { getValueFromLocalStorage, LOCAL_STORAGE_KEY } from 'api/local-storage';
 import { ComboBox, ComboBoxItem } from 'components/combo-box';
 import { LanguageCode, useI18n } from 'i18n';
 import { ThemeType, useCulture, useTheme } from 'models/global-context';
-import { ReactElement, useMemo } from 'react';
+import { ReactElement, useEffect, useMemo, useRef } from 'react';
 import BaseDialog from './base-dialog';
 
 type SettingItemProps = {
@@ -45,6 +45,25 @@ export default function SettingsDialog({ close }: Props) {
   );
   const [culture, setCulture] = useCulture();
   const [theme, setTheme] = useTheme();
+  const httpPortInputRef = useRef<HTMLInputElement>(null);
+  const wsPortInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (httpPortInputRef.current) {
+      httpPortInputRef.current.value = getValueFromLocalStorage(
+        LOCAL_STORAGE_KEY.HTTP_PORT,
+        '6900'
+      );
+    }
+
+    if (wsPortInputRef.current) {
+      wsPortInputRef.current.value = getValueFromLocalStorage(
+        LOCAL_STORAGE_KEY.WEBSOCKET_PORT,
+        '9500'
+      );
+    }
+  }, []);
+
   return (
     <BaseDialog title={$t('dialog.title.settings')} close={close}>
       <div className="SettingsDialog">
@@ -62,10 +81,38 @@ export default function SettingsDialog({ close }: Props) {
             setSelectedItem={item => setTheme(item.value)}
           />
         </SettingItem>
+        <SettingItem text={$t('dialog.settings.httpPort')}>
+          <input className="SettingsDialog__input" ref={httpPortInputRef} />
+        </SettingItem>
+        <SettingItem text={$t('dialog.settings.wsPort')}>
+          <input className="SettingsDialog__input" ref={wsPortInputRef} />
+        </SettingItem>
+        <button
+          className="SettingsDialog__btnSignOut button-primary"
+          onClick={() => {
+            const httpPort = httpPortInputRef.current?.value;
+            if (httpPort) {
+              localStorage.setItem(LOCAL_STORAGE_KEY.HTTP_PORT, httpPort);
+            } else {
+              localStorage.removeItem(LOCAL_STORAGE_KEY.HTTP_PORT);
+            }
+
+            const wsPort = wsPortInputRef.current?.value;
+            if (wsPort) {
+              localStorage.setItem(LOCAL_STORAGE_KEY.WEBSOCKET_PORT, wsPort);
+            } else {
+              localStorage.removeItem(LOCAL_STORAGE_KEY.WEBSOCKET_PORT);
+            }
+
+            window.location.reload();
+          }}
+        >
+          {$t('button.confirm')}
+        </button>
         <button
           className="SettingsDialog__btnSignOut button-darger"
           onClick={() => {
-            localStorage.removeItem(jwtTokenKey);
+            localStorage.removeItem(LOCAL_STORAGE_KEY.JWT_TOKEN);
             window.location.reload();
           }}
         >

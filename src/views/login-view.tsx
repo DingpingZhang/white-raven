@@ -1,4 +1,5 @@
-import { jwtTokenKey, login } from 'api';
+import { login } from 'api';
+import { LOCAL_STORAGE_KEY } from 'api/local-storage';
 import { useI18n } from 'i18n';
 import md5 from 'md5';
 import { useRef, useCallback, useState } from 'react';
@@ -24,7 +25,7 @@ export default function LoginView({ setIsLoggedIn }: Props) {
       try {
         const response = await login(account, md5(password));
         if (response.code === 200) {
-          localStorage.setItem(jwtTokenKey, response.content.token);
+          localStorage.setItem(LOCAL_STORAGE_KEY.JWT_TOKEN, response.content.token);
           setIsLoggedIn(true);
         }
       } catch {

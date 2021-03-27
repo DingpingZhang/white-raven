@@ -19,13 +19,12 @@ import {
   LoginResponse,
   UploadFileResponse,
 } from './http-types';
+import { getValueFromLocalStorage, LOCAL_STORAGE_KEY } from './local-storage';
 
 export type CommonErr = 'connection-timeout';
 
-export const jwtTokenKey = 'jwt-token';
-
 const client = axios.create({
-  baseURL: 'http://localhost:6900/api/v1',
+  baseURL: `${getHost(getValueFromLocalStorage(LOCAL_STORAGE_KEY.HTTP_PORT, '6900'))}/api/v1`,
   timeout: 100_000,
   headers: {
     'Content-Type': 'application/json',
@@ -43,7 +42,7 @@ async function post<TOk, TErr = CommonErr>(url: string, data?: any) {
 }
 
 function getRequestConfig(): AxiosRequestConfig | undefined {
-  const token = localStorage.getItem(jwtTokenKey);
+  const token = localStorage.getItem(LOCAL_STORAGE_KEY.JWT_TOKEN);
 
   if (token) {
     const config: AxiosRequestConfig = {
@@ -54,6 +53,11 @@ function getRequestConfig(): AxiosRequestConfig | undefined {
   }
 
   return undefined;
+}
+
+function getHost(port: string) {
+  const { protocol, hostname } = window.location;
+  return `${protocol}//${hostname}:${port}`;
 }
 
 // ********************************************************
@@ -69,11 +73,13 @@ export async function getSessions() {
 }
 
 export function getFileUrl(id: string) {
-  return `http://localhost:6900/api/v1/files/${id}`;
+  return `${getHost(
+    getValueFromLocalStorage(LOCAL_STORAGE_KEY.HTTP_PORT, '6900')
+  )}/api/v1/files/${id}`;
 }
 
 export async function uploadFile(file: File) {
-  const token = localStorage.getItem(jwtTokenKey);
+  const token = localStorage.getItem(LOCAL_STORAGE_KEY.JWT_TOKEN);
   const res = await client.post<Ok<UploadFileResponse> | Err<CommonErr>>('files', file, {
     headers: {
       Authorization: token,

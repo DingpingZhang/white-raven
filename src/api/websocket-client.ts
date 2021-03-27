@@ -1,5 +1,6 @@
 import { fromEvent, Observable } from 'rxjs';
 import { publish, refCount, tap, map, filter } from 'rxjs/operators';
+import { getValueFromLocalStorage, LOCAL_STORAGE_KEY } from './local-storage';
 
 type EventBase<T extends string = string> = {
   type: T;
@@ -75,4 +76,9 @@ export class WebSocketClient {
   }
 }
 
-export const webSocketClient = new WebSocketClient('ws://localhost:9500/api/v1/events');
+export const webSocketClient = new WebSocketClient(
+  `ws://${window.location.hostname}:${getValueFromLocalStorage(
+    LOCAL_STORAGE_KEY.WEBSOCKET_PORT,
+    '9500'
+  )}/api/v1/events`
+);
