@@ -1,9 +1,9 @@
 import { VirtualizingListBox } from 'components/virtualizing-list-box';
 import SessionItem from './session-item';
 import SearchWidget from 'views/search-widget';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import useSearchWithText from 'models/use-search-with-text';
-import { useSelectedSessionId, useSessionList } from 'models/logged-in-context';
+import { LoggedInContext, useSelectedSessionId, useSessionList } from 'models/logged-in-context';
 
 export default function SessionListWidget() {
   const [queriesText, setQueriesText] = useState('');
@@ -14,6 +14,7 @@ export default function SessionListWidget() {
     item => item.contact.name,
     queriesText
   );
+  const { messageListCluster } = useContext(LoggedInContext);
 
   return (
     <div className="SessionListWidget">
@@ -22,21 +23,27 @@ export default function SessionListWidget() {
         sizeProvider={{ itemSize: 108, itemCount: filteredSessionList.length }}
         renderItems={(startIndex, endIndex) =>
           filteredSessionList.slice(startIndex, endIndex).map(item => {
+            const { type, contact, unreadCount } = item;
+            const { id, avatar, name } = contact;
+
             return (
               <SessionItem
-                key={item.contact.id}
-                sessionType={item.type}
-                contactId={item.contact.id}
-                avatar={item.contact.avatar}
-                name={item.contact.name}
-                unreadCount={item.unreadCount}
+                key={id}
+                sessionType={type}
+                contactId={id}
+                avatar={avatar}
+                name={name}
+                unreadCount={unreadCount}
                 queriesText={queriesText}
-                selected={selectedId === item.contact.id}
-                onSelected={() => setSelectedId(item.contact.id)}
+                selected={selectedId === id}
+                onSelected={() => setSelectedId(id)}
                 onRemoved={() => {
-                  setSessionList(prev => [
-                    ...prev.filter(element => element.contact.id !== item.contact.id),
-                  ]);
+                  setSessionList(prev => [...prev.filter(element => element.contact.id !== id)]);
+
+                  const messageList = messageListCluster.get(id);
+                  if (messageList) {
+                    messageList.clear();
+                  }
                 }}
               />
             );
