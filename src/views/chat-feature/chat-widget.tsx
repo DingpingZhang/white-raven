@@ -41,6 +41,7 @@ export default function ChatWidget(props: Props) {
     )
       .pipe(mergeAll(), filter(filterCurrentContact(contactId)))
       .subscribe(e => messageList.pushItem(e.message));
+
     return () => token.unsubscribe();
   }, [contactId, messageList]);
 

@@ -14,8 +14,10 @@ export default function ChatView() {
   const chatAreaNavigator = useNavigator(SWITCH_NAME.CHAT_AREA);
   useEffect(() => {
     if (sessionList.length > 0) {
-      const selectedSession = sessionList.find(item => item.contact.id === selectedId)!;
-      chatAreaNavigator(selectedSession.contact.id, selectedSession);
+      const selectedSession = sessionList.find(item => item.contact.id === selectedId);
+      if (selectedSession) {
+        chatAreaNavigator(selectedSession.contact.id, selectedSession);
+      }
     }
   }, [chatAreaNavigator, selectedId, sessionList]);
 

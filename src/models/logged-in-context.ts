@@ -55,6 +55,7 @@ const defaultUserInfo: PersonInfo = { id: '', name: '', avatar: '' };
 export function useLoggedInContextStore() {
   return useConstant<LoggedInContextType>(() => {
     const { selectedSessionId, sessionList } = createSessionState();
+
     return {
       userInfo: new RxState<PersonInfo>(defaultUserInfo, async set => {
         const value = await fallbackHttpApi(getUserInfo, defaultUserInfo);
@@ -91,6 +92,7 @@ export function useLoggedInContextStore() {
 }
 
 function createSessionState() {
+  // 声明字段
   const selectedSessionId = new RxState<IdType | null>(null);
   const sessionList = new RxState<SessionInfo[]>([], async set => {
     const value = await makeMutList(fallbackHttpApi(getSessions, []));
@@ -100,6 +102,7 @@ function createSessionState() {
   // 闭包变量
   let prevSelectedIndex = -1;
 
+  // 构造依赖关系
   selectedSessionId.source.subscribe(nextValue => {
     prevSelectedIndex = sessionList.source.value.findIndex(item => item.contact.id === nextValue);
   });
@@ -150,9 +153,15 @@ export function useSelectedSessionId() {
   return useRxState(ctx.selectedSessionId);
 }
 
-export function useSessionList() {
+export function useSessionList(): [
+  SessionInfo[],
+  React.Dispatch<React.SetStateAction<SessionInfo[]>>
+] {
   const ctx = useContext(LoggedInContext);
   return useRxState(ctx.sessionList);
+  // const [value, setValue] = useRxState(ctx.sessionList);
+  // const { id } = useUserInfo();
+  // return [useMemo(() => value.filter(session => session.contact.id !== id), [id, value]), setValue];
 }
 
 export function useContactList() {

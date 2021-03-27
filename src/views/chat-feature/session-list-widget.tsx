@@ -21,7 +21,7 @@ export default function SessionListWidget() {
       <VirtualizingListBox
         sizeProvider={{ itemSize: 108, itemCount: filteredSessionList.length }}
         renderItems={(startIndex, endIndex) =>
-          filteredSessionList.slice(startIndex, endIndex).map((item, index) => {
+          filteredSessionList.slice(startIndex, endIndex).map(item => {
             return (
               <SessionItem
                 key={item.contact.id}

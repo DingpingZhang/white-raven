@@ -167,8 +167,14 @@ export default class MessageList {
 
   private async lock(callback: () => Promise<void>): Promise<void> {
     if (this.isBusy) return;
-    this.isBusy = true;
-    await callback();
-    this.isBusy = false;
+
+    try {
+      this.isBusy = true;
+      await callback();
+    } catch (e) {
+      console.log(e);
+    } finally {
+      this.isBusy = false;
+    }
   }
 }
