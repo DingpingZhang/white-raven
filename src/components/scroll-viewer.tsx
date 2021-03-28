@@ -125,6 +125,41 @@ const ScrollViewer = React.forwardRef(
       [enableHorizontalScrollBar]
     );
 
+    const handleVerticalDragging = useCallback(
+      (_x: number, y: number) => {
+        const scrollElement = wrapperRef.current;
+        if (enableVerticalScrollBar && scrollElement) {
+          const radio = scrollElement.scrollHeight / scrollElement.clientHeight;
+          const newValue = scrollElement.scrollTop + y * radio;
+
+          if (
+            newValue >= 0 &&
+            newValue <= scrollElement.scrollHeight - scrollElement.clientHeight
+          ) {
+            scrollElement.scrollTop = newValue;
+            return true;
+          }
+        }
+
+        return false;
+      },
+      [enableVerticalScrollBar]
+    );
+    const handleHorizontalDragging = useCallback(
+      (x: number, _y: number) => {
+        const scrollElement = wrapperRef.current;
+        if (enableHorizontalScrollBar && scrollElement) {
+          const radio = scrollElement.scrollWidth / scrollElement.clientWidth;
+          scrollElement.scrollLeft += x * radio;
+        }
+
+        return false;
+      },
+      [enableHorizontalScrollBar]
+    );
+    const verticalThumbRef = useDragging(handleVerticalDragging);
+    const horizontalThumbRef = useDragging(handleHorizontalDragging);
+
     return (
       <div className={wrapperClass} style={style}>
         <div
@@ -140,6 +175,7 @@ const ScrollViewer = React.forwardRef(
         {enableHorizontalScrollBar ? (
           <div className={horizontalScrollBarClass}>
             <div
+              ref={horizontalThumbRef}
               className="ScrollViewer__thumb"
               style={{
                 left: scrollBarLeft || 0,
@@ -151,6 +187,7 @@ const ScrollViewer = React.forwardRef(
         {enableVerticalScrollBar ? (
           <div className={verticalScrollBarClass}>
             <div
+              ref={verticalThumbRef}
               className="ScrollViewer__thumb"
               style={{
                 top: scrollBarTop || 0,
@@ -171,3 +208,45 @@ ScrollViewer.defaultProps = {
 };
 
 export default ScrollViewer;
+
+function useDragging<T extends HTMLElement = HTMLElement>(
+  callback: (x: number, y: number) => boolean
+) {
+  const [element, setElement] = useState<T | null>(null);
+  const ref = useCallback((node: T | null) => setElement(node), []);
+  const prevX = useRef(0);
+  const prevY = useRef(0);
+
+  useEffect(() => {
+    if (element) {
+      function onDragging(e: MouseEvent) {
+        if (callback(e.screenX - prevX.current, e.screenY - prevY.current)) {
+          prevX.current = e.screenX;
+          prevY.current = e.screenY;
+        }
+      }
+
+      function onDragEnd() {
+        window.removeEventListener('mouseup', onDragEnd);
+        window.removeEventListener('mousemove', onDragging);
+      }
+
+      function onDragStart(e: MouseEvent) {
+        prevX.current = e.screenX;
+        prevY.current = e.screenY;
+
+        window.addEventListener('mousemove', onDragging);
+        window.addEventListener('mouseup', onDragEnd);
+      }
+
+      element.addEventListener('mousedown', onDragStart);
+
+      return () => {
+        element.removeEventListener('mousedown', onDragStart);
+        onDragEnd();
+      };
+    }
+  }, [callback, element]);
+
+  return ref;
+}
