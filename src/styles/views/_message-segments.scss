@@ -2,6 +2,7 @@
   .MessageSegments__item {
     user-select: text;
     max-width: 100%;
+    overflow-wrap: anywhere;
 
     &.msgText {
       white-space: pre-line;
