@@ -1,9 +1,13 @@
 import classNames from 'classnames';
 import { toDisplayTimestamp } from 'helpers';
-import { IdType, MessageSegment, SessionType } from 'api';
+import { FriendMessageEvent, GroupMessageEvent, IdType, MessageSegment, SessionType, StrangerMessageEvent } from 'api';
 import { ReactComponent as CloseIcon } from 'images/close.svg';
 import HighlightSpan from 'components/highlight-span';
-import { useLastMessage } from 'models/logged-in-context';
+import { useLastMessage, useMessageList } from 'models/logged-in-context';
+import { webSocketClient } from 'api/websocket-client';
+import { useEffect } from 'react';
+import { scheduled, asyncScheduler } from 'rxjs';
+import { mergeAll, filter } from 'rxjs/operators';
 
 export type Props = {
   sessionType: SessionType;
@@ -36,6 +40,26 @@ export default function SessionItem({
 
   const messageSummary = lastMessage?.content.map(convertToHtmlElement).join('');
 
+  const messageList = useMessageList(sessionType, contactId);
+
+  // 订阅 Message 事件。
+  useEffect(() => {
+    if (!messageList) return;
+
+    const token = scheduled(
+      [
+        webSocketClient.event<FriendMessageEvent>('friend/message'),
+        webSocketClient.event<StrangerMessageEvent>('stranger/message'),
+        webSocketClient.event<GroupMessageEvent>('group/message'),
+      ],
+      asyncScheduler
+    )
+      .pipe(mergeAll(), filter(filterCurrentContact(contactId)))
+      .subscribe(e => messageList.pushItem(e.message));
+
+    return () => token.unsubscribe();
+  }, [contactId, messageList]);
+
   return (
     <div className={contactItemClass} onClick={onSelected}>
       <span className="SessionItem__redDot"></span>
@@ -62,6 +86,15 @@ export default function SessionItem({
       </span>
     </div>
   );
+}
+
+function filterCurrentContact(contactId: IdType) {
+  return (e: FriendMessageEvent | StrangerMessageEvent | GroupMessageEvent) => {
+    const { senderId, recipientId } = e.message;
+    return e.type === 'group/message'
+      ? e.groupId === contactId
+      : senderId === contactId || recipientId === contactId;
+  };
 }
 
 function convertToHtmlElement(message: MessageSegment) {
