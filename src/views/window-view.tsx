@@ -121,10 +121,13 @@ function useObserveSession() {
         filter(({ contact }) => !!contact)
       )
       .subscribe(({ senderId, contact }) => {
-        setSessionList(prev => {
-          const session = prev.find(item => item.contact.id === senderId);
-          return session ? prev : [{ type: 'friend', contact: contact!, unreadCount: 1 }, ...prev];
-        });
+        setSessionList(prev =>
+          moveOrAddToFirst(
+            prev,
+            item => item.contact.id === senderId,
+            () => ({ type: 'friend', contact: contact!, unreadCount: 1 })
+          )
+        );
       });
 
     return () => token.unsubscribe();
@@ -138,14 +141,13 @@ function useObserveSession() {
         const stranger = await fallbackHttpApi(() => getStrangerInfo(senderId), null);
         if (!stranger) return;
 
-        setSessionList(prev => {
-          const session = prev.find(item => item.contact.id === senderId);
-          if (!session) {
-            return [{ type: 'stranger', contact: stranger, unreadCount: 1 }, ...prev];
-          }
-
-          return prev;
-        });
+        setSessionList(prev =>
+          moveOrAddToFirst(
+            prev,
+            item => item.contact.id === senderId,
+            () => ({ type: 'stranger', contact: stranger, unreadCount: 1 })
+          )
+        );
       });
 
     return () => token.unsubscribe();
@@ -168,12 +170,20 @@ function useObserveSession() {
         filter(({ contact }) => !!contact)
       )
       .subscribe(({ groupId, contact }) => {
-        setSessionList(prev => {
-          const session = prev.find(item => item.contact.id === groupId);
-          return session ? prev : [{ type: 'group', contact: contact!, unreadCount: 1 }, ...prev];
-        });
+        setSessionList(prev =>
+          moveOrAddToFirst(
+            prev,
+            item => item.contact.id === groupId,
+            () => ({ type: 'group', contact: contact!, unreadCount: 1 })
+          )
+        );
       });
 
     return () => token.unsubscribe();
   }, [contactList, setSessionList]);
+}
+
+function moveOrAddToFirst<T>(list: T[], exists: (item: T) => boolean, factory: () => T): T[] {
+  const exitsItem = list.find(exists);
+  return exitsItem ? [exitsItem, ...list.filter(item => !exists(item))] : [factory(), ...list];
 }
