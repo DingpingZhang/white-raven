@@ -38,7 +38,7 @@ export default function SenderWidget({ sendMessage }: Props) {
   const { markupAdded } = useContext(ChatContext);
   useEffect(() => {
     const token = markupAdded.subscribe(({ markup, content }) => {
-      insertText(` ${markup}${content} `);
+      insertText(`${markup}${content} `);
     });
     return () => token.unsubscribe();
   }, [markupAdded, insertText]);
