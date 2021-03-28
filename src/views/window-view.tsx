@@ -31,7 +31,7 @@ import { filter, map } from 'rxjs/operators';
 
 export default function WindowView() {
   const contactDialogToken = useDialog<FriendInfo | GroupInfo | null>(buildContactDialog);
-  const settingsDialogToken = useDialog<void>(buildSettingsDialog);
+  const settingsDialogToken = useDialog<void>(close => buildSettingsDialog(close, true));
   const { $t } = useI18n();
 
   useObserveSession();

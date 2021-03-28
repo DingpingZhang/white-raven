@@ -19,12 +19,15 @@ import {
   LoginResponse,
   UploadFileResponse,
 } from './http-types';
-import { getValueFromLocalStorage, LOCAL_STORAGE_KEY } from './local-storage';
+import { DEFAULT_LOCAL_VALUE, getValueFromLocalStorage, LOCAL_STORAGE_KEY } from './local-storage';
 
 export type CommonErr = 'connection-timeout';
 
 const client = axios.create({
-  baseURL: `${getHost(getValueFromLocalStorage(LOCAL_STORAGE_KEY.HTTP_PORT, '6900'))}/api/v1`,
+  baseURL: `${getValueFromLocalStorage(
+    LOCAL_STORAGE_KEY.HTTP_HOST,
+    DEFAULT_LOCAL_VALUE.HTTP_HOST
+  )}/api/v1`,
   timeout: 100_000,
   headers: {
     'Content-Type': 'application/json',
@@ -55,11 +58,6 @@ function getRequestConfig(): AxiosRequestConfig | undefined {
   return undefined;
 }
 
-function getHost(port: string) {
-  const { protocol, hostname } = window.location;
-  return `${protocol}//${hostname}:${port}`;
-}
-
 // ********************************************************
 // Uncategorized Api
 // ********************************************************
@@ -73,8 +71,9 @@ export async function getSessions() {
 }
 
 export function getFileUrl(id: string) {
-  return `${getHost(
-    getValueFromLocalStorage(LOCAL_STORAGE_KEY.HTTP_PORT, '6900')
+  return `${getValueFromLocalStorage(
+    LOCAL_STORAGE_KEY.HTTP_HOST,
+    DEFAULT_LOCAL_VALUE.HTTP_HOST
   )}/api/v1/files/${id}`;
 }
 

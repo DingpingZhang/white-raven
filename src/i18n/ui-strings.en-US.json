@@ -12,8 +12,8 @@
 
   "dialog.settings.language": "Language",
   "dialog.settings.theme": "Theme",
-  "dialog.settings.httpPort": "HTTP Port",
-  "dialog.settings.wsPort": "WebSocket Port",
+  "dialog.settings.httpHost": "HTTP Host",
+  "dialog.settings.wsHost": "WebSocket Host",
 
   "theme.light": "Light",
   "theme.dark": "Dark",
@@ -24,5 +24,6 @@
 
   "button.confirm": "Confirm",
   "button.cancel": "Cancel",
-  "button.signOut": "Sign Out"
+  "button.signOut": "Sign Out",
+  "button.settings": "Settings"
 }

@@ -1,7 +1,12 @@
 export const LOCAL_STORAGE_KEY = {
   JWT_TOKEN: 'jwt-token',
-  HTTP_PORT: 'http-port',
-  WEBSOCKET_PORT: 'websocket-port',
+  HTTP_HOST: 'http-host',
+  WEBSOCKET_HOST: 'websocket-host',
+};
+
+export const DEFAULT_LOCAL_VALUE = {
+  HTTP_HOST: 'http://localhost:6900',
+  WEBSOCKET_HOST: 'ws://localhost:9500',
 };
 
 export function getValueFromLocalStorage(key: string): string | undefined;

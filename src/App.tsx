@@ -27,7 +27,9 @@ function App() {
       </DialogHost>
     </LoggedInContextRoot>
   ) : (
-    <LoginView setIsLoggedIn={setIsLoggedIn} />
+    <DialogHost>
+      <LoginView setIsLoggedIn={setIsLoggedIn} />
+    </DialogHost>
   );
 }
 
