@@ -19,5 +19,7 @@
 
   .SearchWidget__input {
     @include input.non-style-input();
+
+    padding-left: 12px;
   }
 }
