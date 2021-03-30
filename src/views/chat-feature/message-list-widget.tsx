@@ -38,20 +38,22 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
     setIsVisibleGotoBottomCallback,
   ] = useSetOfSeparatedState<boolean>();
   const [scrollPointerIndex, setScrollPointerIndex] = useState(INITIAL_SCROLL_INDEX);
+  // 指示用户是否在拖动滚动条，拖动时，应当禁止加载新的 items。
+  const [isDragging, setIsDragging] = useState(false);
 
   const [prevMoreRef, inViewPrevMore, prevMoreEntity] = useInView();
   const [nextMoreRef, inViewNextMore, nextMoreEntity] = useInView();
 
   useEffect(() => {
-    if (inViewPrevMore) {
+    if (inViewPrevMore && !isDragging) {
       messageList.pullPrev();
     }
-  }, [inViewPrevMore, messageList]);
+  }, [inViewPrevMore, isDragging, messageList]);
   useEffect(() => {
-    if (inViewNextMore) {
+    if (inViewNextMore && !isDragging) {
       messageList.pullNext();
     }
-  }, [inViewNextMore, messageList]);
+  }, [inViewNextMore, isDragging, messageList]);
 
   const handleAction = useCallback(
     (action: MessageListAction) => {
@@ -136,6 +138,7 @@ export default function MessageListWidget({ messageList, renderItem }: Props) {
         ref={scrollViewerRef}
         className="MessageListWidget__messageList"
         onScroll={handleGotoBottomVisible}
+        setIsDragging={setIsDragging}
         enableVerticalScrollBar
       >
         <div ref={prevMoreRef} className="MessageListWidget__prevMore"></div>

@@ -46,7 +46,9 @@
     display: none;
 
     &.active {
-      display: block;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .ScrollViewer__thumb {
@@ -54,20 +56,23 @@
 
       position: absolute;
       background-color: var(--scroll-thumb-color);
+
+      &:hover,
+      &.dragging {
+        @include common.circle(8px);
+      }
     }
 
     &.vertical {
       grid-row: 1 / 2;
       grid-column: 2 / 3;
-      margin-right: 4px;
-      width: 4px;
+      width: 8px;
     }
 
     &.horizontal {
       grid-row: 2 / 3;
       grid-column: 1 / 2;
-      margin-bottom: 4px;
-      height: 4px;
+      height: 8px;
     }
   }
 }
