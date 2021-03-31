@@ -47,11 +47,6 @@ export function useChatContextStore(
 // Hooks
 // ********************************************************************
 
-export function useImageLoaded() {
-  const ctx = useContext(ChatContext);
-  return ctx.imageLoaded;
-}
-
 export function useGetContactName() {
   const { getContactById } = useContext(ChatContext);
   return useCallback(

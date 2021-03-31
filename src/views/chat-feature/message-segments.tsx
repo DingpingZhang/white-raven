@@ -8,7 +8,7 @@ import {
 } from 'api';
 import classNames from 'classnames';
 import { useDialogBuilder } from 'components/dialog';
-import { ChatContext, useGetContactName, useImageLoaded } from 'models/chat-context';
+import { ChatContext, useGetContactName } from 'models/chat-context';
 import { useUserInfo } from 'models/logged-in-context';
 import { useContext } from 'react';
 import ImageExplorerDialog from 'views/dialogs/image-explorer-dialog';
@@ -62,7 +62,7 @@ function AtSegment({ targetId }: AtMessageSegment) {
 
 function ImageSegment({ imageId, behavior, width, height }: ImageMessageSegment) {
   const dialogBuilder = useDialogBuilder();
-  const imageLoaded = useImageLoaded();
+  const { imageLoaded } = useContext(ChatContext);
   const imageUrl = getFileUrl(imageId);
 
   return (
