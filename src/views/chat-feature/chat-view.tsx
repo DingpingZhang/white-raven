@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { IdType, SessionInfo } from 'api';
 import { Switch } from 'components/switch';
 import { useNavigator } from 'components/switch-host';
-import { SWITCH_NAME } from 'views/constants';
+import { SWITCH_NAME } from 'models/constants';
 import GroupSessionView from './group-session-view';
 import PrivateSessionView from './private-session-view';
 import SessionListWidget from './session-list-widget';
