@@ -1,10 +1,10 @@
 import { IdType } from 'api';
 
 export default class SortedSet<T> {
-  private readonly ids: Set<IdType> = new Set<IdType>();
-  private readonly storage: T[] = [];
   private readonly getId: (item: T) => IdType;
   private readonly compare: (x: T, y: T) => number;
+  private readonly ids: Set<IdType> = new Set<IdType>();
+  private storage: T[] = [];
 
   get items(): ReadonlyArray<T> {
     return this.storage;
@@ -34,5 +34,10 @@ export default class SortedSet<T> {
 
   addRange(items: ReadonlyArray<T>): number {
     return items.map(item => this.add(item)).filter(item => item).length;
+  }
+
+  clear() {
+    this.ids.clear();
+    this.storage = [];
   }
 }

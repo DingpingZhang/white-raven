@@ -8,6 +8,31 @@
 
   .SenderWidget__btnUpload {
     grid-column: 1 / 2;
+
+    .SenderWidget__inputFile {
+      @include common.circle(32px);
+
+      display: inline-flex;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      fill: var(--fore-secondary-color);
+      align-items: center;
+      justify-content: center;
+      background-color: var(--surface-color);
+
+      &:not([disabled]):hover {
+        filter: brightness(120%);
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    input[type='file'] {
+      display: none;
+    }
   }
 
   .SenderWidget__editArea {

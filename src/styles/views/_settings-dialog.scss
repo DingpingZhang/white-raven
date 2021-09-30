@@ -1,11 +1,11 @@
 @use '../mixins/common';
+@use '../mixins/input';
 
 .SettingsDialog {
   display: flex;
   flex-direction: column;
   @include common.gap(32px, 0);
 
-  width: 300px;
   padding: 0 20px;
   margin-bottom: 20px;
 
@@ -21,6 +21,17 @@
 
     .SettingItem__editor {
       grid-column: 3 / 4;
+
+      display: grid;
+
+      .SettingsDialog__input {
+        @include input.non-style-input();
+
+        height: 28px;
+        border-radius: 4px;
+        padding: 0 16px;
+        border: var(--default-border);
+      }
     }
   }
 }

@@ -1,7 +1,10 @@
-import { jwtTokenKey, login } from 'api';
+import { login } from 'api';
+import { LOCAL_STORAGE_KEY } from 'api/local-storage';
+import { useDialog } from 'components/dialog';
 import { useI18n } from 'i18n';
 import md5 from 'md5';
 import { useRef, useCallback, useState } from 'react';
+import { buildSettingsDialog } from './dialogs/settings-dialog';
 
 type Props = {
   setIsLoggedIn: (value: boolean) => void;
@@ -24,7 +27,7 @@ export default function LoginView({ setIsLoggedIn }: Props) {
       try {
         const response = await login(account, md5(password));
         if (response.code === 200) {
-          localStorage.setItem(jwtTokenKey, response.content.token);
+          localStorage.setItem(LOCAL_STORAGE_KEY.JWT_TOKEN, response.content.token);
           setIsLoggedIn(true);
         }
       } catch {
@@ -32,6 +35,8 @@ export default function LoginView({ setIsLoggedIn }: Props) {
       }
     }
   }, [setIsLoggedIn]);
+  const settingsDialogToken = useDialog<void>(buildSettingsDialog);
+  const showSettingsDialog = useCallback(() => settingsDialogToken.show(), [settingsDialogToken]);
 
   return (
     <div className="LoginView">
@@ -57,6 +62,13 @@ export default function LoginView({ setIsLoggedIn }: Props) {
           disabled={isBusy}
         >
           {$t('button.confirm')}
+        </button>
+        <button
+          className="LoginDialog__btnConfirm button-default"
+          onClick={showSettingsDialog}
+          disabled={isBusy}
+        >
+          {$t('button.settings')}
         </button>
       </div>
     </div>

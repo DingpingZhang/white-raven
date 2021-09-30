@@ -10,9 +10,10 @@ import {
 import { toDisplayTimestamp } from 'helpers';
 import { useAsyncValue } from 'hooks/use-api';
 import { ChatContext, useSenderInfo } from 'models/chat-context';
-import { fallbackHttpApi } from 'models/logged-in-context';
+import { fallbackHttpApi, useMessageList } from 'models/logged-in-context';
 import { useCallback, useContext, useMemo } from 'react';
 import { MessageSegments } from 'views/chat-feature/message-segments';
+import { ReactComponent as TopArrowIcon } from 'images/top-arrow.svg';
 
 type Props = {
   message: QuoteMessage;
@@ -27,6 +28,8 @@ export default function MessageQuoteContent({ message }: Props) {
   ]);
   const prevMessage = useAsyncValue(getMessage, null);
   const { avatar, name } = useSenderInfo(prevMessage?.senderId);
+  const { sessionType, contactId } = useContext(ChatContext);
+  const messageList = useMessageList(sessionType, contactId);
 
   return (
     <div className="MessageQuoteContent">
@@ -37,6 +40,14 @@ export default function MessageQuoteContent({ message }: Props) {
           <span className="MessageQuoteContent__timestamp">
             {prevMessage ? toDisplayTimestamp(prevMessage.timestamp) : null}
           </span>
+          <button
+            className="MessageQuoteContent__btnGoto"
+            onClick={() => {
+              messageList.scrollTo(item => item.id === prevMessage?.id);
+            }}
+          >
+            <TopArrowIcon className="MessageQuoteContent__btnGotoIcon" />
+          </button>
         </div>
         <MessageSegments segments={quote} />
       </div>

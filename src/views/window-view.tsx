@@ -12,96 +12,57 @@ import {
   GroupInfo,
   GroupMessageEvent,
   isGroupInfo,
+  SessionInfo,
   StrangerMessageEvent,
 } from 'api';
 import CircleIcon from 'components/circle-icon';
 import { useI18n } from 'i18n';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { webSocketClient } from 'api/websocket-client';
-import { produce } from 'immer';
-import { removeAll } from 'helpers/list-helpers';
 import {
   useUserInfo,
   useContactList,
   useSessionList,
   fallbackHttpApi,
+  useSelectedSessionId,
 } from 'models/logged-in-context';
 import { buildSettingsDialog } from './dialogs/settings-dialog';
+import { filter, map } from 'rxjs/operators';
 
 export default function WindowView() {
   const contactDialogToken = useDialog<FriendInfo | GroupInfo | null>(buildContactDialog);
-  const settingsDialogToken = useDialog<void>(buildSettingsDialog);
+  const settingsDialogToken = useDialog<void>(close => buildSettingsDialog(close, true));
   const { $t } = useI18n();
-  const { avatar, id: currentUserId } = useUserInfo();
-  const contactList = useContactList();
+
+  useObserveSession();
+
+  const { avatar } = useUserInfo();
   const [, setSessionList] = useSessionList();
+  const [, setSelectedSessionId] = useSelectedSessionId();
+  const showContactDialog = useCallback(async () => {
+    const result = await contactDialogToken.show();
 
-  useEffect(() => {
-    // Subscribe Events
-    const friendToken = webSocketClient.event<FriendMessageEvent>('friend/message').subscribe(e => {
+    if (result) {
       setSessionList(prev => {
-        const { senderId } = e.message;
-        if (senderId === currentUserId) return prev;
+        if (prev.some(item => item.contact.id === result.id)) return prev;
 
-        const session = prev.find(item => item.contact.id === senderId);
-        if (!session) {
-          const contact = contactList.find(item => item.id === senderId)!;
-          return produce(prev, draft => {
-            draft.unshift({ type: 'friend', contact: contact, unreadCount: 1 });
-          });
-        }
+        const newSession: SessionInfo = isGroupInfo(result)
+          ? {
+              type: 'group',
+              unreadCount: 0,
+              contact: result,
+            }
+          : {
+              type: 'friend',
+              unreadCount: 0,
+              contact: result,
+            };
 
-        return prev;
+        return [newSession, ...prev];
       });
-    });
-    const strangerToken = webSocketClient
-      .event<StrangerMessageEvent>('stranger/message')
-      .subscribe(async e => {
-        const { senderId } = e.message;
-        const stranger = await fallbackHttpApi(() => getStrangerInfo(senderId), null);
-        if (!stranger) return;
-
-        setSessionList(prev => {
-          const session = prev.find(item => item.contact.id === senderId);
-          if (session) {
-            return produce(prev, draft => {
-              removeAll(draft, item => item.contact.id === session.contact.id);
-              draft.unshift({ ...session, unreadCount: session.unreadCount + 1 });
-            });
-          } else {
-            return produce(prev, draft => {
-              draft.unshift({
-                type: 'stranger',
-                contact: stranger,
-                unreadCount: 1,
-              });
-            });
-          }
-        });
-      });
-    const groupToken = webSocketClient.event<GroupMessageEvent>('group/message').subscribe(e => {
-      setSessionList(prev => {
-        const session = prev.find(item => item.contact.id === e.groupId);
-        if (!session) {
-          const contact = contactList.find(item => item.id === e.groupId)!;
-          if (!isGroupInfo(contact))
-            throw new Error('The type of "group/message" argument must be GroupInfo.');
-
-          return produce(prev, draft => {
-            draft.unshift({ type: 'group', contact: contact, unreadCount: 1 });
-          });
-        }
-
-        return prev;
-      });
-    });
-
-    return () => {
-      friendToken.unsubscribe();
-      strangerToken.unsubscribe();
-      groupToken.unsubscribe();
-    };
-  }, [contactList, currentUserId, setSessionList]);
+      setSelectedSessionId(result.id);
+    }
+  }, [contactDialogToken, setSelectedSessionId, setSessionList]);
 
   return (
     <div className="WindowView">
@@ -118,29 +79,7 @@ export default function WindowView() {
               key="contact"
               icon={<ContactIcon />}
               title={$t('window.tabHeader.contact')}
-              onClick={async () => {
-                const result = await contactDialogToken.show();
-                if (result) {
-                  setSessionList(prev => {
-                    if (prev.some(item => item.contact.id === result.id)) return prev;
-
-                    return [
-                      isGroupInfo(result)
-                        ? {
-                            type: 'group',
-                            unreadCount: 0,
-                            contact: result,
-                          }
-                        : {
-                            type: 'friend',
-                            unreadCount: 0,
-                            contact: result,
-                          },
-                      ...prev,
-                    ];
-                  });
-                }
-              }}
+              onClick={showContactDialog}
             />,
           ]}
           bottomHeaders={[
@@ -160,4 +99,91 @@ export default function WindowView() {
       </div>
     </div>
   );
+}
+
+function useObserveSession() {
+  const contactList = useContactList();
+  const { id: currentUserId } = useUserInfo();
+  const [, setSessionList] = useSessionList();
+
+  useEffect(() => {
+    const token = webSocketClient
+      .event<FriendMessageEvent>('friend/message')
+      .pipe(
+        filter(item => item.message.senderId !== currentUserId),
+        map(item => {
+          const { senderId } = item.message;
+          return {
+            senderId,
+            contact: contactList.find(item => item.id === senderId),
+          };
+        }),
+        filter(({ contact }) => !!contact)
+      )
+      .subscribe(({ senderId, contact }) => {
+        setSessionList(prev =>
+          moveOrAddToFirst(
+            prev,
+            item => item.contact.id === senderId,
+            () => ({ type: 'friend', contact: contact!, unreadCount: 1 })
+          )
+        );
+      });
+
+    return () => token.unsubscribe();
+  }, [contactList, currentUserId, setSessionList]);
+
+  useEffect(() => {
+    const token = webSocketClient
+      .event<StrangerMessageEvent>('stranger/message')
+      .subscribe(async e => {
+        const { senderId } = e.message;
+        const stranger = await fallbackHttpApi(() => getStrangerInfo(senderId), null);
+        if (!stranger) return;
+
+        setSessionList(prev =>
+          moveOrAddToFirst(
+            prev,
+            item => item.contact.id === senderId,
+            () => ({ type: 'stranger', contact: stranger, unreadCount: 1 })
+          )
+        );
+      });
+
+    return () => token.unsubscribe();
+  }, [setSessionList]);
+
+  useEffect(() => {
+    const token = webSocketClient
+      .event<GroupMessageEvent>('group/message')
+      .pipe(
+        map(({ groupId }) => {
+          const groupOrFriend = contactList.find(item => item.id === groupId);
+          const contact = groupOrFriend
+            ? isGroupInfo(groupOrFriend)
+              ? groupOrFriend
+              : undefined
+            : undefined;
+
+          return { groupId, contact };
+        }),
+        filter(({ contact }) => !!contact)
+      )
+      .subscribe(({ groupId, contact }) => {
+        setSessionList(prev =>
+          moveOrAddToFirst(
+            prev,
+            item => item.contact.id === groupId,
+            () => ({ type: 'group', contact: contact!, unreadCount: 1 })
+          )
+        );
+      });
+
+    return () => token.unsubscribe();
+  }, [contactList, setSessionList]);
+}
+
+function moveOrAddToFirst<T>(list: T[], exists: (item: T) => boolean, factory: () => T): T[] {
+  const exitsItem = list.find(exists);
+  return exitsItem ? [exitsItem, ...list.filter(item => !exists(item))] : [factory(), ...list];
 }

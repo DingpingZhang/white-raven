@@ -4,8 +4,7 @@
   display: grid;
   grid-template-columns: auto 12px auto 1fr;
   grid-template-rows: auto auto 4px auto;
-  margin: 0 28px;
-  padding: 10px 0;
+  padding: 10px 28px;
   box-sizing: border-box;
 
   .MessageItem__senderName {

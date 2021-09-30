@@ -1,20 +1,9 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import MessageItem from './message-item';
 import SenderWidget from './sender-widget';
-import {
-  FriendMessageEvent,
-  GroupMessageEvent,
-  IdType,
-  Message,
-  MessageContent,
-  SessionType,
-  StrangerMessageEvent,
-} from 'api';
-import { webSocketClient } from 'api/websocket-client';
-import { filter, mergeAll } from 'rxjs/operators';
+import { IdType, Message, MessageContent, SessionType } from 'api';
 import MessageListWidget from './message-list-widget';
 import { useContactList, useGroupMemberList, useMessageList } from 'models/logged-in-context';
-import { asyncScheduler, scheduled } from 'rxjs';
 import { ChatContextRoot } from 'models/context-components';
 
 type Props = {
@@ -25,24 +14,6 @@ type Props = {
 
 export default function ChatWidget(props: Props) {
   const { sessionType, contactId } = props;
-  const messageList = useMessageList(sessionType, contactId);
-
-  // 订阅 Message 事件。
-  useEffect(() => {
-    if (!messageList) return;
-
-    const token = scheduled(
-      [
-        webSocketClient.event<FriendMessageEvent>('friend/message'),
-        webSocketClient.event<StrangerMessageEvent>('stranger/message'),
-        webSocketClient.event<GroupMessageEvent>('group/message'),
-      ],
-      asyncScheduler
-    )
-      .pipe(mergeAll(), filter(filterCurrentContact(contactId)))
-      .subscribe(e => messageList.pushItem(e.message));
-    return () => token.unsubscribe();
-  }, [contactId, messageList]);
 
   // 初始化 getContactById 方法，用于根据指定的 Id，从联系人列表及当前群成员（如果是群会话）中找到对应的实例。
   // 若非群会话，groupMemberList 返回 []。
@@ -96,13 +67,4 @@ function InnerChatWidget({ sessionType, contactId, sendMessage }: Props) {
       </div>
     </div>
   );
-}
-
-function filterCurrentContact(contactId: IdType) {
-  return (e: FriendMessageEvent | StrangerMessageEvent | GroupMessageEvent) => {
-    const { senderId, recipientId } = e.message;
-    return e.type === 'group/message'
-      ? e.groupId === contactId
-      : senderId === contactId || recipientId === contactId;
-  };
 }

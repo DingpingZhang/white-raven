@@ -11,17 +11,26 @@ import {
   SessionInfo,
   StrangerInfo,
 } from './basic-types';
-import { Ok, Err, MessageBody, MessageResponse, LoginResponse } from './http-types';
+import {
+  Ok,
+  Err,
+  MessageBody,
+  MessageResponse,
+  LoginResponse,
+  UploadFileResponse,
+} from './http-types';
+import { DEFAULT_LOCAL_VALUE, getValueFromLocalStorage, LOCAL_STORAGE_KEY } from './local-storage';
 
 export type CommonErr = 'connection-timeout';
 
-export const jwtTokenKey = 'jwt-token';
-
 const client = axios.create({
-  baseURL: 'http://localhost:6900/api/v1',
+  baseURL: `${getValueFromLocalStorage(
+    LOCAL_STORAGE_KEY.HTTP_HOST,
+    DEFAULT_LOCAL_VALUE.HTTP_HOST
+  )}/api/v1`,
   timeout: 100_000,
   headers: {
-    'Content-Type': 'application/x-www-form-urlencoded',
+    'Content-Type': 'application/json',
   },
 });
 
@@ -36,7 +45,7 @@ async function post<TOk, TErr = CommonErr>(url: string, data?: any) {
 }
 
 function getRequestConfig(): AxiosRequestConfig | undefined {
-  const token = localStorage.getItem(jwtTokenKey);
+  const token = localStorage.getItem(LOCAL_STORAGE_KEY.JWT_TOKEN);
 
   if (token) {
     const config: AxiosRequestConfig = {
@@ -61,8 +70,22 @@ export async function getSessions() {
   return get<ReadonlyArray<SessionInfo>>('sessions');
 }
 
-export function getImageUrl(id: string) {
-  return `http://localhost:6900/api/v1/assets/images/${id}`;
+export function getFileUrl(id: string) {
+  return `${getValueFromLocalStorage(
+    LOCAL_STORAGE_KEY.HTTP_HOST,
+    DEFAULT_LOCAL_VALUE.HTTP_HOST
+  )}/api/v1/files/${id}`;
+}
+
+export async function uploadFile(file: File) {
+  const token = localStorage.getItem(LOCAL_STORAGE_KEY.JWT_TOKEN);
+  const res = await client.post<Ok<UploadFileResponse> | Err<CommonErr>>('files', file, {
+    headers: {
+      Authorization: token,
+      'Content-Type': file.type,
+    },
+  });
+  return res.data;
 }
 
 export function getFacePackages() {

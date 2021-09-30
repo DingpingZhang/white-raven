@@ -8,31 +8,56 @@ type GetItems = (
   count: number,
   previous: boolean
 ) => Promise<ReadonlyArray<Message>>;
-export type ItemsChangedInfo = {
-  type: 'push' | 'pull-prev' | 'pull-next' | 'pull-until-latest';
-  changedCount: number;
-  sliceCount: number;
+
+type AddedAction = {
+  type: 'add';
+
+  /**
+   * 代表被成功添加的元素的个数。
+   */
+  addedCount: number;
 };
 
+type ScrollAction = {
+  type: 'scroll/previous' | 'scroll/next';
+
+  /**
+   * 代表滚动所至的目标元素在整个集合中的索引，根据 `type` 的不同，有以下含义：
+   *
+   * 1. `scroll/previous`：该索引对应的元素，是滚动后的 window 视图中的第一个元素；
+   * 2. `scroll/next`：该索引对应的元素，是滚动后 window 视图中的最后一个元素。
+   */
+  targetIndex: number;
+};
+
+export type MessageListAction = AddedAction | ScrollAction;
+
 const BATCH_COUNT = 20;
+const SCROLL_PULL_COUNT_LIMIT = 5;
 
 export default class MessageList {
   private readonly getItems: GetItems;
-  private readonly innerItemsChanged: Subject<ItemsChangedInfo> = new Subject<ItemsChangedInfo>();
+  private readonly messageListAction: Subject<MessageListAction> = new Subject<MessageListAction>();
 
   private isBusy: boolean = false;
+  private innerStartIndex: number = 0;
 
   readonly capacity: number = 100;
   readonly storage: SortedSet<Message>;
 
-  startIndex: number = 0;
-
-  get items() {
-    return this.storage.items.slice(this.startIndex, this.startIndex + this.capacity);
+  /**
+   * 滑动窗口（Sliding window），本上下文中出现的 window，指的均是滑动窗口，表示全集的一段可滑动的切片。
+   */
+  get window() {
+    return this.storage.items.slice(this.innerStartIndex, this.innerStartIndex + this.capacity);
   }
 
-  get itemsChanged(): Observable<ItemsChangedInfo> {
-    return this.innerItemsChanged;
+  get action(): Observable<MessageListAction> {
+    return this.messageListAction;
+  }
+
+  get startIndex() {
+    return this.innerStartIndex;
   }
 
   constructor(getItems: GetItems) {
@@ -45,24 +70,15 @@ export default class MessageList {
 
   pullPrev(): Promise<void> {
     return this.lock(async () => {
-      if (this.startIndex >= BATCH_COUNT) {
-        this.startIndex -= BATCH_COUNT;
-        this.raiseItemsChanged({
-          type: 'pull-prev',
-          changedCount: BATCH_COUNT,
-          sliceCount: this.getSliceCount(),
-        });
+      const prevStartIndex = this.innerStartIndex;
+      if (this.innerStartIndex >= BATCH_COUNT) {
+        this.innerStartIndex -= BATCH_COUNT;
+        this.raiseAction({ type: 'scroll/previous', targetIndex: prevStartIndex - 1 });
       } else {
-        const start = firstItemOrDefault(this.storage.items);
-        const prevItems = await this.getItems(start?.id, BATCH_COUNT, true);
-        const count = this.storage.addRange(prevItems);
+        const count = await this.pullPrevItemsFromRemote();
         if (count > 0) {
-          this.startIndex = 0;
-          this.raiseItemsChanged({
-            type: 'pull-prev',
-            changedCount: count,
-            sliceCount: this.getSliceCount(),
-          });
+          this.innerStartIndex = 0;
+          this.raiseAction({ type: 'scroll/previous', targetIndex: prevStartIndex + count - 1 });
         }
       }
     });
@@ -70,73 +86,110 @@ export default class MessageList {
 
   pullNext(): Promise<void> {
     return this.lock(async () => {
-      if (this.startIndex + BATCH_COUNT < this.storage.items.length) {
-        const prevStartIndex = this.startIndex;
-        this.startIndex =
-          this.startIndex + this.capacity < this.storage.items.length
-            ? this.startIndex + BATCH_COUNT
-            : this.startIndex;
-        this.raiseItemsChanged({
-          type: 'pull-next',
-          changedCount: this.startIndex - prevStartIndex,
-          sliceCount: this.getSliceCount(),
-        });
+      const prevEndIndex = this.getEndIndex();
+      if (this.innerStartIndex + BATCH_COUNT < this.storage.items.length) {
+        const canScrollBack = this.innerStartIndex + this.capacity < this.storage.items.length;
+        if (canScrollBack) {
+          const remainingCount = this.storage.items.length - this.innerStartIndex - this.capacity;
+          this.innerStartIndex += Math.min(BATCH_COUNT, remainingCount);
+          this.raiseAction({ type: 'scroll/next', targetIndex: prevEndIndex + 1 });
+        }
       } else {
         const end = lastItemOrDefault(this.storage.items);
         const nextItems = await this.getItems(end?.id, BATCH_COUNT, false);
         const count = this.storage.addRange(nextItems);
         if (count > 0) {
-          this.startIndex = Math.max(this.storage.items.length - this.capacity, 0);
-          this.raiseItemsChanged({
-            type: 'pull-next',
-            changedCount: count,
-            sliceCount: this.getSliceCount(),
-          });
+          this.innerStartIndex = Math.max(this.storage.items.length - this.capacity, 0);
+          this.raiseAction({ type: 'scroll/next', targetIndex: prevEndIndex + 1 });
         }
       }
     });
   }
 
-  pullUntilLatest() {
-    this.startIndex = Math.max(this.storage.items.length - this.capacity, 0);
-    this.raiseItemsChanged({
-      type: 'pull-until-latest',
-      changedCount: Number.MAX_SAFE_INTEGER,
-      sliceCount: this.getSliceCount(),
+  scrollTo(predicate: ((item: Message) => boolean) | 'latest'): Promise<void> {
+    return this.lock(async () => {
+      if (predicate === 'latest') {
+        this.innerStartIndex = Math.max(this.storage.items.length - this.capacity, 0);
+        this.raiseAction({ type: 'scroll/next', targetIndex: this.storage.items.length - 1 });
+      } else {
+        for (let pullCount = 0; pullCount < SCROLL_PULL_COUNT_LIMIT; pullCount++) {
+          const targetIndex = this.storage.items.findIndex(predicate);
+          if (targetIndex < 0) {
+            // TODO: 目前默认就是向前（previous）搜索，以后酌情添加向后（next）查询跳转功能。
+            await this.pullPrevItemsFromRemote();
+          } else {
+            if (targetIndex < this.innerStartIndex) {
+              this.innerStartIndex = targetIndex;
+              this.raiseAction({ type: 'scroll/previous', targetIndex });
+            } else if (targetIndex >= this.innerStartIndex + this.capacity) {
+              this.innerStartIndex = targetIndex - this.capacity;
+              this.raiseAction({ type: 'scroll/next', targetIndex });
+            } else {
+              this.raiseAction({ type: 'scroll/previous', targetIndex });
+            }
+          }
+        }
+      }
     });
   }
 
   pushItem(item: Message) {
     if (this.storage.add(item)) {
-      this.raiseItemsChanged({ type: 'push', changedCount: 1, sliceCount: this.getSliceCount() });
+      this.innerStartIndex = Math.max(
+        this.storage.items.length - this.capacity,
+        this.innerStartIndex
+      );
+      this.raiseAction({ type: 'add', addedCount: 1 });
     }
   }
 
   pushItems(items: ReadonlyArray<Message>) {
     const count = this.storage.addRange(items);
     if (count > 0) {
-      this.raiseItemsChanged({
-        type: 'push',
-        changedCount: count,
-        sliceCount: this.getSliceCount(),
-      });
+      this.innerStartIndex = Math.max(
+        this.storage.items.length - this.capacity,
+        this.innerStartIndex
+      );
+      this.raiseAction({ type: 'add', addedCount: count });
     }
   }
 
-  private raiseItemsChanged(e: ItemsChangedInfo) {
-    this.innerItemsChanged.next(e);
+  clear() {
+    this.innerStartIndex = 0;
+    this.isBusy = false;
+    this.storage.clear();
   }
 
-  private getSliceCount() {
-    return this.startIndex + this.capacity < this.storage.items.length
-      ? this.capacity
-      : this.storage.items.length - this.startIndex;
+  isWindowAtLatest() {
+    return this.innerStartIndex + this.capacity >= this.storage.items.length;
+  }
+
+  private async pullPrevItemsFromRemote() {
+    const start = firstItemOrDefault(this.storage.items);
+    const prevItems = await this.getItems(start?.id, BATCH_COUNT, true);
+    return this.storage.addRange(prevItems);
+  }
+
+  private raiseAction(action: MessageListAction) {
+    this.messageListAction.next(action);
+  }
+
+  private getEndIndex() {
+    const count = this.storage.items.length - this.innerStartIndex;
+    const actualCount = Math.min(count, this.capacity);
+    return this.innerStartIndex + actualCount;
   }
 
   private async lock(callback: () => Promise<void>): Promise<void> {
     if (this.isBusy) return;
-    this.isBusy = true;
-    await callback();
-    this.isBusy = false;
+
+    try {
+      this.isBusy = true;
+      await callback();
+    } catch (e) {
+      console.log(e);
+    } finally {
+      this.isBusy = false;
+    }
   }
 }

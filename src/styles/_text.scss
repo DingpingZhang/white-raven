@@ -1,6 +1,7 @@
 span.text {
   user-select: none;
   cursor: default;
+  overflow-wrap: anywhere;
 
   &.title {
     color: var(--fore-primary-color);

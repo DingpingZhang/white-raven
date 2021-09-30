@@ -38,3 +38,7 @@ export type LoginResponse = {
    */
   token: string;
 };
+
+export type UploadFileResponse = {
+  fileId: string;
+};
