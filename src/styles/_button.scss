@@ -27,12 +27,14 @@ button.button {
   &-primary {
     @include button-style-base();
 
+    color: var(--fore-on-primary-primary-color);
     background-color: var(--primary-color);
   }
 
   &-darger {
     @include button-style-base();
 
+    color: var(--fore-on-primary-primary-color);
     background-color: var(--secondary-color);
   }
 }
