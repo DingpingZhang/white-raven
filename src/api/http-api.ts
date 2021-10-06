@@ -40,8 +40,12 @@ async function get<TOk, TErr = CommonErr>(url: string) {
 }
 
 async function post<TOk, TErr = CommonErr>(url: string, data?: any) {
-  const res = await client.post<Ok<TOk> | Err<TErr | CommonErr>>(url, data, getRequestConfig());
-  return res.data;
+  const res = await client.post<any, Ok<TOk> | Err<TErr | CommonErr>>(
+    url,
+    data,
+    getRequestConfig()
+  );
+  return res;
 }
 
 function getRequestConfig(): AxiosRequestConfig | undefined {
@@ -79,13 +83,13 @@ export function getFileUrl(id: string) {
 
 export async function uploadFile(file: File) {
   const token = localStorage.getItem(LOCAL_STORAGE_KEY.JWT_TOKEN);
-  const res = await client.post<Ok<UploadFileResponse> | Err<CommonErr>>('files', file, {
+  const res = await client.post<File, Ok<UploadFileResponse> | Err<CommonErr>>('files', file, {
     headers: {
-      Authorization: token,
+      Authorization: token || '',
       'Content-Type': file.type,
     },
   });
-  return res.data;
+  return res;
 }
 
 export function getFacePackages() {
