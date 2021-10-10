@@ -1,3 +1,4 @@
+import { getValueFromLocalStorage, LOCAL_STORAGE_KEY } from 'api/local-storage';
 import { useConstant } from 'hooks';
 import { IRxState, RxState } from 'hooks/rx-state';
 import { useRxState } from 'hooks/use-rx';
@@ -19,8 +20,12 @@ export const GlobalContext = createContext<GlobalContextType>(undefined as any);
 
 export function useGlobalContextStore() {
   return useConstant<GlobalContextType>(() => ({
-    theme: new RxState<ThemeType>('theme-dark'),
-    culture: new RxState<LanguageCode>('zh-CN'),
+    theme: new RxState<ThemeType>(
+      getValueFromLocalStorage(LOCAL_STORAGE_KEY.THEME, 'theme-dark') as ThemeType
+    ),
+    culture: new RxState<LanguageCode>(
+      getValueFromLocalStorage(LOCAL_STORAGE_KEY.CULTURE, 'zh-CN') as LanguageCode
+    ),
   }));
 }
 

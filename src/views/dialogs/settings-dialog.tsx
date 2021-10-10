@@ -34,7 +34,7 @@ export function buildSettingsDialog(close: () => void, isLoggedIn?: boolean) {
 
 export default function SettingsDialog({ close, isLoggedIn }: Props) {
   const { $t } = useI18n();
-  const cultrues = useMemo<ComboBoxItem<LanguageCode>[]>(
+  const cultures = useMemo<ComboBoxItem<LanguageCode>[]>(
     () => [
       { label: '简体中文', value: 'zh-CN' },
       { label: 'English', value: 'en-US' },
@@ -69,13 +69,18 @@ export default function SettingsDialog({ close, isLoggedIn }: Props) {
     }
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY.CULTURE, culture);
+    localStorage.setItem(LOCAL_STORAGE_KEY.THEME, theme);
+  }, [culture, theme]);
+
   return (
     <BaseDialog title={$t('dialog.title.settings')} close={close}>
       <div className="SettingsDialog">
         <SettingItem text={$t('dialog.settings.language')}>
           <ComboBox
-            itemsSource={cultrues}
-            selectedItem={cultrues.find(item => item.value === culture)!}
+            itemsSource={cultures}
+            selectedItem={cultures.find(item => item.value === culture)!}
             setSelectedItem={item => setCulture(item.value)}
           />
         </SettingItem>

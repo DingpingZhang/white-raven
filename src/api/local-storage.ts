@@ -2,6 +2,8 @@ export const LOCAL_STORAGE_KEY = {
   JWT_TOKEN: 'jwt-token',
   HTTP_HOST: 'http-host',
   WEBSOCKET_HOST: 'websocket-host',
+  THEME: 'theme',
+  CULTURE: 'culture',
 };
 
 export const DEFAULT_LOCAL_VALUE = {
