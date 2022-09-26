@@ -1,14 +1,16 @@
+@use 'sass:math';
+
 // Safari not support the gap css prop in non-grid element.
 @mixin gap($row-gap, $column-gap) {
-  > * {
+  >* {
     &:not(:first-child) {
-      margin-top: $row-gap / 2;
-      margin-left: $column-gap / 2;
+      margin-top: math.div($row-gap, 2);
+      margin-left: math.div($column-gap, 2);
     }
 
     &:not(:last-child) {
-      margin-bottom: $row-gap / 2;
-      margin-right: $column-gap / 2;
+      margin-bottom: math.div($row-gap, 2);
+      margin-right: math.div($column-gap, 2);
     }
   }
 }
