@@ -1,3 +1,4 @@
+@use 'sass:math';
 @use '../mixins/button';
 
 $quote-avatar-size: 18px;
@@ -19,7 +20,7 @@ $quote-avatar-size: 18px;
       .MessageQuoteContent__avatar {
         width: $quote-avatar-size;
         height: $quote-avatar-size;
-        border-radius: $quote-avatar-size / 2;
+        border-radius: math.div($quote-avatar-size, 2);
       }
 
       .MessageQuoteContent__name {
